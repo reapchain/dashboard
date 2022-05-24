@@ -15,7 +15,7 @@
       </b-alert>
       <b-row>
         <span v-if="uptime.length === 0" class="text-danger">
-          Your node is out of active validator set {{ chain }} ,,
+          Your node is out of active validator set {{ chain }}
           {{ validators }}</span
         >
         <b-col

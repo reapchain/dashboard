@@ -1,60 +1,148 @@
 <template>
   <div class="text-center">
-    <b-card v-if="calculateTotalChange !== 0" border-variant="primary">
-      <b-row class="mx-0 d-flex align-items-center">
-        <b-col md="4" class="py-0">
-          <b-dropdown
-            :text="`Currency: ${currency2.toUpperCase()}`"
-            size="sm"
-            class="text-uppercase"
-            variant="primary"
-          >
-            <b-dropdown-item @click="setCurrency('usd')">
-              USD
-            </b-dropdown-item>
-            <b-dropdown-item @click="setCurrency('cny')">
-              CNY (人民币)
-            </b-dropdown-item>
-            <b-dropdown-item @click="setCurrency('eur')">
-              EUR (Euro)
-            </b-dropdown-item>
-            <b-dropdown-item @click="setCurrency('jpy')">
-              JPY (日本円)
-            </b-dropdown-item>
-            <b-dropdown-item @click="setCurrency('hkd')">
-              HKD (港幣)
-            </b-dropdown-item>
-            <b-dropdown-item @click="setCurrency('sgd')">
-              SGD (新加坡元)
-            </b-dropdown-item>
-            <b-dropdown-item @click="setCurrency('krw')">
-              KRW (대한민국원)
-            </b-dropdown-item>
-          </b-dropdown>
-          <h2 class="mt-1 mb-0">{{ currency }}{{ calculateTotal }}</h2>
-          <small v-if="calculateTotalChange > 0" class="my-0 text-success">
-            +{{ formatTotalChange(calculateTotalChange) }} (24h)
-          </small>
-          <small v-else class="my-0 text-danger">
-            {{ formatTotalChange(calculateTotalChange) }} (24h)
-          </small>
-          <span @click="refreshPrice()">
-            <feather-icon icon="RefreshCwIcon" size="12"
-          /></span>
-          <!-- chart -->
-          <chart-component-doughnut
-            :height="160"
-            :width="160"
-            :data="calculateChartDoughnut"
-          />
-        </b-col>
-        <b-col md="8">
-          <echart-scatter :items.sync="scatters" auto-resize />
-        </b-col>
+    <div>
+      <b-row>
+        <b-col
+          v-for="(item, index) in accounts"
+          :key="index"
+          sm="12"
+          md="6"
+          xl="4"
+          ><div v-for="(acc, j) in item.address" :key="j">
+            <b-card no-body class="card-browser-states">
+              <b-card-header>
+                <div>
+                  <b-card-title>
+                    <!-- <span class="text-uppercase">
+                      {{acc.chain}}
+                    </span> -->
+                    <span class="">
+                      {{ `${item.name}` }}
+                    </span>
+                  </b-card-title>
+                </div>
+                <feather-icon
+                  v-b-tooltip.hover.v-danger
+                  :title="`Remove ${item.name}`"
+                  icon="XSquareIcon"
+                  size="18"
+                  class="cursor-pointer text-danger"
+                  @click="removeAddress(acc.addr)"
+                />
+              </b-card-header>
+              <b-card-body class="text-truncate">
+                <b-row>
+                  <b-col>
+                    <div class="d-flex justify-content-between">
+                      <b-avatar
+                        :src="acc.logo"
+                        size="28"
+                        variant="light-primary"
+                        rounded
+                      />
+                      <div class="text-right">
+                        <h4 class="my-0">
+                          {{ currency }}{{ formatBalance(acc.addr) }}
+                        </h4>
+                        <small :class="formatBalanceChangesColor(acc.addr)">
+                          {{ formatBalanceChanges(acc.addr) }}</small
+                        >
+                      </div>
+                    </div>
+                    <app-collapse>
+                      <app-collapse-item title="Assets">
+                        <template #header>
+                          <div style="text-align: left;">
+                            <feather-icon
+                              icon="CopyIcon"
+                              @click="copy(acc.addr)"
+                            />&nbsp;
+                            <small class="text-muted">{{
+                              formatAddr(acc.addr)
+                            }}</small
+                            ><br />
+                            <feather-icon
+                              icon="CopyIcon"
+                              @click="copy(convertToEthAddress(acc.addr))"
+                            />&nbsp;
+                            <small class="text-muted">{{
+                              formatAddrEth(convertToEthAddress(acc.addr))
+                            }}</small>
+                          </div>
+                        </template>
+                        <div
+                          v-for="(b, i) in balances[acc.addr]"
+                          :key="i"
+                          class="d-flex justify-content-between"
+                        >
+                          <div
+                            class="ml-25 font-weight-bolder text-uppercase text-success d-flex flex-column text-left"
+                            title="Balance"
+                          >
+                            {{ formatAmount(b.amount, b.denom) }}
+                            {{ formatDenom(b.denom) }}
+                            <span class="font-small-2 text-muted text-nowrap"
+                              >{{ currency
+                              }}{{ formatCurrency(b.amount, b.denom) }}</span
+                            >
+                          </div>
+                          <div class="d-flex flex-column text-right">
+                            <span class="font-weight-bold mb-0"
+                              >{{ currency }}{{ formatPrice(b.denom) }}</span
+                            >
+                            <small :class="priceColor(b.denom)" class="py-0">{{
+                              formatChanges(b.denom)
+                            }}</small>
+                          </div>
+                        </div>
+                        <div
+                          v-for="(b, i) in delegations[acc.addr]"
+                          :key="`d-${i}`"
+                          class="d-flex justify-content-between align-items-center"
+                        >
+                          <div
+                            class="ml-25 font-weight-bolder text-uppercase text-primary d-flex flex-column text-left"
+                            title="Balance"
+                          >
+                            {{ formatAmount(b.amount, b.denom) }}
+                            {{ formatDenom(b.denom) }}
+                            <span class="font-small-2 text-muted text-nowrap"
+                              >{{ currency
+                              }}{{ formatCurrency(b.amount, b.denom) }}</span
+                            >
+                          </div>
+                          <div class="d-flex flex-column text-right">
+                            <span class="font-weight-bold mb-0"
+                              >{{ currency }}{{ formatPrice(b.denom) }}</span
+                            >
+                            <small :class="priceColor(b.denom)" class="py-0">{{
+                              formatChanges(b.denom)
+                            }}</small>
+                          </div>
+                        </div>
+                        <b-button
+                          v-if="balances[acc.addr]"
+                          block
+                          size="sm"
+                          variant="outline-primary"
+                          :to="`/${acc.chain}/account/${acc.addr}`"
+                          class="mt-1 mb-0"
+                          @click="updateDefaultWallet(item.name)"
+                        >
+                          <feather-icon icon="TrelloIcon" /> Detail
+                        </b-button>
+                      </app-collapse-item>
+                    </app-collapse>
+                  </b-col>
+                </b-row>
+              </b-card-body>
+            </b-card>
+          </div></b-col
+        >
       </b-row>
-    </b-card>
+    </div>
 
-    <div v-for="(item, index) in accounts" :key="index">
+    <!-- <div v-for="(item, index) in accounts" :key="index">
       <div>
         <div class="d-flex justify-content-between align-items-end mb-1">
           <b-button
@@ -209,7 +297,7 @@
           </b-col>
         </b-row>
       </div>
-    </div>
+    </div> -->
 
     <router-link to="/wallet/import">
       <b-card class="addzone">

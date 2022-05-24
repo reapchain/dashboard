@@ -20,18 +20,14 @@
     <b-link>
       <div class="d-flex justify-content-center align-items-center">
         <vuexy-logo />
-        <!-- <h1 class="text-primary display-4 font-weight-bolder d-none d-md-block">
-          Ping Explorer<small class="flow-left">Beta</small>
-        </h1> -->
+        <h1 class="text-primary display-4 font-weight-bolder d-none d-md-block">
+          <small class="flow-left"></small>
+        </h1>
       </div>
     </b-link>
 
-    <p class="mb-1">
-      Ping explorer is not just an explorer but also a wallet and more ... 🛠
-    </p>
-    <h2 class="mb-3">
-      Cosmos Ecosystem Blockchains 🚀
-    </h2>
+    <p class="mb-1"></p>
+    <h2 class="mb-3"></h2>
 
     <div>
       <b-row class="match-height">
