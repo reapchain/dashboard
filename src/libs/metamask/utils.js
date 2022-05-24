@@ -1,0 +1,322 @@
+import axios from "./axios";
+import {
+  generateEndpointAccount,
+  generateEndpointBroadcast,
+  generatePostBodyBroadcast,
+} from "@tharsis/provider";
+import {
+  createMessageSend,
+  createTxRawEIP712,
+  signatureToWeb3Extension,
+  createTxMsgDelegate,
+  createTxMsgWithdrawDelegatorReward,
+  createTxMsgBeginRedelegate,
+  createTxMsgMultipleWithdrawDelegatorReward,
+  createTxMsgUndelegate,
+} from "@tharsis/transactions";
+import { ethToReap } from "./addressConverter";
+
+const chain = {
+  chainId: 9000,
+  cosmosChainId: "mercury_9000-1",
+};
+
+export const metamaskSendTx = async (type, txData) => {
+  console.log("type :: ", type);
+  console.log("txData :: ", txData);
+  try {
+    const enable = await window.ethereum.enable();
+    if (!enable) {
+      return;
+    }
+    const addressETH = enable[0];
+    const addressReap = ethToReap(addressETH);
+    const { data: myAccount } = await axios.get(
+      generateEndpointAccount(addressReap)
+    );
+    const sender = {
+      accountAddress: myAccount.account.base_account.address,
+      sequence: myAccount.account.base_account.sequence,
+      accountNumber: myAccount.account.base_account.account_number,
+      pubkey: myAccount.account.base_account.pub_key.key || "",
+    };
+    const msg = createMetamaskTxMessage(type, txData, sender);
+    console.log("msg : ", msg);
+
+    let signature = await window.ethereum.request({
+      method: "eth_signTypedData_v4",
+      params: [addressETH, JSON.stringify(msg.eipToSign)],
+    });
+    console.log("signature : ", signature);
+    let extension = signatureToWeb3Extension(chain, sender, signature);
+    let rawTx = createTxRawEIP712(
+      msg.legacyAmino.body,
+      msg.legacyAmino.authInfo,
+      extension
+    );
+    const res = await axios.post(
+      generateEndpointBroadcast(),
+      JSON.parse(generatePostBodyBroadcast(rawTx))
+    );
+    console.log("res : ", res);
+    return {
+      result: true,
+      txhash: res.data.tx_response.txhash || "",
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      result: false,
+      msg: error,
+    };
+  }
+};
+
+export const createMetamaskTxMessage = (type, txData, sender) => {
+  console.log(type, txData);
+  try {
+    switch (type) {
+      case "Transfer":
+        return createMessageSend(
+          chain,
+          sender,
+          {
+            amount: "1000000",
+            denom: "areap",
+            gas: "200000",
+          },
+          txData.memo,
+          {
+            destinationAddress: txData.msg[0].value.toAddress,
+            amount: txData.msg[0].value.amount[0].amount,
+            denom: txData.msg[0].value.amount[0].denom,
+          }
+        );
+      case "Delegate":
+        return createTxMsgDelegate(
+          chain,
+          sender,
+          {
+            amount: "1000000",
+            denom: "areap",
+            gas: "200000",
+          },
+          txData.memo,
+          {
+            validatorAddress: txData.msg[0].value.validatorAddress,
+            amount: txData.msg[0].value.amount.amount.toString(),
+            denom: txData.msg[0].value.amount.denom,
+          }
+        );
+      case "Withdraw":
+        if (txData.msg.length > 1) {
+          return createTxMsgMultipleWithdrawDelegatorReward(
+            chain,
+            sender,
+            {
+              amount: "1000000",
+              denom: "areap",
+              gas: "250000",
+            },
+            txData.memo,
+            {
+              validatorAddresses: txData.msg.map(
+                (ele) => ele.value.validatorAddress
+              ),
+            }
+          );
+        }
+        return createTxMsgWithdrawDelegatorReward(
+          chain,
+          sender,
+          {
+            amount: "1000000",
+            denom: "areap",
+            gas: "200000",
+          },
+          txData.memo,
+          {
+            validatorAddress: txData.msg[0].value.validatorAddress,
+          }
+        );
+      case "Redelegate":
+        return createTxMsgBeginRedelegate(
+          chain,
+          sender,
+          {
+            amount: "1000000",
+            denom: "areap",
+            gas: "330000",
+          },
+          txData.memo,
+          {
+            validatorSrcAddress: txData.msg[0].value.validatorSrcAddress,
+            validatorDstAddress: txData.msg[0].value.validatorDstAddress,
+            amount: txData.msg[0].value.amount.amount.toString(),
+            denom: txData.msg[0].value.amount.denom,
+          }
+        );
+      case "Unbond":
+        return createTxMsgUndelegate(
+          chain,
+          sender,
+          {
+            amount: "1000000",
+            denom: "areap",
+            gas: "330000",
+          },
+          txData.memo,
+          {
+            validatorAddress: txData.msg[0].value.validatorAddress,
+            amount: txData.msg[0].value.amount.amount.toString(),
+            denom: txData.msg[0].value.amount.denom,
+          }
+        );
+      default:
+        return null;
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const metamaskGetAccount = async () => {
+  const enable = await window.ethereum.enable();
+  if (!enable || enable.length < 1) {
+    console.log("metamask is not enable");
+    return;
+  }
+  const { data: myAccount } = await axios.get(
+    generateEndpointAccount(ethToReap(enable[0]))
+  );
+  if (!myAccount) {
+    return null;
+  }
+  return {
+    address: myAccount.account.base_account.address,
+    algo: "ethsecp256k1",
+    pubkey: {
+      type: myAccount.account.base_account.pub_key["@type"],
+      key: myAccount.account.base_account.pub_key.key,
+    },
+  };
+};
+
+// not used
+export const metamaskWithdraw = async (txData) => {
+  console.log("txData :", txData);
+  try {
+    const enable = await window.ethereum.enable();
+    if (!enable) {
+      return;
+    }
+    const addressETH = enable[0];
+    const addressReap = ethToReap(addressETH);
+    const { data: myAccount } = await axios.get(
+      generateEndpointAccount(addressReap)
+    );
+    const sender = {
+      accountAddress: myAccount.account.base_account.address,
+      sequence: myAccount.account.base_account.sequence,
+      accountNumber: myAccount.account.base_account.account_number,
+      pubkey: myAccount.account.base_account.pub_key.key || "",
+    };
+    const msg = createTxMsgWithdrawDelegatorReward(
+      chain,
+      sender,
+      {
+        amount: "1000000",
+        denom: "areap",
+        gas: "200000",
+      },
+      txData.memo,
+      {
+        validatorAddress: txData.msg[0].value.validatorAddress,
+      }
+    );
+    let signature = await window.ethereum.request({
+      method: "eth_signTypedData_v4",
+      params: [addressETH, JSON.stringify(msg.eipToSign)],
+    });
+    let extension = signatureToWeb3Extension(chain, sender, signature);
+    let rawTx = createTxRawEIP712(
+      msg.legacyAmino.body,
+      msg.legacyAmino.authInfo,
+      extension
+    );
+    const res = await axios.post(
+      generateEndpointBroadcast(),
+      JSON.parse(generatePostBodyBroadcast(rawTx))
+    );
+    return {
+      result: true,
+      txhash: res.data.tx_response.txhash || "",
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      result: false,
+      msg: error,
+    };
+  }
+};
+// not used
+export const metamaskDelegation = async (delegateData) => {
+  console.log("delegateData :", delegateData);
+  try {
+    const enable = await window.ethereum.enable();
+    if (!enable) {
+      return;
+    }
+    const addressETH = enable[0];
+    const addressReap = ethToReap(addressETH);
+    const { data: myAccount } = await axios.get(
+      generateEndpointAccount(addressReap)
+    );
+    const sender = {
+      accountAddress: myAccount.account.base_account.address,
+      sequence: myAccount.account.base_account.sequence,
+      accountNumber: myAccount.account.base_account.account_number,
+      pubkey: myAccount.account.base_account.pub_key.key || "",
+    };
+    const msg = createTxMsgDelegate(
+      chain,
+      sender,
+      {
+        amount: "1000000",
+        denom: "areap",
+        gas: "200000",
+      },
+      delegateData.memo,
+      {
+        validatorAddress: delegateData.msg[0].value.validatorAddress,
+        amount: delegateData.msg[0].value.amount.amount.toString(),
+        denom: delegateData.msg[0].value.amount.denom,
+      }
+    );
+    let signature = await window.ethereum.request({
+      method: "eth_signTypedData_v4",
+      params: [addressETH, JSON.stringify(msg.eipToSign)],
+    });
+    let extension = signatureToWeb3Extension(chain, sender, signature);
+    let rawTx = createTxRawEIP712(
+      msg.legacyAmino.body,
+      msg.legacyAmino.authInfo,
+      extension
+    );
+    const res = await axios.post(
+      generateEndpointBroadcast(),
+      JSON.parse(generatePostBodyBroadcast(rawTx))
+    );
+    return {
+      result: true,
+      txhash: res.data.tx_response.txhash || "",
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      result: false,
+      msg: error,
+    };
+  }
+};
