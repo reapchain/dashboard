@@ -308,7 +308,7 @@
     <operation-modal
       :type="operationModalType"
       :address="selectedAddress"
-      :selected-chain-name="'reapchain_local'"
+      :selected-chain-name="'reapchain'"
     />
   </div>
 </template>
@@ -391,7 +391,7 @@ export default {
       ibcDenom: {},
       quotes: {},
       operationModalType: "",
-      selectedChainName: "reapchain_local",
+      selectedChainName: "reapchain",
       options: {
         maintainAspectRatio: false,
         legend: {
@@ -553,6 +553,10 @@ export default {
     },
     init() {
       this.accounts = getLocalAccounts();
+      console.log("MyAccount this.accounts : ", this.accounts);
+      if (!this.accounts) {
+        return;
+      }
       const chains = getLocalChains();
       if (this.accounts) {
         Object.keys(this.accounts).forEach((acc) => {

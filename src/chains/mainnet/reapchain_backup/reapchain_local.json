@@ -1,0 +1,21 @@
+{
+  "chain_name": "reapchain",
+  "coingecko": "",
+  "api": ["http://192.168.100.44:1317"],
+  "rpc": ["http://192.168.100.44:37100"],
+  "snapshot_provider": "",
+  "sdk_version": "0.45.1",
+  "coin_type": "60",
+  "min_tx_fee": "10000000",
+  "addr_prefix": "reap",
+  "logo": "/logos/reapchain_logo.png",
+  "assets": [
+    {
+      "base": "areap",
+      "symbol": "reap",
+      "exponent": "18",
+      "coingecko_id": "",
+      "logo": "/logos/reapchain_logo.png"
+    }
+  ]
+}

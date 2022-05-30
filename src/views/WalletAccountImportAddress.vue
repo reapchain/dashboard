@@ -474,7 +474,7 @@ export default {
       const transport = this.device === "ledger" ? "usb" : "bluetooth";
       return getLedgerAddress(transport, this.hdpath);
     },
-    async cennectMetamask() {
+    async connectMetamask() {
       const myAccount = metamaskGetAccount();
 
       if (!myAccount) {
@@ -483,7 +483,7 @@ export default {
       }
       return myAccount;
     },
-    async cennectKeplr() {
+    async connectKeplr() {
       if (!window.getOfflineSigner || !window.keplr) {
         this.debug = "Please install keplr extension";
         return null;
@@ -519,8 +519,8 @@ export default {
       const string = localStorage.getItem("accounts");
       const accounts = string ? JSON.parse(string) : {};
 
-      const selected = "reapchain_local";
-      const thisChain = this.chains[selected];
+      const selected = process.env.VUE_APP_CHAIN_NAME || "reapchain";
+      const thisChain = this.chains[process.env.VUE_APP_CHAIN_NAME];
 
       accounts[this.name] = {
         name: this.name,
@@ -558,20 +558,27 @@ export default {
         // new import, otherwise it's edit mode.
         switch (this.device) {
           case "metamask":
-            await this.cennectMetamask().then((accounts) => {
-              if (accounts) {
-                // eslint-disable-next-line prefer-destructuring
-                this.accounts = [accounts];
-                console.log("this.accounts : ", this.accounts);
-                ok = true;
-              } else {
-                ok = false;
-                this.debug = "invalidate account...";
-              }
-            });
+            try {
+              await this.connectMetamask().then((accounts) => {
+                console.log("accounts : ", accounts);
+                if (accounts) {
+                  // eslint-disable-next-line prefer-destructuring
+                  this.accounts = [accounts];
+                  // console.log("this.accounts : ", this.accounts);
+                  ok = true;
+                } else {
+                  ok = false;
+                  this.debug = "invalidate account";
+                }
+              });
+            } catch (error) {
+              ok = false;
+              this.debug = "invalidate account";
+              break;
+            }
             break;
           case "keplr":
-            await this.cennectKeplr().then((accounts) => {
+            await this.connectKeplr().then((accounts) => {
               if (accounts) {
                 console.log("keplr accounts : ", accounts);
                 // eslint-disable-next-line prefer-destructuring

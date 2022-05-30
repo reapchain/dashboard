@@ -17,8 +17,8 @@ import {
 import { ethToReap } from "./addressConverter";
 
 const chain = {
-  chainId: 9000,
-  cosmosChainId: "mercury_9000-1",
+  chainId: process.env.VUE_APP_CHAIN_ID,
+  cosmosChainId: process.env.VUE_APP_CHAIN_ID_COSMOS,
 };
 
 export const metamaskSendTx = async (type, txData) => {
@@ -31,9 +31,20 @@ export const metamaskSendTx = async (type, txData) => {
     }
     const addressETH = enable[0];
     const addressReap = ethToReap(addressETH);
-    const { data: myAccount } = await axios.get(
+    let { data: myAccount } = await axios.get(
       generateEndpointAccount(addressReap)
     );
+    console.log("metamaskSendTx - myAccount : ", myAccount);
+    if (!myAccount.account.base_account.pub_key) {
+      const pubkey = await window.ethereum.request({
+        method: "eth_getEncryptionPublicKey",
+        params: [enable[0]],
+      });
+      myAccount.account.base_account.pub_key = {
+        "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
+        key: pubkey,
+      };
+    }
     const sender = {
       accountAddress: myAccount.account.base_account.address,
       sequence: myAccount.account.base_account.sequence,
@@ -47,18 +58,30 @@ export const metamaskSendTx = async (type, txData) => {
       method: "eth_signTypedData_v4",
       params: [addressETH, JSON.stringify(msg.eipToSign)],
     });
+    console.log("chain : ", chain);
+    console.log("sender : ", sender);
     console.log("signature : ", signature);
     let extension = signatureToWeb3Extension(chain, sender, signature);
+    console.log("extension : ", extension);
     let rawTx = createTxRawEIP712(
       msg.legacyAmino.body,
       msg.legacyAmino.authInfo,
       extension
     );
+    console.log("rawTx : ", rawTx);
     const res = await axios.post(
       generateEndpointBroadcast(),
       JSON.parse(generatePostBodyBroadcast(rawTx))
     );
     console.log("res : ", res);
+    if (res.data) {
+      if (res.data.tx_response.raw_log === "signature verification failed") {
+        return {
+          result: false,
+          msg: "signature verification failed",
+        };
+      }
+    }
     return {
       result: true,
       txhash: res.data.tx_response.txhash || "",
@@ -186,12 +209,23 @@ export const metamaskGetAccount = async () => {
     console.log("metamask is not enable");
     return;
   }
-  const { data: myAccount } = await axios.get(
+  let { data: myAccount } = await axios.get(
     generateEndpointAccount(ethToReap(enable[0]))
   );
   if (!myAccount) {
     return null;
   }
+  if (!myAccount.account.base_account.pub_key) {
+    const pubkey = await window.ethereum.request({
+      method: "eth_getEncryptionPublicKey",
+      params: [enable[0]],
+    });
+    myAccount.account.base_account.pub_key = {
+      "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
+      key: pubkey,
+    };
+  }
+
   return {
     address: myAccount.account.base_account.address,
     algo: "ethsecp256k1",

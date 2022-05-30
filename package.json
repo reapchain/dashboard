@@ -6,6 +6,8 @@
   },
   "scripts": {
     "start": "vue-cli-service serve",
+    "local": "vue-cli-service serve --mode local",
+    "dev": "vue-cli-service serve --mode dev",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",

@@ -24,7 +24,7 @@ configs.keys().forEach((k) => {
 
 chains = update;
 localStorage.setItem("chains", JSON.stringify(update));
-const selected = chains["reapchain_local"];
+const selected = chains[process.env.VUE_APP_CHAIN_NAME || "reapchain"];
 
 const avatarcache = localStorage.getItem("avatars");
 

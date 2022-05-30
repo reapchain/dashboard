@@ -14,8 +14,8 @@ const router = new VueRouter({
     {
       path: "/",
       name: "home",
-      redirect: "/reapchain_local",
-      // component: () => import("@/views/Home.vue"),
+      redirect: process.env.VUE_APP_CHAIN_NAME || "/",
+      component: () => import("@/views/Home.vue"),
       meta: {
         layout: "full",
         pageTitle: "Home",

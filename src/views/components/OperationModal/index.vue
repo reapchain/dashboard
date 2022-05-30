@@ -276,7 +276,7 @@ export default {
       actionName: "Send",
       showResult: false,
       txHash: "",
-      selectedChainName: "reapchain_local",
+      selectedChainName: "reapchain",
       required,
       password,
       email,
@@ -298,6 +298,7 @@ export default {
     accounts() {
       const accounts = getLocalAccounts();
       const selectedWallet = this.$store.state.chains.defaultWallet;
+
       return accounts[selectedWallet];
     },
     async isOwner() {
@@ -401,24 +402,25 @@ export default {
             return;
           }
 
+          console.log("metamaskSendTx Res : ", res);
           if (res.result) {
             this.showResult = true;
             this.txHash = res.txhash;
-            setLocalTxHistory({
-              chain: this.$store.state.chains.selected,
-              op: this.historyName,
-              hash: res,
-              time: new Date(),
-            });
+
+            // setLocalTxHistory({
+            //   chain: this.$store.state.chains.selected,
+            //   op: this.historyName,
+            //   hash: res,
+            //   time: new Date(),
+            // });
+            // this.sendTx().then((ret) => {
+            //   this.error = ret;
+            // });
           } else {
             this.showResult = false;
-            this.error = "fail";
+            this.error = res.error || "fail";
             this.showDismissibleAlert = true;
           }
-
-          this.sendTx().then((ret) => {
-            this.error = ret;
-          });
         }
       });
       return;
