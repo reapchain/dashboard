@@ -121,7 +121,7 @@
                           </div>
                         </div>
                         <b-button
-                          v-if="balances[acc.addr]"
+                          v-if="balances[acc.addr] || true"
                           block
                           size="sm"
                           variant="outline-primary"

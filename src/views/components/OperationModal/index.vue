@@ -181,6 +181,7 @@ import TransactionResult from "./TransactionResult.vue";
 
 import { metamaskSendTx } from "@/libs/metamask/utils";
 import { getDefaultAccountDevice } from "@/libs/account/utils";
+import { delegateTest } from "@/libs/keplr/keplr";
 
 export default {
   name: "DelegateDialogue",
@@ -395,14 +396,16 @@ export default {
                 gas: this.gas,
               },
             });
+          } else if (walletType === "keplr") {
+            console.log("keplr...");
+            const res = await delegateTest();
+            console.log("res : ", res);
           } else {
             this.showResult = false;
-            this.error = "canceled..";
+            this.error = "walletType error...";
             this.showDismissibleAlert = true;
             return;
           }
-
-          console.log("metamaskSendTx Res : ", res);
           if (res.result) {
             this.showResult = true;
             this.txHash = res.txhash;
