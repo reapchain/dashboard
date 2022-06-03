@@ -170,6 +170,7 @@ import SearchBar from "@core/layouts/components/app-navbar/components/SearchBar.
 // import CartDropdown from '@core/layouts/components/app-navbar/components/CartDropdown.vue'
 import { getLocalAccounts, timeIn, toDay } from "@/libs/utils";
 // import UserDropdown from '@core/layouts/components/app-navbar/components/UserDropdown.vue'
+import { initKeplr } from "@/libs/keplr/keplr";
 
 export default {
   components: {
@@ -248,7 +249,9 @@ export default {
       return accounts.filter((x) => x.address);
     },
   },
-  mounted() {},
+  mounted() {
+    initKeplr();
+  },
   methods: {
     formatAddr(v) {
       return v.substring(0, 10).concat("...", v.substring(v.length - 10));

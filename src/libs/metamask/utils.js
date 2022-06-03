@@ -34,17 +34,19 @@ export const metamaskSendTx = async (type, txData) => {
     let { data: myAccount } = await axios.get(
       generateEndpointAccount(addressReap)
     );
-    console.log("metamaskSendTx - myAccount : ", myAccount);
+
     if (!myAccount.account.base_account.pub_key) {
       const pubkey = await window.ethereum.request({
         method: "eth_getEncryptionPublicKey",
         params: [enable[0]],
       });
+      console.log("eth_getEncryptionPublicKey : ", pubkey);
       myAccount.account.base_account.pub_key = {
         "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
         key: pubkey,
       };
     }
+    console.log("metamaskSendTx - myAccount : ", myAccount);
     const sender = {
       accountAddress: myAccount.account.base_account.address,
       sequence: myAccount.account.base_account.sequence,

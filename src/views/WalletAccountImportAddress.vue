@@ -282,6 +282,7 @@ import {
 } from "@/libs/utils";
 import { toHex } from "@cosmjs/encoding";
 import { metamaskGetAccount } from "@/libs/metamask/utils";
+import { getAccounts } from "@/libs/keplr/keplr";
 
 export default {
   components: {
@@ -483,19 +484,6 @@ export default {
       }
       return myAccount;
     },
-    async connectKeplr() {
-      if (!window.getOfflineSigner || !window.keplr) {
-        this.debug = "Please install keplr extension";
-        return null;
-      }
-      // const chainId = 'cosmoshub'
-      const chainId = await this.$http
-        .getLatestBlock()
-        .then((ret) => ret.block.header.chain_id);
-      await window.keplr.enable(chainId);
-      const offlineSigner = window.getOfflineSigner(chainId);
-      return offlineSigner.getAccounts();
-    },
     localAddress() {
       if (!this.address) return false;
       try {
@@ -578,14 +566,15 @@ export default {
             }
             break;
           case "keplr":
-            await this.connectKeplr().then((accounts) => {
-              if (accounts) {
-                console.log("keplr accounts : ", accounts);
-                // eslint-disable-next-line prefer-destructuring
-                this.accounts = accounts[0];
-                ok = true;
-              }
-            });
+            try {
+              const account = await getAccounts();
+              this.accounts = [account];
+              ok = true;
+            } catch (error) {
+              ok = false;
+              this.debug = "invalidate account";
+              break;
+            }
             break;
           case "ledger":
           case "ledger2":
