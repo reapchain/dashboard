@@ -181,7 +181,7 @@ import TransactionResult from "./TransactionResult.vue";
 
 import { metamaskSendTx } from "@/libs/metamask/utils";
 import { getDefaultAccountDevice } from "@/libs/account/utils";
-import { delegateTest } from "@/libs/keplr/keplr";
+import { keplrSendTx } from "@/libs/keplr/utils";
 
 export default {
   name: "DelegateDialogue",
@@ -385,6 +385,7 @@ export default {
       this.$refs.simpleRules.validate().then(async (ok) => {
         if (ok) {
           const walletType = getDefaultAccountDevice();
+          console.log("walletType : ", walletType);
           let res;
           if (walletType === "metamask") {
             res = await metamaskSendTx(this.type, {
@@ -397,8 +398,15 @@ export default {
               },
             });
           } else if (walletType === "keplr") {
-            console.log("keplr...");
-            const res = await delegateTest();
+            res = await keplrSendTx(this.type, {
+              msg: this.$refs.component.msg,
+              memo: this.memo,
+              fee: {
+                amount: this.fee,
+                denom: this.feeDenom,
+                gas: this.gas,
+              },
+            });
             console.log("res : ", res);
           } else {
             this.showResult = false;

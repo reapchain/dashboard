@@ -1,4 +1,4 @@
-import axios from "./axios";
+import axios from "../common/axios";
 import {
   generateEndpointAccount,
   generateEndpointBroadcast,
@@ -334,6 +334,7 @@ export const metamaskDelegation = async (delegateData) => {
       method: "eth_signTypedData_v4",
       params: [addressETH, JSON.stringify(msg.eipToSign)],
     });
+    console.log("signature : ", signature);
     let extension = signatureToWeb3Extension(chain, sender, signature);
     let rawTx = createTxRawEIP712(
       msg.legacyAmino.body,
