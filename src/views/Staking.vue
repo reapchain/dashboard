@@ -492,36 +492,7 @@ export default {
   },
   methods: {
     validatorFilter(validatorList, condition) {
-      // validator type check
-      if (condition.type === "standing") {
-        if (condition.active === "active") {
-          return validatorList.filter(
-            (ele) =>
-              ele.type === "standing" &&
-              ele.tokens >= 44000000000000000000000000
-          );
-        } else {
-          return validatorList.filter(
-            (ele) =>
-              ele.type === "standing" && ele.tokens < 44000000000000000000000000
-          );
-        }
-      } else if (condition.type === "steering") {
-        if (condition.active === "active") {
-          return validatorList.filter(
-            (ele) =>
-              ele.type === "steering" && ele.tokens >= 100000000000000000000000
-          );
-        } else {
-          return validatorList.filter(
-            (ele) =>
-              ele.type === "steering" && ele.tokens < 100000000000000000000000
-          );
-        }
-      } else {
-        return [];
-      }
-      // validator jailed check
+      return validatorList.filter((ele) => ele.type == condition.type);
     },
     initial() {
       this.$http.getValidatorList().then((res) => {
@@ -593,33 +564,30 @@ export default {
     },
     getValidatorListByStatus() {
       if (this.isInactiveLoaded) return;
-      const statusList = ["BOND_STATUS_UNBONDED", "BOND_STATUS_UNBONDING"];
-      statusList.forEach((status) => {
-        this.$http.getValidatorListByStatus(status).then((res) => {
-          const identities = [];
-          const temp = res;
-          for (let i = 0; i < temp.length; i += 1) {
-            const { identity } = temp[i].description;
-            const url = this.$store.getters["chains/getAvatarById"](identity);
-            if (url) {
-              temp[i].avatar = url;
-            } else if (identity && identity !== "") {
-              identities.push(identity);
-            }
+      this.$http.getValidatorListByStatus().then((res) => {
+        const identities = [];
+        const temp = res;
+        for (let i = 0; i < temp.length; i += 1) {
+          const { identity } = temp[i].description;
+          const url = this.$store.getters["chains/getAvatarById"](identity);
+          if (url) {
+            temp[i].avatar = url;
+          } else if (identity && identity !== "") {
+            identities.push(identity);
           }
+        }
 
-          // fetch avatar from keybase
-          let promise = Promise.resolve();
-          identities.forEach((item) => {
-            promise = promise.then(
-              () =>
-                new Promise((resolve) => {
-                  this.avatar(item, resolve);
-                })
-            );
-          });
-          this.inactiveValidators = this.inactiveValidators.concat(res);
+        // fetch avatar from keybase
+        let promise = Promise.resolve();
+        identities.forEach((item) => {
+          promise = promise.then(
+            () =>
+              new Promise((resolve) => {
+                this.avatar(item, resolve);
+              })
+          );
         });
+        this.inactiveValidators = this.inactiveValidators.concat(res);
       });
       this.isInactiveLoaded = true;
     },

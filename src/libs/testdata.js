@@ -1,6 +1,6 @@
 export const validatorsDummy = {
   height: "4444",
-  result: [
+  validators: [
     {
       operator_address: "reapvaloper1wqjwvq883e9gvcyk99dx9t25r49ast7ar02jac",
       consensus_pubkey: {
@@ -8,6 +8,7 @@ export const validatorsDummy = {
         value: "DBMEDFYdC5eVXxUJGctvWP8A2ijFZ7Z1R8NLqtieERA=",
       },
       status: 3,
+      jailed: false,
       tokens: "100010100000000000000000000",
       delegator_shares: "100010100000000000000000000.000000000000000000",
       description: {
@@ -32,6 +33,7 @@ export const validatorsDummy = {
         value: "MfDpvTY/kRPHp77Ac27CC+LwNjWzKRfxgyh5BF4krqQ=",
       },
       status: 3,
+      jailed: false,
       tokens: "200000000000000000000000",
       delegator_shares: "200000000000000000000000.000000000000000000",
       description: {
@@ -56,6 +58,7 @@ export const validatorsDummy = {
         value: "Z7qXMa6zWhEN5+6BRjrAS7+Ew52mLxl7MGHG283Ik68=",
       },
       status: 3,
+      jailed: false,
       tokens: "200000000000000000000000",
       delegator_shares: "200000000000000000000000.000000000000000000",
       description: {
@@ -80,6 +83,7 @@ export const validatorsDummy = {
         value: "GGF5EjRFZ2H9l2whM2xM8+palD13vyFkcjmeSwv7oFE=",
       },
       status: 3,
+      jailed: false,
       tokens: "10000000000000000000",
       delegator_shares: "240000000000000000000000.000000000000000000",
       description: {
@@ -102,7 +106,7 @@ export const validatorsDummy = {
 
 export const validatorsUnbondedDummy = {
   height: "4444",
-  result: [
+  validators: [
     {
       operator_address: "reapvaloper1wqjwvq883e9gvcyk99dx9t25r49ast7ar02jac",
       consensus_pubkey: {
@@ -110,6 +114,7 @@ export const validatorsUnbondedDummy = {
         value: "DBMEDFYdC5eVXxUJGctvWP8A2ijFZ7Z1R8NLqtieERA=",
       },
       status: 3,
+      jailed: true,
       tokens: "50000000000000000000000000",
       delegator_shares: "100010100000000000000000000.000000000000000000",
       description: {
@@ -134,6 +139,7 @@ export const validatorsUnbondedDummy = {
         value: "DBMEDFYdC5eVXxUJGctvWP8A2ijFZ7Z1R8NLqtieERA=",
       },
       status: 3,
+      jailed: false,
       tokens: "60000000000000000000000000",
       delegator_shares: "100010100000000000000000000.000000000000000000",
       description: {
@@ -158,6 +164,7 @@ export const validatorsUnbondedDummy = {
         value: "DBMEDFYdC5eVXxUJGctvWP8A2ijFZ7Z1R8NLqtieERA=",
       },
       status: 3,
+      jailed: false,
       tokens: "1000000000000000000000000",
       delegator_shares: "100010100000000000000000000.000000000000000000",
       description: {
@@ -182,6 +189,7 @@ export const validatorsUnbondedDummy = {
         value: "DBMEDFYdC5eVXxUJGctvWP8A2ijFZ7Z1R8NLqtieERA=",
       },
       status: 3,
+      jailed: false,
       tokens: "2000000000000000000000000",
       delegator_shares: "100010100000000000000000000.000000000000000000",
       description: {
@@ -206,6 +214,7 @@ export const validatorsUnbondedDummy = {
         value: "DBMEDFYdC5eVXxUJGctvWP8A2ijFZ7Z1R8NLqtieERA=",
       },
       status: 3,
+      jailed: false,
       tokens: "300000000000000000000000",
       delegator_shares: "100010100000000000000000000.000000000000000000",
       description: {
@@ -230,6 +239,7 @@ export const validatorsUnbondedDummy = {
         value: "DBMEDFYdC5eVXxUJGctvWP8A2ijFZ7Z1R8NLqtieERA=",
       },
       status: 3,
+      jailed: false,
       tokens: "200000000000000000000000",
       delegator_shares: "100010100000000000000000000.000000000000000000",
       description: {
@@ -254,6 +264,7 @@ export const validatorsUnbondedDummy = {
         value: "DBMEDFYdC5eVXxUJGctvWP8A2ijFZ7Z1R8NLqtieERA=",
       },
       status: 3,
+      jailed: false,
       tokens: "50000000000000000000000",
       delegator_shares: "100010100000000000000000000.000000000000000000",
       description: {
@@ -278,6 +289,7 @@ export const validatorsUnbondedDummy = {
         value: "GGF5EjRFZ2H9l2whM2xM8+palD13vyFkcjmeSwv7oFE=",
       },
       status: 3,
+      jailed: false,
       tokens: "60000000000000000000000",
       delegator_shares: "240000000000000000000000.000000000000000000",
       description: {
@@ -300,7 +312,7 @@ export const validatorsUnbondedDummy = {
 
 export const validatorsUnbondingDummy = {
   height: "4444",
-  result: [
+  validators: [
     {
       operator_address: "reapvaloper1wqjwvq883e9gvcyk99dx9t25r49ast7ar02jac",
       consensus_pubkey: {
@@ -308,6 +320,7 @@ export const validatorsUnbondingDummy = {
         value: "DBMEDFYdC5eVXxUJGctvWP8A2ijFZ7Z1R8NLqtieERA=",
       },
       status: 3,
+      jailed: false,
       tokens: "10000000000000000000000000",
       delegator_shares: "100010100000000000000000000.000000000000000000",
       description: {
@@ -332,6 +345,7 @@ export const validatorsUnbondingDummy = {
         value: "DBMEDFYdC5eVXxUJGctvWP8A2ijFZ7Z1R8NLqtieERA=",
       },
       status: 3,
+      jailed: false,
       tokens: "15000000000000000000000000",
       delegator_shares: "100010100000000000000000000.000000000000000000",
       description: {
@@ -356,6 +370,7 @@ export const validatorsUnbondingDummy = {
         value: "Z7qXMa6zWhEN5+6BRjrAS7+Ew52mLxl7MGHG283Ik68=",
       },
       status: 3,
+      jailed: false,
       tokens: "10000000000000000000000",
       delegator_shares: "200000000000000000000000.000000000000000000",
       description: {
@@ -380,6 +395,7 @@ export const validatorsUnbondingDummy = {
         value: "GGF5EjRFZ2H9l2whM2xM8+palD13vyFkcjmeSwv7oFE=",
       },
       status: 3,
+      jailed: true,
       tokens: "20000000000000000000000",
       delegator_shares: "240000000000000000000000.000000000000000000",
       description: {

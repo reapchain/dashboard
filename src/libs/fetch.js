@@ -40,6 +40,61 @@ export function keybase(identity) {
   ).then((res) => res.json());
 }
 
+const validatorFilter = (
+  validatorList,
+  condition = { type: "", active: "active" }
+) => {
+  if (condition.type === "standing") {
+    if (condition.active === "active") {
+      return validatorList.filter(
+        (ele) =>
+          ele.type === "standing" &&
+          ele.tokens >= 44000000000000000000000000 &&
+          ele.jailed == false
+      );
+    } else {
+      return validatorList.filter(
+        (ele) =>
+          ele.type === "standing" &&
+          (ele.jailed == true || ele.tokens < 44000000000000000000000000)
+      );
+    }
+  } else if (condition.type === "steering") {
+    if (condition.active === "active") {
+      return validatorList.filter(
+        (ele) =>
+          ele.type === "steering" &&
+          ele.tokens >= 100000000000000000000000 &&
+          ele.jailed == false
+      );
+    } else {
+      return validatorList.filter(
+        (ele) =>
+          ele.type === "steering" &&
+          (ele.jailed == true || ele.tokens < 100000000000000000000000)
+      );
+    }
+  } else {
+    if (condition.active === "active") {
+      return validatorList.filter(
+        (ele) =>
+          ele.jailed == false &&
+          ((ele.type === "standing" &&
+            ele.tokens >= 44000000000000000000000000) ||
+            (ele.type === "steering" && ele.tokens >= 100000000000000000000000))
+      );
+    } else {
+      return validatorList.filter(
+        (ele) =>
+          ele.jailed == true ||
+          (ele.type === "standing" &&
+            ele.tokens < 44000000000000000000000000) ||
+          (ele.type === "steering" && ele.tokens < 100000000000000000000000)
+      );
+    }
+  }
+};
+
 export default class ChainFetch {
   constructor() {
     this.osmosis = new OsmosAPI();
@@ -199,11 +254,8 @@ export default class ChainFetch {
     });
   }
 
-  async getValidatorList(config = null) {
+  async getValidatorList_pre(config = null) {
     return this.get("/staking/validators", config).then((data) => {
-      //dummyTest
-      console.log("getValidatorList data :: ", data);
-      data = validatorsDummy;
       const vals = commonProcess(data).map((i) => new Validator().init(i));
       localStorage.setItem(
         `validators-${this.config.chain_name}`,
@@ -211,6 +263,40 @@ export default class ChainFetch {
       );
       return vals;
     });
+  }
+
+  async getValidatorList(config = null) {
+    try {
+      const validatorsBonded = await this.get(
+        "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED"
+      );
+      const validatorsUnbonding = await this.get(
+        "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_UNBONDING"
+      );
+      const validatorsUnbonded = await this.get(
+        "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_UNBONDED"
+      );
+      // const validatorsAll = validatorsBonded.validators
+      //   .concat(validatorsUnbonding.validators)
+      //   .concat(validatorsUnbonded.validators);
+      const validatorsAll = validatorsDummy.validators
+        .concat(validatorsUnbondedDummy.validators)
+        .concat(validatorsUnbondingDummy.validators);
+      const validatorActive = validatorFilter(validatorsAll, {
+        type: "",
+        active: "active",
+      });
+      const vals = commonProcess(validatorActive).map((i) =>
+        new Validator().init(i)
+      );
+      localStorage.setItem(
+        `validators-${this.config.chain_name}`,
+        JSON.stringify(vals)
+      );
+      return vals;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async getValidatorUnbondedList() {
@@ -223,7 +309,7 @@ export default class ChainFetch {
     });
   }
 
-  async getValidatorListByStatus(status) {
+  async getValidatorListByStatus_pre(status) {
     return this.get(
       `/cosmos/staking/v1beta1/validators?status=${status}&pagination.limit=500`
     ).then((data) => {
@@ -238,6 +324,36 @@ export default class ChainFetch {
       const vals = result.validators ? result.validators : result;
       return vals.map((i) => new Validator().init(i));
     });
+  }
+
+  async getValidatorListByStatus() {
+    try {
+      const validatorsBonded = await this.get(
+        "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED"
+      );
+      const validatorsUnbonding = await this.get(
+        "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_UNBONDING"
+      );
+      const validatorsUnbonded = await this.get(
+        "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_UNBONDED"
+      );
+      // const validatorsAll = validatorsBonded.validators
+      //   .concat(validatorsUnbonding.validators)
+      //   .concat(validatorsUnbonded.validators);
+      const validatorsAll = validatorsDummy.validators
+        .concat(validatorsUnbondedDummy.validators)
+        .concat(validatorsUnbondingDummy.validators);
+      const validatorInactive = validatorFilter(validatorsAll, {
+        type: "",
+        active: "inactive",
+      });
+
+      const result = commonProcess(validatorInactive);
+      const vals = result.validators ? result.validators : result;
+      return vals.map((i) => new Validator().init(i));
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async getValidatorListByHeight(height, offset) {
