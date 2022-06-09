@@ -20,6 +20,11 @@ import {
   isTypeofEvmos,
 } from "./utils";
 import OsmosAPI from "./osmos";
+import {
+  validatorsDummy,
+  validatorsUnbondedDummy,
+  validatorsUnbondingDummy,
+} from "./testdata";
 
 function commonProcess(res) {
   if (res && Object.keys(res).includes("result")) {
@@ -196,6 +201,9 @@ export default class ChainFetch {
 
   async getValidatorList(config = null) {
     return this.get("/staking/validators", config).then((data) => {
+      //dummyTest
+      console.log("getValidatorList data :: ", data);
+      data = validatorsDummy;
       const vals = commonProcess(data).map((i) => new Validator().init(i));
       localStorage.setItem(
         `validators-${this.config.chain_name}`,
@@ -219,6 +227,13 @@ export default class ChainFetch {
     return this.get(
       `/cosmos/staking/v1beta1/validators?status=${status}&pagination.limit=500`
     ).then((data) => {
+      //dummyTest
+      if (status == "BOND_STATUS_UNBONDED") {
+        data = validatorsUnbondedDummy;
+        // data = data.map(ele => { return {...ele,}})
+      } else if (status == "BOND_STATUS_UNBONDING") {
+        data = validatorsUnbondingDummy;
+      }
       const result = commonProcess(data);
       const vals = result.validators ? result.validators : result;
       return vals.map((i) => new Validator().init(i));

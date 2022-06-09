@@ -45,7 +45,7 @@
                 :key="x.denom"
                 :value="x.denom"
               >
-                {{ format(x) }}
+                {{ format(x) || "balance is zero.." }}
               </b-form-select-option>
             </b-form-select>
             <!-- <small class="text-danger">{{ errors[0] }}</small> -->

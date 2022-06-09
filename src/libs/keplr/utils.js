@@ -9,9 +9,16 @@ import {
   TxBody,
   Fee,
 } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
-import { MsgDelegate } from "@keplr-wallet/proto-types/cosmos/staking/v1beta1/tx";
+import {
+  MsgDelegate,
+  MsgBeginRedelegate,
+  MsgUndelegate,
+} from "@keplr-wallet/proto-types/cosmos/staking/v1beta1/tx";
+import { MsgWithdrawDelegatorReward } from "@keplr-wallet/proto-types/cosmos/distribution/v1beta1/tx";
+import { MsgSend } from "@keplr-wallet/proto-types/cosmos/bank/v1beta1/tx";
 import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
 import { SignMode } from "@keplr-wallet/proto-types/cosmos/tx/signing/v1beta1/signing";
+import { createTxMsgWithdrawDelegatorReward } from "@tharsis/transactions";
 
 const chain = {
   chainId: process.env.VUE_APP_CHAIN_ID,
@@ -20,6 +27,8 @@ const chain = {
 
 export const keplrSendTx = async (type, txData) => {
   try {
+    console.log("type : ", type);
+    console.log("txData : ", txData);
     const keplrAccount = await getAccounts();
     if (!keplrAccount) {
       console.log("error : keplr account info...");
@@ -60,12 +69,14 @@ export const keplrSendTx = async (type, txData) => {
       apiAccount.account.base_account.account_number,
       apiAccount.account.base_account.sequence
     );
+    console.log("signDoc : ", signDoc);
 
     const signResponse = await window.keplr.signAmino(
       chain.cosmosChainId,
       keplrAccount.address,
       signDoc
     );
+    console.log("signResponse : ", signResponse);
 
     const signedTx = TxRaw.encode({
       bodyBytes: TxBody.encode(
@@ -103,11 +114,14 @@ export const keplrSendTx = async (type, txData) => {
       signatures: [Buffer.from(signResponse.signature.signature, "base64")],
     }).finish();
 
+    console.log("signedTx : ", signedTx);
+
     const sendTxRes = await window.keplr?.sendTx(
       chain.cosmosChainId,
       signedTx,
       "async"
     );
+    console.log("sendTxRes : ", sendTxRes);
 
     return {
       result: true,
@@ -122,12 +136,34 @@ export const keplrSendTx = async (type, txData) => {
   }
 };
 
-export const createKeplrTxMessageSet = (type, txData) => {
-  console.log(type, txData);
+export const createKeplrTxMessageSet = (type, txData, sender) => {
   try {
+    let msgValue = txData.msg[0].value;
     switch (type) {
+      case "Transfer":
+        return {
+          aminoMsgs: [
+            {
+              type: "cosmos-sdk/MsgSend",
+              value: {
+                from_address: msgValue.fromAddress,
+                to_address: msgValue.toAddress,
+                amount: msgValue.amount,
+              },
+            },
+          ],
+          protoMsgs: [
+            {
+              typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+              value: MsgSend.encode({
+                fromAddress: msgValue.fromAddress,
+                toAddress: msgValue.toAddress,
+                amount: msgValue.amount,
+              }).finish(),
+            },
+          ],
+        };
       case "Delegate":
-        const msgValue = txData.msg[0].value;
         return {
           aminoMsgs: [
             {
@@ -143,6 +179,76 @@ export const createKeplrTxMessageSet = (type, txData) => {
             {
               typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
               value: MsgDelegate.encode({
+                delegatorAddress: msgValue.delegatorAddress,
+                validatorAddress: msgValue.validatorAddress,
+                amount: msgValue.amount,
+              }).finish(),
+            },
+          ],
+        };
+      case "Withdraw":
+        return {
+          aminoMsgs: [
+            {
+              type: "cosmos-sdk/MsgWithdrawDelegationReward",
+              value: {
+                delegator_address: msgValue.delegatorAddress,
+                validator_address: msgValue.validatorAddress,
+              },
+            },
+          ],
+          protoMsgs: [
+            {
+              typeUrl:
+                "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+              value: MsgWithdrawDelegatorReward.encode({
+                delegatorAddress: msgValue.delegatorAddress,
+                validatorAddress: msgValue.validatorAddress,
+              }).finish(),
+            },
+          ],
+        };
+      case "Redelegate":
+        return {
+          aminoMsgs: [
+            {
+              type: "cosmos-sdk/MsgBeginRedelegate",
+              value: {
+                delegator_address: msgValue.delegatorAddress,
+                validator_src_address: msgValue.validatorSrcAddress,
+                validator_dst_address: msgValue.validatorDstAddress,
+                amount: msgValue.amount,
+              },
+            },
+          ],
+          protoMsgs: [
+            {
+              typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate",
+              value: MsgBeginRedelegate.encode({
+                delegatorAddress: msgValue.delegatorAddress,
+                validatorSrcAddress: msgValue.validatorSrcAddress,
+                validatorDstAddress: msgValue.validatorDstAddress,
+                amount: msgValue.amount,
+              }).finish(),
+            },
+          ],
+        };
+      case "Unbond":
+        return {
+          aminoMsgs: [
+            {
+              type: "cosmos-sdk/MsgUndelegate",
+              value: {
+                delegator_address: msgValue.delegatorAddress,
+                validator_address: msgValue.validatorAddress,
+                amount: msgValue.amount,
+              },
+            },
+          ],
+          protoMsgs: [
+            {
+              typeUrl: "/cosmos.staking.v1beta1.MsgUndelegate",
+              value: MsgUndelegate.encode({
                 delegatorAddress: msgValue.delegatorAddress,
                 validatorAddress: msgValue.validatorAddress,
                 amount: msgValue.amount,

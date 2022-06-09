@@ -81,7 +81,8 @@
         </template>
       </b-table>
     </b-card>
-    <b-card no-body class="overflow-auto">
+    <!-- Standing -->
+    <b-card no-body title="Standing Validators" class="overflow-auto">
       <b-card-header class="d-flex justify-content-between">
         <b-form-group class="mb-0">
           <b-form-radio-group
@@ -94,18 +95,22 @@
             @change="getValidatorListByStatus"
           />
         </b-form-group>
-        <b-card-title class="d-none d-sm-block">
+        <b-card-title class="d-none d-sm-block" v-if="false">
           <span
-            >Validators {{ validators.length }}/{{
-              stakingParameters.max_validators
-            }}
+            >Validators ...
+            <!-- {{ validators.length }}/{{stakingParameters.max_validators}} -->
           </span>
         </b-card-title>
       </b-card-header>
       <b-card-body class="pl-0 pr-0 pb-0">
+        <b-card-header class="mb-0">
+          <h3>
+            Standing Validators {{ `[${standingList.length || "-"}/14]` }}
+          </h3>
+        </b-card-header>
         <b-table
           class="mb-0"
-          :items="list"
+          :items="standingList"
           :fields="validator_fields"
           :sort-desc="true"
           sort-by="tokens"
@@ -146,7 +151,7 @@
               <span class="font-weight-bolder d-block text-nowrap">
                 <router-link :to="`./staking/${data.item.operator_address}`">
                   {{ data.item.description.moniker }}
-                  {{ data.item.type ? `(${data.item.type})` : "" }}
+                  <!-- {{ data.item.type ? `(${data.item.type})` : "" }} -->
                 </router-link>
               </span>
               <small class="text-muted">{{
@@ -177,6 +182,98 @@
           </template>
           <template #cell(operation)="data">
             <b-button
+              v-if="data.item.type == 'standing'"
+              v-b-modal.operation-modal
+              :name="data.item.operator_address"
+              variant="primary"
+              size="sm"
+              @click="selectValidator(data.item.operator_address)"
+            >
+              Delegate
+            </b-button>
+          </template>
+        </b-table>
+
+        <b-card-header class="mb-0">
+          <h3>
+            Steering Validators {{ `[${steeringList.length || "-"}/15]` }}
+          </h3>
+        </b-card-header>
+        <b-table
+          class="mb-0"
+          :items="steeringList"
+          :fields="validator_fields"
+          :sort-desc="true"
+          sort-by="tokens"
+          striped
+          hover
+          responsive="sm"
+        >
+          <!-- A virtual column -->
+          <template #cell(index)="data">
+            <b-badge :variant="rankBadge(data)">
+              {{ data.index + 1 }}
+            </b-badge>
+          </template>
+          <!-- Column: Validator -->
+          <template #cell(description)="data">
+            <b-media
+              vertical-align="center"
+              class="text-truncate"
+              style="max-width:320px;"
+            >
+              <template #aside>
+                <b-avatar
+                  v-if="data.item.avatar"
+                  v-b-tooltip.hover.v-primary
+                  v-b-tooltip.hover.right="data.item.description.details"
+                  size="32"
+                  variant="light-primary"
+                  :src="data.item.avatar"
+                />
+                <b-avatar
+                  v-if="!data.item.avatar"
+                  v-b-tooltip.hover.v-primary
+                  v-b-tooltip.hover.right="data.item.description.details"
+                >
+                  <feather-icon icon="ServerIcon" />
+                </b-avatar>
+              </template>
+              <span class="font-weight-bolder d-block text-nowrap">
+                <router-link :to="`./staking/${data.item.operator_address}`">
+                  {{ data.item.description.moniker }}
+                  <!-- {{ data.item.type ? `(${data.item.type})` : "" }} -->
+                </router-link>
+              </span>
+              <small class="text-muted">{{
+                data.item.description.website || data.item.description.identity
+              }}</small>
+            </b-media>
+          </template>
+          <!-- Token -->
+          <template #cell(tokens)="data">
+            <div v-if="data.item.tokens > 0" class="d-flex flex-column">
+              <span class="font-weight-bold mb-0">{{
+                tokenFormatter(data.item.tokens, stakingParameters.bond_denom)
+              }}</span>
+              <span
+                class="font-small-2 text-muted text-nowrap d-none d-lg-block"
+                >{{ percent(data.item.tokens / stakingPool) }}%</span
+              >
+            </div>
+            <span v-else>{{ data.item.delegator_shares }}</span>
+          </template>
+          <!-- Token -->
+          <template #cell(changes)="data">
+            <small v-if="data.item.changes > 0" class="text-success"
+              >+{{ data.item.changes }}</small
+            >
+            <small v-else-if="data.item.changes === 0">-</small>
+            <small v-else class="text-danger">{{ data.item.changes }}</small>
+          </template>
+          <template #cell(operation)="data">
+            <b-button
+              v-if="data.item.type == 'standing'"
               v-b-modal.operation-modal
               :name="data.item.operator_address"
               variant="primary"
@@ -189,7 +286,7 @@
         </b-table>
       </b-card-body>
       <b-card-footer class="d-none d-md-block">
-        <small>
+        <!-- <small>
           <b-badge variant="danger">
             &nbsp;
           </b-badge>
@@ -198,7 +295,7 @@
             &nbsp;
           </b-badge>
           Top 67% of Voting Power
-        </small>
+        </small> -->
       </b-card-footer>
     </b-card>
     <operation-modal type="Delegate" :validator-address="validator_address" />
@@ -307,6 +404,54 @@ export default {
     };
   },
   computed: {
+    standingList() {
+      const tab =
+        this.selectedStatus === "active"
+          ? this.validatorFilter(this.validators, {
+              type: "standing",
+              active: "active",
+            })
+          : this.validatorFilter(this.inactiveValidators, {
+              type: "standing",
+              active: "",
+            });
+      return tab.map((x) => {
+        const xh = x;
+        if (
+          Object.keys(this.latestPower).length > 0 &&
+          Object.keys(this.previousPower).length > 0
+        ) {
+          const latest = this.latestPower[x.consensus_pubkey.value] || 0;
+          const previous = this.previousPower[x.consensus_pubkey.value] || 0;
+          xh.changes = latest - previous;
+        }
+        return xh;
+      });
+    },
+    steeringList() {
+      const tab =
+        this.selectedStatus === "active"
+          ? this.validatorFilter(this.validators, {
+              type: "steering",
+              active: "active",
+            })
+          : this.validatorFilter(this.inactiveValidators, {
+              type: "steering",
+              active: "",
+            });
+      return tab.map((x) => {
+        const xh = x;
+        if (
+          Object.keys(this.latestPower).length > 0 &&
+          Object.keys(this.previousPower).length > 0
+        ) {
+          const latest = this.latestPower[x.consensus_pubkey.value] || 0;
+          const previous = this.previousPower[x.consensus_pubkey.value] || 0;
+          xh.changes = latest - previous;
+        }
+        return xh;
+      });
+    },
     list() {
       const tab =
         this.selectedStatus === "active"
@@ -346,6 +491,38 @@ export default {
     });
   },
   methods: {
+    validatorFilter(validatorList, condition) {
+      // validator type check
+      if (condition.type === "standing") {
+        if (condition.active === "active") {
+          return validatorList.filter(
+            (ele) =>
+              ele.type === "standing" &&
+              ele.tokens >= 44000000000000000000000000
+          );
+        } else {
+          return validatorList.filter(
+            (ele) =>
+              ele.type === "standing" && ele.tokens < 44000000000000000000000000
+          );
+        }
+      } else if (condition.type === "steering") {
+        if (condition.active === "active") {
+          return validatorList.filter(
+            (ele) =>
+              ele.type === "steering" && ele.tokens >= 100000000000000000000000
+          );
+        } else {
+          return validatorList.filter(
+            (ele) =>
+              ele.type === "steering" && ele.tokens < 100000000000000000000000
+          );
+        }
+      } else {
+        return [];
+      }
+      // validator jailed check
+    },
     initial() {
       this.$http.getValidatorList().then((res) => {
         const identities = [];
@@ -454,6 +631,7 @@ export default {
       return formatToken({ amount, denom }, {}, 0);
     },
     rankBadge(data) {
+      return "primary";
       if (this.selectedStatus === "inactive") return "primary";
       const { index, item } = data;
       if (index === 0) {

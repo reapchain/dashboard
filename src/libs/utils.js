@@ -572,14 +572,14 @@ export function numberWithCommas(x) {
 export function formatTokenAmount(
   tokenAmount,
   decimals = 2,
-  tokenDenom = "uatom",
+  tokenDenom = "areap",
   format = true
 ) {
   const denom = tokenDenom.denom_trace
     ? tokenDenom.denom_trace.base_denom
     : tokenDenom;
   let amount = 0;
-  let exp = String(denom).startsWith("gravity") ? 18 : 6;
+  let exp = String(denom).startsWith("areap") ? 18 : 6;
   const config = Object.values(getLocalChains());
 
   config.forEach((x) => {

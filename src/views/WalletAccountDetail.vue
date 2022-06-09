@@ -125,11 +125,30 @@
                   {{ formatDate(data.item.completion_time) }}
                 </template>
                 <template #cell(initial_balance)="data">
-                  {{ data.item.initial_balance
-                  }}{{ stakingParameters.bond_denom }}
+                  {{
+                    formatToken(
+                      {
+                        denom: stakingParameters.bond_denom,
+                        amount: data.item.initial_balance,
+                      },
+                      {},
+                      18,
+                      true
+                    )
+                  }}
                 </template>
                 <template #cell(balance)="data">
-                  {{ data.item.balance }}{{ stakingParameters.bond_denom }}
+                  {{
+                    formatToken(
+                      {
+                        denom: stakingParameters.bond_denom,
+                        amount: data.item.balance,
+                      },
+                      {},
+                      18,
+                      true
+                    )
+                  }}
                 </template>
               </b-table>
             </b-col>
@@ -234,13 +253,10 @@
         <b-table-simple stacked="sm">
           <b-tbody v-if="account.type === 'cosmos-sdk/BaseAccount'">
             <b-tr>
-              <b-td>
-                Account Type </b-td
-              ><b-td> {{ account.type }} </b-td>
+              <b-td> Account Type </b-td><b-td> {{ account.type }} </b-td>
             </b-tr>
             <b-tr>
-              <b-td class="max-width:100px;">
-                Account Number </b-td
+              <b-td class="max-width:100px;"> Account Number </b-td
               ><b-td> {{ account.value.account_number }} </b-td>
             </b-tr>
             <b-tr>
@@ -270,8 +286,7 @@
               </b-td>
             </b-tr>
             <b-tr>
-              <b-td>
-                Account Number </b-td
+              <b-td> Account Number </b-td
               ><b-td>
                 {{
                   account.value.base_vesting_account.base_account.account_number
@@ -361,13 +376,10 @@
             "
           >
             <b-tr>
-              <b-td>
-                Account Type </b-td
-              ><b-td> {{ account.type }} </b-td>
+              <b-td> Account Type </b-td><b-td> {{ account.type }} </b-td>
             </b-tr>
             <b-tr>
-              <b-td style="max-width:100px;">
-                Account Number </b-td
+              <b-td style="max-width:100px;"> Account Number </b-td
               ><b-td>
                 {{
                   account.value.base_vesting_account.base_account.account_number

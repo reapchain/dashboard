@@ -266,10 +266,10 @@ export default {
       sequence: 1,
       accountNumber: 0,
       advance: false,
-      fee: "900",
+      fee: "1000",
       feeDenom: "",
       wallet: "ledgerUSB",
-      gas: "250000",
+      gas: "300000",
       memo: "",
       blockingMsg: this.address
         ? "You are not the owner"
