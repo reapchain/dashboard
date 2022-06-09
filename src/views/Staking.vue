@@ -273,11 +273,11 @@
           </template>
           <template #cell(operation)="data">
             <b-button
-              v-if="data.item.type == 'standing'"
               v-b-modal.operation-modal
               :name="data.item.operator_address"
               variant="primary"
               size="sm"
+              :disabled="data.item.type == 'steering' && true"
               @click="selectValidator(data.item.operator_address)"
             >
               Delegate
@@ -377,10 +377,10 @@ export default {
           thClass: "text-right",
           sortByFormatted: true,
         },
-        {
-          key: "changes",
-          label: "24H Changes",
-        },
+        // {
+        //   key: "changes",
+        //   label: "24H Changes",
+        // },
         {
           key: "commission",
           formatter: (value) => `${percent(value.rate)}%`,
