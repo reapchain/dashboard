@@ -71,9 +71,93 @@
       </b-media>
     </div>
 
+    <!-- Connect with wallet -->
+    <b-navbar-nav class="nav align-items-center ml-auto">
+      <dark-Toggler class="d-none d-lg-block" />
+      <search-bar />
+      <locale />
+      <b-dropdown class="ml-1" variant="link" no-caret toggle-class="p-0" right>
+        <template #button-content>
+          <b-button
+            v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+            variant="primary"
+            class="btn-icon"
+          >
+            <template v-if="!wallet.isConnected">
+              <feather-icon icon="LinkIcon" />
+              {{ "Connect Wallet" }}
+            </template>
+            <template v-else-if="wallet.isConnected && wallet.type == 'keplr'">
+              <img
+                src="@/assets/images/wallet/keplr-logo.svg"
+                width="20"
+                alt="keplr"
+              />
+              {{ `${wallet.name} - ${wallet.addressAbbr}` }}
+            </template>
+            <template
+              v-else-if="wallet.isConnected && wallet.type == 'metamask'"
+            >
+              <img
+                src="@/assets/images/wallet/metamask-logo.svg"
+                width="20"
+                alt="metamask"
+              />
+              {{ `${wallet.addressAbbr}` }}
+            </template>
+          </b-button>
+        </template>
+
+        <template v-if="!wallet.isConnected">
+          <b-dropdown-item @click="connectWithKeplr">
+            <img
+              src="@/assets/images/wallet/keplr-logo.svg"
+              width="20"
+              alt="keplr"
+            />
+            <span class="align-middle ml-50">With Keplr</span>
+          </b-dropdown-item>
+          <b-dropdown-item @click="connectWithMetamask">
+            <img
+              src="@/assets/images/wallet/metamask-logo.svg"
+              width="20"
+              alt="metamask"
+            />
+            <span class="align-middle ml-50">With Metamask</span>
+          </b-dropdown-item>
+        </template>
+        <template v-else>
+          <b-dropdown-item
+            v-if="wallet.type == 'keplr'"
+            :to="`${chainInfo.chainName}/account/${wallet.address}`"
+          >
+            <feather-icon icon="KeyIcon" size="16" />
+            <span class="align-middle ml-50">My Account</span>
+          </b-dropdown-item>
+          <b-dropdown-item
+            v-else-if="wallet.type == 'metamask'"
+            :to="`${chainInfo.chainName}/account/${wallet.addressBech32}`"
+          >
+            <feather-icon icon="KeyIcon" size="16" />
+            <span class="align-middle ml-50">My Account</span>
+          </b-dropdown-item>
+
+          <b-dropdown-item :to="`/wallet/transactions`" v-if="false">
+            <feather-icon icon="LayersIcon" size="16" />
+            <span class="align-middle ml-50">My Transactions</span>
+          </b-dropdown-item>
+
+          <b-dropdown-item @click="disconnectWallet">
+            <feather-icon icon="LogOutIcon" size="16" />
+            <span class="align-middle ml-50">Disconnect</span>
+          </b-dropdown-item>
+        </template>
+      </b-dropdown>
+    </b-navbar-nav>
+
     <!-- <dark-Toggler class="d-none d-lg-block" /> -->
     <!-- Right Col -->
-    <b-navbar-nav class="nav align-items-center ml-auto">
+    <b-navbar-nav class="nav align-items-center ml-auto" v-if="false">
       <dark-Toggler class="d-none d-lg-block" />
       <search-bar />
       <locale />
@@ -88,6 +172,8 @@
             {{ walletName }}
           </b-button>
         </template>
+
+        {{ accounts }}
 
         <b-dropdown-item
           v-for="(item, k) in accounts"
@@ -170,7 +256,9 @@ import SearchBar from "@core/layouts/components/app-navbar/components/SearchBar.
 // import CartDropdown from '@core/layouts/components/app-navbar/components/CartDropdown.vue'
 import { getLocalAccounts, timeIn, toDay } from "@/libs/utils";
 // import UserDropdown from '@core/layouts/components/app-navbar/components/UserDropdown.vue'
-import { initKeplr } from "@/libs/keplr/keplr";
+import { connectKeplrWallet } from "@/libs/keplr/keplr";
+import { connectMetamaskWallet } from "@/libs/metamask/utils";
+import { ethToReap } from "@/libs/metamask/addressConverter";
 
 export default {
   components: {
@@ -208,6 +296,16 @@ export default {
       tips: "Synced",
       index: 0,
       chainid: "",
+      chainInfo: {
+        chainName: process.env.VUE_APP_CHAIN_NAME,
+      },
+      wallet: {
+        isConnected: false,
+        name: "",
+        type: "",
+        address: "",
+        pubkey: "",
+      },
     };
   },
   computed: {
@@ -250,9 +348,71 @@ export default {
     },
   },
   mounted() {
-    initKeplr();
+    // initKeplr();
+    const walletTypeCheck = localStorage.getItem("walletType");
+    if (walletTypeCheck == "keplr") {
+      this.connectWithKeplr();
+    } else if (walletTypeCheck == "metamask") {
+      this.connectWithMetamask();
+    }
   },
   methods: {
+    async connectWithKeplr() {
+      const myAccount = await connectKeplrWallet();
+      if (myAccount) {
+        this.wallet = {
+          isConnected: true,
+          type: "keplr",
+          name: myAccount.name,
+          address: myAccount.bech32Address,
+          addressAbbr: `${myAccount.bech32Address.substring(
+            0,
+            10
+          )}...${myAccount.bech32Address.substring(
+            myAccount.bech32Address.length - 6
+          )}`,
+        };
+        localStorage.setItem("walletType", "keplr");
+      }
+      window.addEventListener("keplr_keystorechange", () => {
+        this.connectWithKeplr();
+      });
+    },
+    async connectWithMetamask() {
+      const myAccount = await connectMetamaskWallet();
+
+      if (myAccount) {
+        this.wallet = {
+          isConnected: true,
+          type: "metamask",
+          name: "",
+          address: myAccount[0],
+          addressBech32: ethToReap(myAccount[0]),
+          addressAbbr: `${myAccount[0].substring(
+            0,
+            10
+          )}...${myAccount[0].substring(myAccount[0].length - 6)}`,
+        };
+        localStorage.setItem("walletType", "metamask");
+      }
+      window.ethereum.on("accountsChanged", () => {
+        this.connectWithMetamask();
+      });
+    },
+    disconnectWallet() {
+      this.wallet = {
+        isConnected: false,
+        name: "",
+        type: "",
+        address: "",
+        pubkey: "",
+      };
+      window.removeEventListener("keplr_keystorechange", () => {});
+      if (window.ethereum) {
+        window.ethereum.on("accountsChanged", () => {});
+      }
+      localStorage.setItem("walletType", "");
+    },
     formatAddr(v) {
       return v.substring(0, 10).concat("...", v.substring(v.length - 10));
     },
