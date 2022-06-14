@@ -25,6 +25,7 @@ import {
   validatorsUnbondedDummy,
   validatorsUnbondingDummy,
 } from "./testdata";
+import { ethToReap } from "./metamask/addressConverter";
 
 function commonProcess(res) {
   if (res && Object.keys(res).includes("result")) {
@@ -276,12 +277,12 @@ export default class ChainFetch {
       const validatorsUnbonded = await this.get(
         "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_UNBONDED"
       );
-      // const validatorsAll = validatorsBonded.validators
-      //   .concat(validatorsUnbonding.validators)
-      //   .concat(validatorsUnbonded.validators);
-      const validatorsAll = validatorsDummy.validators
-        .concat(validatorsUnbondedDummy.validators)
-        .concat(validatorsUnbondingDummy.validators);
+      const validatorsAll = validatorsBonded.validators
+        .concat(validatorsUnbonding.validators)
+        .concat(validatorsUnbonded.validators);
+      // const validatorsAll = validatorsDummy.validators
+      //   .concat(validatorsUnbondedDummy.validators)
+      //   .concat(validatorsUnbondingDummy.validators);
       const validatorActive = validatorFilter(validatorsAll, {
         type: "",
         active: "active",
@@ -337,12 +338,12 @@ export default class ChainFetch {
       const validatorsUnbonded = await this.get(
         "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_UNBONDED"
       );
-      // const validatorsAll = validatorsBonded.validators
-      //   .concat(validatorsUnbonding.validators)
-      //   .concat(validatorsUnbonded.validators);
-      const validatorsAll = validatorsDummy.validators
-        .concat(validatorsUnbondedDummy.validators)
-        .concat(validatorsUnbondingDummy.validators);
+      const validatorsAll = validatorsBonded.validators
+        .concat(validatorsUnbonding.validators)
+        .concat(validatorsUnbonded.validators);
+      // const validatorsAll = validatorsDummy.validators
+      //   .concat(validatorsUnbondedDummy.validators)
+      //   .concat(validatorsUnbondingDummy.validators);
       const validatorInactive = validatorFilter(validatorsAll, {
         type: "",
         active: "inactive",
@@ -573,6 +574,9 @@ export default class ChainFetch {
   }
 
   async getAuthAccount(address, config = null) {
+    // if (address.substring(0, 2) == "0x") {
+    //   address = ethToReap(address);
+    // }
     return this.get("/auth/accounts/".concat(address), config).then((data) => {
       const result = commonProcess(data);
       return result.value ? result : { value: result };

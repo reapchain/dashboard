@@ -129,19 +129,18 @@
         <template v-else>
           <b-dropdown-item
             v-if="wallet.type == 'keplr'"
-            :to="`${chainInfo.chainName}/account/${wallet.address}`"
+            :to="`/${chainInfo.chainName}/account/${wallet.address}`"
           >
             <feather-icon icon="KeyIcon" size="16" />
             <span class="align-middle ml-50">My Account</span>
           </b-dropdown-item>
           <b-dropdown-item
             v-else-if="wallet.type == 'metamask'"
-            :to="`${chainInfo.chainName}/account/${wallet.addressBech32}`"
+            :to="`/${chainInfo.chainName}/account/${wallet.addressBech32}`"
           >
             <feather-icon icon="KeyIcon" size="16" />
             <span class="align-middle ml-50">My Account</span>
           </b-dropdown-item>
-
           <b-dropdown-item :to="`/wallet/transactions`" v-if="false">
             <feather-icon icon="LayersIcon" size="16" />
             <span class="align-middle ml-50">My Transactions</span>
@@ -373,6 +372,7 @@ export default {
           )}`,
         };
         localStorage.setItem("walletType", "keplr");
+        this.updateDefaultWallet(this.wallet.address);
       }
       window.addEventListener("keplr_keystorechange", () => {
         this.connectWithKeplr();
@@ -395,6 +395,7 @@ export default {
         };
         localStorage.setItem("walletType", "metamask");
       }
+      this.updateDefaultWallet(this.wallet.address);
       window.ethereum.on("accountsChanged", () => {
         this.connectWithMetamask();
       });
@@ -412,6 +413,7 @@ export default {
         window.ethereum.on("accountsChanged", () => {});
       }
       localStorage.setItem("walletType", "");
+      this.updateDefaultWallet("");
     },
     formatAddr(v) {
       return v.substring(0, 10).concat("...", v.substring(v.length - 10));

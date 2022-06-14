@@ -7,6 +7,7 @@
             <feather-icon icon="CameraIcon" size="32" />
           </b-avatar>
           <div class="ml-2">
+            <!-- {{ walletAccount }} -->
             <h3 style="color: #fff" class="mb-0">
               Address:
               <feather-icon icon="CopyIcon" size="18" @click="copy()" />
@@ -583,6 +584,10 @@ export default {
     };
   },
   computed: {
+    walletAccount() {
+      const key = this.$store?.state?.chains?.defaultWallet;
+      return key || "";
+    },
     accountTitle() {
       if (this.account && this.account.type) {
         return this.account.type.substring(this.account.type.indexOf("/") + 1);

@@ -187,6 +187,7 @@
               :name="data.item.operator_address"
               variant="primary"
               size="sm"
+              :disabled="!selectedAccount"
               @click="selectValidator(data.item.operator_address)"
             >
               Delegate
@@ -277,7 +278,12 @@
               :name="data.item.operator_address"
               variant="primary"
               size="sm"
-              :disabled="data.item.type == 'steering' && true"
+              :disabled="
+                !selectedAccount ||
+                  (data.item.type == 'steering' &&
+                    selectedAccount.substring(5, 37) !==
+                      data.item.operator_address.substring(12, 44))
+              "
               @click="selectValidator(data.item.operator_address)"
             >
               Delegate
@@ -404,6 +410,10 @@ export default {
     };
   },
   computed: {
+    selectedAccount() {
+      const key = this.$store?.state?.chains?.defaultWallet;
+      return key || "";
+    },
     standingList() {
       const tab =
         this.selectedStatus === "active"

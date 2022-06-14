@@ -90,9 +90,14 @@ export const metamaskSendTx = async (type, txData) => {
     };
   } catch (error) {
     console.log(error);
+    let msg = error.message;
+    if (error.message.indexOf("Provided chainId") > -1) {
+      msg = "select the correct network in metamask";
+    }
+
     return {
       result: false,
-      msg: error,
+      msg,
     };
   }
 };
