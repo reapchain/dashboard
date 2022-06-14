@@ -276,12 +276,12 @@ export default class ChainFetch {
       const validatorsUnbonded = await this.get(
         "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_UNBONDED"
       );
-      // const validatorsAll = validatorsBonded.validators
-      //   .concat(validatorsUnbonding.validators)
-      //   .concat(validatorsUnbonded.validators);
-      const validatorsAll = validatorsDummy.validators
-        .concat(validatorsUnbondedDummy.validators)
-        .concat(validatorsUnbondingDummy.validators);
+      const validatorsAll = validatorsBonded.validators
+        .concat(validatorsUnbonding.validators)
+        .concat(validatorsUnbonded.validators);
+      // const validatorsAll = validatorsDummy.validators
+      //   .concat(validatorsUnbondedDummy.validators)
+      //   .concat(validatorsUnbondingDummy.validators);
       const validatorActive = validatorFilter(validatorsAll, {
         type: "",
         active: "active",
@@ -313,10 +313,8 @@ export default class ChainFetch {
     return this.get(
       `/cosmos/staking/v1beta1/validators?status=${status}&pagination.limit=500`
     ).then((data) => {
-      //dummyTest
       if (status == "BOND_STATUS_UNBONDED") {
         data = validatorsUnbondedDummy;
-        // data = data.map(ele => { return {...ele,}})
       } else if (status == "BOND_STATUS_UNBONDING") {
         data = validatorsUnbondingDummy;
       }
@@ -337,12 +335,12 @@ export default class ChainFetch {
       const validatorsUnbonded = await this.get(
         "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_UNBONDED"
       );
-      // const validatorsAll = validatorsBonded.validators
-      //   .concat(validatorsUnbonding.validators)
-      //   .concat(validatorsUnbonded.validators);
-      const validatorsAll = validatorsDummy.validators
-        .concat(validatorsUnbondedDummy.validators)
-        .concat(validatorsUnbondingDummy.validators);
+      const validatorsAll = validatorsBonded.validators
+        .concat(validatorsUnbonding.validators)
+        .concat(validatorsUnbonded.validators);
+      // const validatorsAll = validatorsDummy.validators
+      //   .concat(validatorsUnbondedDummy.validators)
+      //   .concat(validatorsUnbondingDummy.validators);
       const validatorInactive = validatorFilter(validatorsAll, {
         type: "",
         active: "inactive",
