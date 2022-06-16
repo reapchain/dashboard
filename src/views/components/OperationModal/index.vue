@@ -300,7 +300,10 @@ export default {
       const accounts = getLocalAccounts();
       const selectedWallet = this.$store.state.chains.defaultWallet;
 
-      return accounts[selectedWallet];
+      if (accounts && selectedWallet) {
+        return accounts[selectedWallet];
+      }
+      return "";
     },
     async isOwner() {
       const accounts = await this.accounts;

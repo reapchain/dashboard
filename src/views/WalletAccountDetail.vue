@@ -7,8 +7,25 @@
             <feather-icon icon="CameraIcon" size="32" />
           </b-avatar>
           <div class="ml-2">
-            <!-- {{ walletAccount }} -->
             <h3 style="color: #fff" class="mb-0">
+              <template v-if="walletAccount == address && myDevice">
+                <template v-if="myDevice == 'keplr'">
+                  <img
+                    src="@/assets/images/wallet/keplr-logo.svg"
+                    width="20"
+                    alt="keplr"
+                  />
+                  My
+                </template>
+                <template v-else-if="myDevice == 'metamask'">
+                  <img
+                    src="@/assets/images/wallet/metamask-logo.svg"
+                    width="20"
+                    alt="metamask"
+                  />
+                  My
+                </template>
+              </template>
               Address:
               <feather-icon icon="CopyIcon" size="18" @click="copy()" />
             </h3>
@@ -531,6 +548,7 @@ import {
 import OperationModal from "@/views/components/OperationModal/index.vue";
 import ObjectFieldComponent from "./ObjectFieldComponent.vue";
 import ChartComponentDoughnut from "./ChartComponentDoughnut.vue";
+import { getLocalAccounts } from "@/libs/utils";
 
 export default {
   components: {
@@ -585,8 +603,17 @@ export default {
   },
   computed: {
     walletAccount() {
-      const key = this.$store?.state?.chains?.defaultWallet;
+      const key = this.$store.state.chains.defaultWallet;
       return key || "";
+    },
+    myDevice() {
+      const accounts = getLocalAccounts();
+      const selectedWallet = this.$store.state.chains.defaultWallet || "";
+
+      if (accounts && selectedWallet) {
+        return accounts[selectedWallet].device || "";
+      }
+      return "";
     },
     accountTitle() {
       if (this.account && this.account.type) {
