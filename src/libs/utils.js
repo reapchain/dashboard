@@ -295,8 +295,11 @@ export function consensusPubkeyToHexAddress(consensusPubkey) {
         .digest("hex")
         .toUpperCase();
       return raw;
+    } else if (consensusPubkey["@type"] === "/cosmos.crypto.ed25519.PubKey") {
+      raw = sha256(fromBase64(consensusPubkey.key));
+    } else {
+      raw = sha256(fromBase64(consensusPubkey.value));
     }
-    raw = sha256(fromBase64(consensusPubkey.value));
   } else {
     raw = sha256(
       fromHex(

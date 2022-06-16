@@ -255,7 +255,7 @@ import SearchBar from "@core/layouts/components/app-navbar/components/SearchBar.
 // import CartDropdown from '@core/layouts/components/app-navbar/components/CartDropdown.vue'
 import { getLocalAccounts, timeIn, toDay } from "@/libs/utils";
 // import UserDropdown from '@core/layouts/components/app-navbar/components/UserDropdown.vue'
-import { connectKeplrWallet } from "@/libs/keplr/keplr";
+import { connectKeplrWallet, initKeplr } from "@/libs/keplr/keplr";
 import { connectMetamaskWallet } from "@/libs/metamask/utils";
 import { ethToReap } from "@/libs/metamask/addressConverter";
 
@@ -347,7 +347,7 @@ export default {
     },
   },
   mounted() {
-    // initKeplr();
+    initKeplr();
     const walletTypeCheck = localStorage.getItem("walletType");
     if (walletTypeCheck == "keplr") {
       this.connectWithKeplr();

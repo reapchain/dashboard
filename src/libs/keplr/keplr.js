@@ -15,7 +15,7 @@ export const connectKeplrWallet = async () => {
   const accounts = await offlineSigner.getAccounts();
 
   if (accounts.length > 0) {
-    const keyInfo = await keplr.getKey("mercury_2022-2");
+    const keyInfo = await keplr.getKey(process.env.VUE_APP_CHAIN_ID_COSMOS);
     if (keyInfo) {
       return keyInfo;
     }
