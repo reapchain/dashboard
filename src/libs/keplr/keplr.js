@@ -1,3 +1,31 @@
+export const connectKeplrWallet = async () => {
+  console.log("Checking keplr");
+
+  if (!window.getOfflineSignerOnlyAmino || !window.keplr) {
+    const error = "Please install Keplr extension";
+    console.error(error);
+    return null;
+  }
+
+  const chainId = process.env.VUE_APP_CHAIN_ID_COSMOS || "";
+
+  await window.keplr.enable(chainId);
+
+  const offlineSigner = getOfflineSignerOnlyAmino(chainId);
+  const accounts = await offlineSigner.getAccounts();
+
+  if (accounts.length > 0) {
+    const keyInfo = await keplr.getKey(process.env.VUE_APP_CHAIN_ID_COSMOS);
+    if (keyInfo) {
+      return keyInfo;
+    }
+  }
+
+  console.log("No accounts found");
+
+  return null;
+};
+
 export const getKeplr = async () => {
   if (window.keplr) {
     return window.keplr;

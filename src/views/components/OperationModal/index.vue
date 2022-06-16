@@ -429,7 +429,7 @@ export default {
             // });
           } else {
             this.showResult = false;
-            this.error = res.error || "fail";
+            this.error = res.msg;
             this.showDismissibleAlert = true;
           }
         }

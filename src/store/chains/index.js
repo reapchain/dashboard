@@ -8,6 +8,7 @@
 import { isTestnet } from "@/libs/utils";
 import { sha256 } from "@cosmjs/crypto";
 import { toHex } from "@cosmjs/encoding";
+import { ethToReap } from "../../libs/metamask/addressConverter";
 
 let chains = {};
 
@@ -66,10 +67,37 @@ export default {
       state.quotes = quotes;
     },
     setDefaultWallet(state, defaultWallet) {
-      if ((defaultWallet && defaultWallet.length > 0) || true) {
+      if (defaultWallet && defaultWallet.length > 0) {
+        let walletType;
+        if (defaultWallet.substring(0, 2) == "0x") {
+          walletType = "metamask";
+          defaultWallet = ethToReap(defaultWallet);
+        } else {
+          walletType = "keplr";
+        }
         localStorage.setItem("default-wallet", defaultWallet);
-        state.chains.defaultWallet = defaultWallet;
+
+        const accounts = {
+          [defaultWallet]: {
+            name: defaultWallet,
+            device: walletType,
+            address: [
+              {
+                chain: selected.chain_name || "reapchain",
+                addr: defaultWallet,
+                logo: "/logos/reapchain_logo.png",
+                hdpath: "m/44'/60/0'/0/0",
+              },
+            ],
+          },
+        };
+        const accountString = JSON.stringify(accounts);
+        localStorage.setItem("accounts", accountString);
+      } else {
+        localStorage.setItem("default-wallet", "");
+        localStorage.setItem("accounts", "");
       }
+      state.chains.defaultWallet = defaultWallet;
     },
     setIBCDenoms(state, denoms) {
       state.denoms = { ...state.denoms, ...denoms };

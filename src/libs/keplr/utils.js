@@ -27,11 +27,8 @@ const chain = {
 
 export const keplrSendTx = async (type, txData) => {
   try {
-    console.log("type : ", type);
-    console.log("txData : ", txData);
     const keplrAccount = await getAccounts();
     if (!keplrAccount) {
-      console.log("error : keplr account info...");
       return false;
     }
 
@@ -51,7 +48,6 @@ export const keplrSendTx = async (type, txData) => {
     };
 
     const txMessageSet = createKeplrTxMessageSet(type, txData, sender);
-    console.log("txMessageSet : ", txMessageSet);
 
     const fee = {
       amount: {
@@ -69,14 +65,12 @@ export const keplrSendTx = async (type, txData) => {
       apiAccount.account.base_account.account_number,
       apiAccount.account.base_account.sequence
     );
-    console.log("signDoc : ", signDoc);
 
     const signResponse = await window.keplr.signAmino(
       chain.cosmosChainId,
       keplrAccount.address,
       signDoc
     );
-    console.log("signResponse : ", signResponse);
 
     const signedTx = TxRaw.encode({
       bodyBytes: TxBody.encode(
@@ -114,14 +108,11 @@ export const keplrSendTx = async (type, txData) => {
       signatures: [Buffer.from(signResponse.signature.signature, "base64")],
     }).finish();
 
-    console.log("signedTx : ", signedTx);
-
     const sendTxRes = await window.keplr?.sendTx(
       chain.cosmosChainId,
       signedTx,
       "async"
     );
-    console.log("sendTxRes : ", sendTxRes);
 
     return {
       result: true,

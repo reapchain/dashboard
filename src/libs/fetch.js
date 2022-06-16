@@ -25,6 +25,7 @@ import {
   validatorsUnbondedDummy,
   validatorsUnbondingDummy,
 } from "./testdata";
+import { ethToReap } from "./metamask/addressConverter";
 
 function commonProcess(res) {
   if (res && Object.keys(res).includes("result")) {
@@ -571,6 +572,9 @@ export default class ChainFetch {
   }
 
   async getAuthAccount(address, config = null) {
+    // if (address.substring(0, 2) == "0x") {
+    //   address = ethToReap(address);
+    // }
     return this.get("/auth/accounts/".concat(address), config).then((data) => {
       const result = commonProcess(data);
       return result.value ? result : { value: result };

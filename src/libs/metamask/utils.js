@@ -90,9 +90,14 @@ export const metamaskSendTx = async (type, txData) => {
     };
   } catch (error) {
     console.log(error);
+    let msg = error.message;
+    if (error.message.indexOf("Provided chainId") > -1) {
+      msg = "select the correct network in metamask";
+    }
+
     return {
       result: false,
-      msg: error,
+      msg,
     };
   }
 };
@@ -209,7 +214,7 @@ export const metamaskGetAccount = async () => {
   const enable = await window.ethereum.enable();
   if (!enable || enable.length < 1) {
     console.log("metamask is not enable");
-    return;
+    return null;
   }
   let { data: myAccount } = await axios.get(
     generateEndpointAccount(ethToReap(enable[0]))
@@ -238,122 +243,16 @@ export const metamaskGetAccount = async () => {
   };
 };
 
-// not used
-export const metamaskWithdraw = async (txData) => {
-  console.log("txData :", txData);
-  try {
-    const enable = await window.ethereum.enable();
-    if (!enable) {
-      return;
-    }
-    const addressETH = enable[0];
-    const addressReap = ethToReap(addressETH);
-    const { data: myAccount } = await axios.get(
-      generateEndpointAccount(addressReap)
-    );
-    const sender = {
-      accountAddress: myAccount.account.base_account.address,
-      sequence: myAccount.account.base_account.sequence,
-      accountNumber: myAccount.account.base_account.account_number,
-      pubkey: myAccount.account.base_account.pub_key.key || "",
-    };
-    const msg = createTxMsgWithdrawDelegatorReward(
-      chain,
-      sender,
-      {
-        amount: "1000000",
-        denom: "areap",
-        gas: "200000",
-      },
-      txData.memo,
-      {
-        validatorAddress: txData.msg[0].value.validatorAddress,
-      }
-    );
-    let signature = await window.ethereum.request({
-      method: "eth_signTypedData_v4",
-      params: [addressETH, JSON.stringify(msg.eipToSign)],
-    });
-    let extension = signatureToWeb3Extension(chain, sender, signature);
-    let rawTx = createTxRawEIP712(
-      msg.legacyAmino.body,
-      msg.legacyAmino.authInfo,
-      extension
-    );
-    const res = await axios.post(
-      generateEndpointBroadcast(),
-      JSON.parse(generatePostBodyBroadcast(rawTx))
-    );
-    return {
-      result: true,
-      txhash: res.data.tx_response.txhash || "",
-    };
-  } catch (error) {
-    console.log(error);
-    return {
-      result: false,
-      msg: error,
-    };
+export const connectMetamaskWallet = async () => {
+  const enable = await window.ethereum.enable();
+  if (!enable || enable.length < 1) {
+    console.log("metamask is not enable");
+    return null;
   }
-};
-// not used
-export const metamaskDelegation = async (delegateData) => {
-  console.log("delegateData :", delegateData);
-  try {
-    const enable = await window.ethereum.enable();
-    if (!enable) {
-      return;
-    }
-    const addressETH = enable[0];
-    const addressReap = ethToReap(addressETH);
-    const { data: myAccount } = await axios.get(
-      generateEndpointAccount(addressReap)
-    );
-    const sender = {
-      accountAddress: myAccount.account.base_account.address,
-      sequence: myAccount.account.base_account.sequence,
-      accountNumber: myAccount.account.base_account.account_number,
-      pubkey: myAccount.account.base_account.pub_key.key || "",
-    };
-    const msg = createTxMsgDelegate(
-      chain,
-      sender,
-      {
-        amount: "1000000",
-        denom: "areap",
-        gas: "200000",
-      },
-      delegateData.memo,
-      {
-        validatorAddress: delegateData.msg[0].value.validatorAddress,
-        amount: delegateData.msg[0].value.amount.amount.toString(),
-        denom: delegateData.msg[0].value.amount.denom,
-      }
-    );
-    let signature = await window.ethereum.request({
-      method: "eth_signTypedData_v4",
-      params: [addressETH, JSON.stringify(msg.eipToSign)],
-    });
-    console.log("signature : ", signature);
-    let extension = signatureToWeb3Extension(chain, sender, signature);
-    let rawTx = createTxRawEIP712(
-      msg.legacyAmino.body,
-      msg.legacyAmino.authInfo,
-      extension
-    );
-    const res = await axios.post(
-      generateEndpointBroadcast(),
-      JSON.parse(generatePostBodyBroadcast(rawTx))
-    );
-    return {
-      result: true,
-      txhash: res.data.tx_response.txhash || "",
-    };
-  } catch (error) {
-    console.log(error);
-    return {
-      result: false,
-      msg: error,
-    };
+
+  const accountList = await ethereum.request({ method: "eth_requestAccounts" });
+  if (accountList && accountList.length > 0) {
+    return accountList;
   }
+  return null;
 };
