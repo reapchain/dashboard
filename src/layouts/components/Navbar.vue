@@ -129,7 +129,7 @@
         <template v-else>
           <b-dropdown-item
             v-if="wallet.type == 'keplr'"
-            :to="`/${chainInfo.chainName}/account/${wallet.address}`"
+            @click="handleMyAccount"
           >
             <feather-icon icon="KeyIcon" size="16" />
             <span class="align-middle ml-50">My Account</span>
@@ -356,6 +356,11 @@ export default {
     }
   },
   methods: {
+    handleMyAccount() {
+      this.$router
+        .replace(`/${this.chainInfo.chainName}/account/${this.wallet.address}`)
+        .catch(() => {});
+    },
     async connectWithKeplr() {
       const myAccount = await connectKeplrWallet();
       if (myAccount) {

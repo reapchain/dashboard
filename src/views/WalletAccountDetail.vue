@@ -30,7 +30,7 @@
               <feather-icon icon="CopyIcon" size="18" @click="copy()" />
             </h3>
             {{ address }}
-            <span v-if="isEthAddr"> - {{ ethaddress() }}</span>
+            <span> - {{ ethaddress() }}</span>
           </div>
         </div>
       </b-card>
@@ -582,12 +582,10 @@ export default {
     Ripple,
   },
   data() {
-    const { address } = this.$route.params;
     return {
       currency: getUserCurrencySign(),
       selectedValidator: "",
       totalCurrency: 0,
-      address,
       account: null,
       assets: [],
       reward: [],
@@ -602,6 +600,9 @@ export default {
     };
   },
   computed: {
+    address() {
+      return this.$route.params.address;
+    },
     walletAccount() {
       const key = this.$store.state.chains.defaultWallet;
       return key || "";
@@ -670,7 +671,7 @@ export default {
         });
       }
 
-      if (this.reward.total) {
+      if (this.reward && this.reward.total) {
         total = total.concat(
           this.reward.total.map((x) => {
             const xh = x;
@@ -808,6 +809,25 @@ export default {
     elem.addEventListener("txcompleted", () => {
       this.initial();
     });
+  },
+  watch: {
+    address(newAddress) {
+      this.$http
+        .getAuthAccount(this.address)
+        .then((acc) => {
+          this.account = acc;
+          this.initial();
+          this.$http.getTxsBySender(this.address).then((res) => {
+            this.transactions = res;
+          });
+          this.$http.getStakingParameters().then((res) => {
+            this.stakingParameters = res;
+          });
+        })
+        .catch((err) => {
+          this.error = err;
+        });
+    },
   },
   methods: {
     initial() {
