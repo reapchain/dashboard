@@ -14,7 +14,10 @@ import {
   createTxMsgMultipleWithdrawDelegatorReward,
   createTxMsgUndelegate,
 } from "@tharsis/transactions";
+
 import { ethToReap } from "./addressConverter";
+import { Secp256k1 } from "@cosmjs/crypto";
+import { utils } from "ethers";
 
 const chain = {
   chainId: process.env.VUE_APP_CHAIN_ID,
@@ -22,8 +25,8 @@ const chain = {
 };
 
 export const metamaskSendTx = async (type, txData) => {
-  console.log("type :: ", type);
-  console.log("txData :: ", txData);
+  // console.log("type :: ", type);
+  // console.log("txData :: ", txData);
   try {
     const enable = await window.ethereum.enable();
     if (!enable) {
@@ -36,14 +39,17 @@ export const metamaskSendTx = async (type, txData) => {
     );
 
     if (!myAccount.account.base_account.pub_key) {
-      const pubkey = await window.ethereum.request({
-        method: "eth_getEncryptionPublicKey",
-        params: [enable[0]],
-      });
+      let pubkey = getLocalPubkey(addressETH);
+      if (!pubkey) {
+        pubkey = await setLocalPubkey(ethAddress);
+        if (!pubkey) {
+          throw new Error("personal sign is required.");
+        }
+      }
       console.log("eth_getEncryptionPublicKey : ", pubkey);
       myAccount.account.base_account.pub_key = {
         "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
-        key: pubkey,
+        key: pubkey || "",
       };
     }
     console.log("metamaskSendTx - myAccount : ", myAccount);
@@ -65,6 +71,7 @@ export const metamaskSendTx = async (type, txData) => {
     console.log("signature : ", signature);
     let extension = signatureToWeb3Extension(chain, sender, signature);
     console.log("extension : ", extension);
+
     let rawTx = createTxRawEIP712(
       msg.legacyAmino.body,
       msg.legacyAmino.authInfo,
@@ -210,6 +217,53 @@ export const createMetamaskTxMessage = (type, txData, sender) => {
   }
 };
 
+const getLocalPubkey = (ethAddress) => {
+  const locals = localStorage.getItem(`ethPubkey`);
+  if (!locals) {
+    return;
+  }
+
+  const val = JSON.parse(locals)[ethAddress];
+  if (!val) {
+    return;
+  }
+
+  return val;
+};
+
+const setLocalPubkey = async (ethAddress) => {
+  let data = localStorage.getItem(`ethPubkey`) || {};
+
+  if (data.ethAddress) {
+    return;
+  }
+
+  const signMsg = "generate_pubkey";
+  const signMsgHex = "0x" + Buffer.from(signMsg).toString("hex");
+
+  try {
+    const sign = await ethereum.request({
+      method: "personal_sign",
+      params: [signMsgHex, ethAddress],
+    });
+
+    const msgHash = utils.hashMessage(signMsg);
+    const msgHashBytes = utils.arrayify(msgHash);
+    const recoveredPubKey = utils.recoverPublicKey(msgHashBytes, sign);
+    const pubKey = Secp256k1.compressPubkey(
+      Buffer.from(recoveredPubKey.substring(2), "hex")
+    );
+    const pubKeyBase64 = Buffer.from(pubKey).toString("base64");
+
+    data[ethAddress] = pubKeyBase64;
+    localStorage.setItem("ethPubkey", JSON.stringify(data));
+    return pubKeyBase64;
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+};
+
 export const metamaskGetAccount = async () => {
   const enable = await window.ethereum.enable();
   if (!enable || enable.length < 1) {
@@ -222,28 +276,28 @@ export const metamaskGetAccount = async () => {
   if (!myAccount) {
     return null;
   }
-  if (!myAccount.account.base_account.pub_key) {
-    const pubkey = await window.ethereum.request({
-      method: "eth_getEncryptionPublicKey",
-      params: [enable[0]],
-    });
-    myAccount.account.base_account.pub_key = {
-      "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
-      key: pubkey,
-    };
+
+  const ethAddress = enable[0];
+  let pubkey = getLocalPubkey(ethAddress);
+  if (!pubkey) {
+    pubkey = await setLocalPubkey(ethAddress);
+    if (!pubkey) {
+      return null;
+    }
   }
 
   return {
     address: myAccount.account.base_account.address,
     algo: "ethsecp256k1",
     pubkey: {
-      type: myAccount.account.base_account.pub_key["@type"],
-      key: myAccount.account.base_account.pub_key.key,
+      type: "/ethermint.crypto.v1.ethsecp256k1.PubKey",
+      key: pubkey,
     },
   };
 };
 
 export const connectMetamaskWallet = async () => {
+  console.log("connectMetamaskWallet");
   const enable = await window.ethereum.enable();
   if (!enable || enable.length < 1) {
     console.log("metamask is not enable");
@@ -251,8 +305,16 @@ export const connectMetamaskWallet = async () => {
   }
 
   const accountList = await ethereum.request({ method: "eth_requestAccounts" });
-  if (accountList && accountList.length > 0) {
-    return accountList;
+
+  if (!accountList || accountList.length < 1) {
+    return null;
   }
-  return null;
+
+  const ethAddress = enable[0];
+  const pubkey = getLocalPubkey(ethAddress);
+  if (!pubkey) {
+    await setLocalPubkey(ethAddress);
+  }
+
+  return accountList;
 };
