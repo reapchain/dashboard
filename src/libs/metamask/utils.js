@@ -23,10 +23,9 @@ const chain = {
   chainId: process.env.VUE_APP_CHAIN_ID,
   cosmosChainId: process.env.VUE_APP_CHAIN_ID_COSMOS,
 };
+const pubkeyType = "/ethermint.crypto.v1.ethsecp256k1.PubKey";
 
 export const metamaskSendTx = async (type, txData) => {
-  // console.log("type :: ", type);
-  // console.log("txData :: ", txData);
   try {
     const enable = await window.ethereum.enable();
     if (!enable) {
@@ -46,13 +45,17 @@ export const metamaskSendTx = async (type, txData) => {
           throw new Error("personal sign is required.");
         }
       }
-      console.log("eth_getEncryptionPublicKey : ", pubkey);
       myAccount.account.base_account.pub_key = {
-        "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
-        key: pubkey || "",
+        "@type": pubkeyType,
+        key: pubkey,
+      };
+    } else {
+      myAccount.account.base_account.pub_key = {
+        "@type": pubkeyType,
+        key: myAccount.account.base_account.pub_key.key,
       };
     }
-    console.log("metamaskSendTx - myAccount : ", myAccount);
+
     const sender = {
       accountAddress: myAccount.account.base_account.address,
       sequence: myAccount.account.base_account.sequence,
@@ -60,29 +63,21 @@ export const metamaskSendTx = async (type, txData) => {
       pubkey: myAccount.account.base_account.pub_key.key || "",
     };
     const msg = createMetamaskTxMessage(type, txData, sender);
-    console.log("msg : ", msg);
 
     let signature = await window.ethereum.request({
       method: "eth_signTypedData_v4",
       params: [addressETH, JSON.stringify(msg.eipToSign)],
     });
-    console.log("chain : ", chain);
-    console.log("sender : ", sender);
-    console.log("signature : ", signature);
     let extension = signatureToWeb3Extension(chain, sender, signature);
-    console.log("extension : ", extension);
-
     let rawTx = createTxRawEIP712(
       msg.legacyAmino.body,
       msg.legacyAmino.authInfo,
       extension
     );
-    console.log("rawTx : ", rawTx);
     const res = await axios.post(
       generateEndpointBroadcast(),
       JSON.parse(generatePostBodyBroadcast(rawTx))
     );
-    console.log("res : ", res);
     if (res.data) {
       if (res.data.tx_response.raw_log === "signature verification failed") {
         return {
@@ -290,14 +285,13 @@ export const metamaskGetAccount = async () => {
     address: myAccount.account.base_account.address,
     algo: "ethsecp256k1",
     pubkey: {
-      type: "/ethermint.crypto.v1.ethsecp256k1.PubKey",
+      type: pubkeyType,
       key: pubkey,
     },
   };
 };
 
 export const connectMetamaskWallet = async () => {
-  console.log("connectMetamaskWallet");
   const enable = await window.ethereum.enable();
   if (!enable || enable.length < 1) {
     console.log("metamask is not enable");
