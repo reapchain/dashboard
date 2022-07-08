@@ -17,22 +17,22 @@ const modules = [
     title: "staking",
     route: "staking",
   },
-  {
-    scope: "normal",
-    title: "governance",
-    route: "governance",
-    exclude: "emoney",
-  },
+  // {
+  //   scope: "normal",
+  //   title: "governance",
+  //   route: "governance",
+  //   exclude: "emoney",
+  // },
   {
     scope: "normal",
     title: "uptime",
     route: "uptime",
   },
-  {
-    scope: "normal",
-    title: "statesync",
-    route: "statesync",
-  },
+  // {
+  //   scope: "normal",
+  //   title: "statesync",
+  //   route: "statesync",
+  // },
   {
     scope: "cos-mos",
     title: "gravity",

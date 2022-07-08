@@ -70,15 +70,15 @@
                     <b-dropdown-item :to="`/${data.chain_name}/staking`">
                       Staking
                     </b-dropdown-item>
-                    <b-dropdown-item :to="`/${data.chain_name}/gov`">
+                    <!-- <b-dropdown-item :to="`/${data.chain_name}/gov`">
                       Governance
-                    </b-dropdown-item>
+                    </b-dropdown-item> -->
                     <b-dropdown-item :to="`/${data.chain_name}/uptime`">
                       Uptime
                     </b-dropdown-item>
-                    <b-dropdown-item :to="`/${data.chain_name}/statesync`">
+                    <!-- <b-dropdown-item :to="`/${data.chain_name}/statesync`">
                       State Sync
-                    </b-dropdown-item>
+                    </b-dropdown-item> -->
                   </b-dropdown>
                 </b-card-title>
 

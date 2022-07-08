@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- Sample Table -->
     <b-card v-if="false" title="" class="overflow-auto">
       <b-table
         :items="[]"
@@ -165,10 +166,10 @@
               <span class="font-weight-bold mb-0">{{
                 tokenFormatter(data.item.tokens, stakingParameters.bond_denom)
               }}</span>
-              <span
+              <!-- <span
                 class="font-small-2 text-muted text-nowrap d-none d-lg-block"
                 >{{ percent(data.item.tokens / stakingPool) }}%</span
-              >
+              > -->
             </div>
             <span v-else>{{ data.item.delegator_shares }}</span>
           </template>
@@ -257,10 +258,10 @@
               <span class="font-weight-bold mb-0">{{
                 tokenFormatter(data.item.tokens, stakingParameters.bond_denom)
               }}</span>
-              <span
+              <!-- <span
                 class="font-small-2 text-muted text-nowrap d-none d-lg-block"
                 >{{ percent(data.item.tokens / stakingPool) }}%</span
-              >
+              > -->
             </div>
             <span v-else>{{ data.item.delegator_shares }}</span>
           </template>
@@ -377,7 +378,7 @@ export default {
         { key: "description", label: "Validator" },
         {
           key: "tokens",
-          label: "Voting Power",
+          label: "Bonded Tokens",
           sortable: true,
           tdClass: "text-right",
           thClass: "text-right",

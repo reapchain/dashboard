@@ -21,7 +21,9 @@
                 <h4 class="mb-0">
                   {{ validator.description.moniker }}
                 </h4>
-                <span class="card-text">{{ validator.description.website }}</span>
+                <span class="card-text">{{
+                  validator.description.website
+                }}</span>
               </div>
               <div class="d-flex flex-wrap">
                 <b-button
@@ -38,14 +40,8 @@
           <!-- User Stats -->
           <div class="d-flex flex-wrap align-items-center mt-2">
             <div class="d-flex align-items-center mr-2">
-              <b-avatar
-                variant="light-primary"
-                rounded
-              >
-                <feather-icon
-                  icon="DiscIcon"
-                  size="18"
-                />
+              <b-avatar variant="light-primary" rounded>
+                <feather-icon icon="DiscIcon" size="18" />
               </b-avatar>
               <div class="ml-1">
                 <h5 class="mb-0">
@@ -56,35 +52,24 @@
             </div>
 
             <div class="d-flex align-items-center mr-2">
-              <b-avatar
-                variant="light-warning"
-                rounded
-              >
-                <feather-icon
-                  icon="DivideCircleIcon"
-                  size="18"
-                />
+              <b-avatar variant="light-warning" rounded>
+                <feather-icon icon="DivideCircleIcon" size="18" />
               </b-avatar>
               <div class="ml-1">
                 <h5 class="mb-0">
-                  {{ percentFormat(selfDelegation.balance.amount/validator.tokens) }}%
+                  {{
+                    percentFormat(
+                      selfDelegation.balance.amount / validator.tokens
+                    )
+                  }}%
                 </h5>
                 <small>Self Delegation</small>
               </div>
             </div>
 
-            <div
-              v-if="mintInflation"
-              class="d-flex align-items-center"
-            >
-              <b-avatar
-                variant="light-success"
-                rounded
-              >
-                <feather-icon
-                  icon="TrendingUpIcon"
-                  size="18"
-                />
+            <div v-if="mintInflation" class="d-flex align-items-center">
+              <b-avatar variant="light-success" rounded>
+                <feather-icon icon="TrendingUpIcon" size="18" />
               </b-avatar>
               <div class="ml-1">
                 <h5 class="mb-0">
@@ -97,36 +82,24 @@
         </b-col>
 
         <!-- Right Col: Table -->
-        <b-col
-          cols="12"
-          xl="6"
-        >
+        <b-col cols="12" xl="6">
           <table class="mt-2 mt-xl-0 w-100">
             <tr>
               <th class="pb-50">
-                <feather-icon
-                  icon="UserIcon"
-                  class="mr-75"
-                />
+                <feather-icon icon="UserIcon" class="mr-75" />
                 <span class="font-weight-bold">Identity</span>
               </th>
               <td class="pb-50">
-                <small>{{ validator.description.identity || '-' }}</small>
+                <small>{{ validator.description.identity || "-" }}</small>
               </td>
             </tr>
             <tr>
               <th class="pb-50">
-                <feather-icon
-                  icon="CheckIcon"
-                  class="mr-75"
-                />
+                <feather-icon icon="CheckIcon" class="mr-75" />
                 <span class="font-weight-bold">Status</span>
               </th>
               <td class="pb-50 text-capitalize">
-                <b-badge
-                  v-if="validator.status===3"
-                  variant="light-success"
-                >
+                <b-badge v-if="validator.status === 3" variant="light-success">
                   Active
                 </b-badge>
                 <span v-else>{{ validator.status }}</span>
@@ -134,22 +107,16 @@
             </tr>
             <tr>
               <th class="pb-50">
-                <feather-icon
-                  icon="StarIcon"
-                  class="mr-75"
-                />
+                <feather-icon icon="StarIcon" class="mr-75" />
                 <span class="font-weight-bold">Unbond Height</span>
               </th>
               <td class="pb-50 text-capitalize">
-                {{ validator.unbonding_height || '-' }}
+                {{ validator.unbonding_height || "-" }}
               </td>
             </tr>
             <tr>
               <th class="pb-50">
-                <feather-icon
-                  icon="StarIcon"
-                  class="mr-75"
-                />
+                <feather-icon icon="StarIcon" class="mr-75" />
                 <span class="font-weight-bold">Unbond Time</span>
               </th>
               <td class="pb-50 text-capitalize">
@@ -158,10 +125,7 @@
             </tr>
             <tr>
               <th class="pb-50">
-                <feather-icon
-                  icon="FlagIcon"
-                  class="mr-75"
-                />
+                <feather-icon icon="FlagIcon" class="mr-75" />
                 <span class="font-weight-bold">Min Self Delegation</span>
               </th>
               <td class="pb-50">
@@ -170,26 +134,20 @@
             </tr>
             <tr>
               <th class="pb-50">
-                <feather-icon
-                  icon="AlertCircleIcon"
-                  class="mr-75"
-                />
+                <feather-icon icon="AlertCircleIcon" class="mr-75" />
                 <span class="font-weight-bold">Jailed</span>
               </th>
               <td class="pb-50">
-                {{ validator.jailed || '-' }}
+                {{ validator.jailed || "-" }}
               </td>
             </tr>
             <tr>
               <th>
-                <feather-icon
-                  icon="PhoneIcon"
-                  class="mr-75"
-                />
+                <feather-icon icon="PhoneIcon" class="mr-75" />
                 <span class="font-weight-bold">Contact</span>
               </th>
               <td>
-                {{ validator.security_contact || '-' }}
+                {{ validator.security_contact || "-" }}
               </td>
             </tr>
           </table>
@@ -200,32 +158,23 @@
         v-if="validator.description.details"
         class="mt-1 pl-0 pr-0"
       >
-        {{ validator.description.details || '' }}
+        {{ validator.description.details || "" }}
       </b-card-footer>
     </b-card>
     <!-- First Row -->
     <template>
       <b-row class="match-height">
-        <b-col
-          lg="4"
-          md="12"
-        >
+        <b-col lg="4" md="12">
           <staking-commission-component :data="validator.commission" />
         </b-col>
-        <b-col
-          lg="4"
-          md="12"
-        >
+        <b-col lg="4" md="12">
           <staking-reward-component
             :data="distribution"
             :validator="validator.operator_address"
             :address="accountAddress"
           />
         </b-col>
-        <b-col
-          lg="4"
-          md="12"
-        >
+        <b-col lg="4" md="12">
           <staking-address-component
             :hex-address="hexAddress"
             :operator-address="validator.operator_address"
@@ -237,13 +186,7 @@
       <b-row>
         <b-col>
           <b-card title="Transactions">
-            <b-table
-              :items="txs"
-              striped
-              hover
-              responsive="sm"
-              stacked="sm"
-            >
+            <b-table :items="txs" striped hover responsive="sm" stacked="sm">
               <template #cell(height)="data">
                 <router-link :to="`../blocks/${data.item.height}`">
                   {{ data.item.height }}
@@ -278,17 +221,35 @@
 
 <script>
 import {
-  BCard, BButton, BAvatar, BRow, BCol, BTable, BCardFooter, VBTooltip, VBModal, BBadge, BPagination,
-} from 'bootstrap-vue'
+  BCard,
+  BButton,
+  BAvatar,
+  BRow,
+  BCol,
+  BTable,
+  BCardFooter,
+  VBTooltip,
+  VBModal,
+  BBadge,
+  BPagination,
+} from "bootstrap-vue";
 
 import {
-  percent, formatToken, StakingParameters, Validator, operatorAddressToAccount, consensusPubkeyToHexAddress, toDay, abbrMessage, abbrAddress,
-} from '@/libs/utils'
-import { keybase } from '@/libs/fetch'
-import OperationModal from '@/views/components/OperationModal/index.vue'
-import StakingAddressComponent from './StakingAddressComponent.vue'
-import StakingCommissionComponent from './StakingCommissionComponent.vue'
-import StakingRewardComponent from './StakingRewardComponent.vue'
+  percent,
+  formatToken,
+  StakingParameters,
+  Validator,
+  operatorAddressToAccount,
+  consensusPubkeyToHexAddress,
+  toDay,
+  abbrMessage,
+  abbrAddress,
+} from "@/libs/utils";
+import { keybase } from "@/libs/fetch";
+import OperationModal from "@/views/components/OperationModal/index.vue";
+import StakingAddressComponent from "./StakingAddressComponent.vue";
+import StakingCommissionComponent from "./StakingCommissionComponent.vue";
+import StakingRewardComponent from "./StakingRewardComponent.vue";
 
 export default {
   components: {
@@ -307,8 +268,8 @@ export default {
     OperationModal,
   },
   directives: {
-    'b-modal': VBModal,
-    'b-tooltip': VBTooltip,
+    "b-modal": VBModal,
+    "b-tooltip": VBTooltip,
   },
   data() {
     return {
@@ -321,114 +282,140 @@ export default {
         balance: { amount: 0 },
       },
       latestHeight: 0,
-      accountAddress: '-',
-      hexAddress: '-',
+      accountAddress: "-",
+      hexAddress: "-",
       stakingPool: {},
       mintInflation: 0,
       stakingParameter: new StakingParameters(),
       validator: new Validator(),
       address: null,
       userData: {},
-      blocks: Array.from('0'.repeat(100)).map(x => [Boolean(x), Number(x)]),
+      blocks: Array.from("0".repeat(100)).map((x) => [Boolean(x), Number(x)]),
       distribution: {},
       transactions: {},
-    }
+    };
   },
   computed: {
     txs() {
       if (this.transactions.txs) {
-        return this.transactions.tx_responses.map(x => ({
+        return this.transactions.tx_responses.map((x) => ({
           height: Number(x.height),
           txhash: x.txhash,
           msgs: abbrMessage(x.tx.body.messages),
           time: toDay(x.timestamp),
-        }))
+        }));
       }
-      return []
+      return [];
     },
   },
   created() {
-    this.$http.getStakingPool().then(res => { this.stakingPool = res })
-    this.$http.getStakingParameters().then(res => { this.stakingParameter = res })
-    this.$http.getMintingInflation().then(res => { this.mintInflation = res })
-    this.address = this.$route.params.address
-    this.initial()
+    this.$http.getStakingPool().then((res) => {
+      this.stakingPool = res;
+    });
+    this.$http.getStakingParameters().then((res) => {
+      this.stakingParameter = res;
+    });
+    this.$http.getMintingInflation().then((res) => {
+      this.mintInflation = res;
+    });
+    this.address = this.$route.params.address;
+    this.initial();
   },
   mounted() {
-    const elem = document.getElementById('txevent')
-    elem.addEventListener('txcompleted', () => {
-      this.initial()
-    })
+    const elem = document.getElementById("txevent");
+    elem.addEventListener("txcompleted", () => {
+      this.initial();
+    });
   },
   methods: {
     initial() {
-      this.$http.getStakingValidator(this.address).then(data => {
-        this.validator = data
+      this.$http.getStakingValidator(this.address).then((data) => {
+        this.validator = data;
 
-        this.processAddress(data.operator_address, data.consensus_pubkey)
-        this.$http.getTxsBySender(this.accountAddress).then(res => {
-          this.transactions = res
-        })
+        this.processAddress(data.operator_address, data.consensus_pubkey);
+        this.$http.getTxsBySender(this.accountAddress).then((res) => {
+          this.transactions = res;
+        });
 
-        const { identity } = data.description
-        keybase(identity).then(d => {
+        const { identity } = data.description;
+        keybase(identity).then((d) => {
           if (Array.isArray(d.them) && d.them.length > 0) {
-            this.$set(this.validator, 'avatar', d.them[0].pictures.primary.url)
-            this.$store.commit('cacheAvatar', { identity, url: d.them[0].pictures.primary.url })
+            this.$set(this.validator, "avatar", d.them[0].pictures.primary.url);
+            this.$store.commit("cacheAvatar", {
+              identity,
+              url: d.them[0].pictures.primary.url,
+            });
           }
-        })
-      })
-      this.$http.getValidatorDistribution(this.address).then(res => { this.distribution = res })
+        });
+      });
+      this.$http.getValidatorDistribution(this.address).then((res) => {
+        this.distribution = res;
+      });
     },
     pageload(v) {
-      this.$http.getTxsBySender(this.accountAddress, v).then(res => {
-        this.transactions = res
-      })
+      this.$http.getTxsBySender(this.accountAddress, v).then((res) => {
+        this.transactions = res;
+      });
     },
     formatHash: abbrAddress,
     timeFormat(value) {
-      return toDay(value)
+      return toDay(value);
     },
     percentFormat(value) {
-      return percent(value)
+      return percent(value);
     },
     processAddress(operAddress, consensusPubkey) {
-      this.accountAddress = operatorAddressToAccount(operAddress)
-      this.hexAddress = consensusPubkeyToHexAddress(consensusPubkey)
-      this.$http.getStakingDelegatorDelegation(this.accountAddress, operAddress).then(d => {
-        this.selfDelegation = d
-      })
+      this.accountAddress = operatorAddressToAccount(operAddress);
+      this.hexAddress = consensusPubkeyToHexAddress(consensusPubkey);
+      this.$http
+        .getStakingDelegatorDelegation(this.accountAddress, operAddress)
+        .then((d) => {
+          this.selfDelegation = d;
+        });
     },
     tokenFormatter(token) {
-      return formatToken({ amount: token, denom: this.stakingParameter.bond_denom })
+      return formatToken({
+        amount: token,
+        denom: this.stakingParameter.bond_denom,
+      });
     },
     apr(rate) {
-      return `${percent((1 - rate) * this.mintInflation)} %`
+      return `${percent((1 - rate) * this.mintInflation)} %`;
     },
     fetch_status(item, lastHeight) {
-      return this.$http.getBlockByHeight(item[1]).then(res => {
+      return this.$http.getBlockByHeight(item[1]).then((res) => {
         if (item[1] !== lastHeight) {
-          const sigs = res.block.last_commit.signatures.find(s => s.validator_address === this.hexAddress)
-          const block = this.blocks.find(b => b[1] === item[1])
-          if (typeof block !== 'undefined') {
-            this.$set(block, 0, typeof sigs !== 'undefined')
+          const sigs = res.block.last_commit.signatures.find(
+            (s) => s.validator_address === this.hexAddress
+          );
+          const block = this.blocks.find((b) => b[1] === item[1]);
+          if (typeof block !== "undefined") {
+            this.$set(block, 0, typeof sigs !== "undefined");
           }
         }
-      })
+      });
     },
     fetch_latest() {
-      this.$http.getLatestBlock().then(res => {
-        const sigs = res.block.last_commit.signatures.find(s => s.validator_address === this.hexAddress)
-        const block = this.blocks.find(b => b[1] === res.block.last_commit.height)
-        if (typeof block === 'undefined') { // mei
+      this.$http.getLatestBlock().then((res) => {
+        const sigs = res.block.last_commit.signatures.find(
+          (s) => s.validator_address === this.hexAddress
+        );
+        const block = this.blocks.find(
+          (b) => b[1] === res.block.last_commit.height
+        );
+        if (typeof block === "undefined") {
+          // mei
           // this.$set(block, 0, typeof sigs !== 'undefined')
-          if (this.blocks.length > 999) this.blocks.shift()
-          this.blocks.push([typeof sigs !== 'undefined', res.block.last_commit.height])
+          if (this.blocks.length > 999) this.blocks.shift();
+          this.blocks.push([
+            typeof sigs !== "undefined",
+            res.block.last_commit.height,
+          ]);
         }
-      })
+      });
     },
   },
-}
+};
 </script>
 
 <style></style>

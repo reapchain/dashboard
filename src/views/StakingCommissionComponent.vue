@@ -1,7 +1,5 @@
 <template>
-  <b-card
-    no-body
-  >
+  <b-card no-body>
     <b-card-header>
       <h4 class="mb-0">
         Commission
@@ -48,16 +46,14 @@
 </template>
 
 <script>
-import {
-  BCard, BCardHeader, BRow, BCol, BCardText,
-} from 'bootstrap-vue'
-import VueApexCharts from 'vue-apexcharts'
-import { $themeColors } from '@themeConfig'
-import { percent, toDay } from '@/libs/utils'
+import { BCard, BCardHeader, BRow, BCol, BCardText } from "bootstrap-vue";
+import VueApexCharts from "vue-apexcharts";
+import { $themeColors } from "@themeConfig";
+import { percent, toDay } from "@/libs/utils";
 
-const $strokeColor = '#ebe9f1'
-const $textHeadingColor = '#5e5873'
-const $goalStrokeColor2 = '#51e5a8'
+const $strokeColor = "#ebe9f1";
+const $textHeadingColor = "#5e5873";
+const $goalStrokeColor2 = "#51e5a8";
 export default {
   components: {
     VueApexCharts,
@@ -78,7 +74,7 @@ export default {
       goalOverviewRadialBar: {
         chart: {
           height: 105,
-          type: 'radialBar',
+          type: "radialBar",
           sparkline: {
             enabled: true,
           },
@@ -97,11 +93,11 @@ export default {
             startAngle: -150,
             endAngle: 150,
             hollow: {
-              size: '60%',
+              size: "60%",
             },
             track: {
               background: $strokeColor,
-              strokeWidth: '80%',
+              strokeWidth: "80%",
             },
             dataLabels: {
               name: {
@@ -109,17 +105,17 @@ export default {
               },
               value: {
                 color: $textHeadingColor,
-                fontSize: '2.86rem',
-                fontWeight: '600',
+                fontSize: "2.86rem",
+                fontWeight: "600",
               },
             },
           },
         },
         fill: {
-          type: 'gradient',
+          type: "gradient",
           gradient: {
-            shade: 'dark',
-            type: 'horizontal',
+            shade: "dark",
+            type: "horizontal",
             shadeIntensity: 0.5,
             gradientToColors: [$themeColors.success],
             inverseColors: true,
@@ -129,7 +125,7 @@ export default {
           },
         },
         stroke: {
-          lineCap: 'round',
+          lineCap: "round",
         },
         grid: {
           padding: {
@@ -137,15 +133,15 @@ export default {
           },
         },
       },
-    }
+    };
   },
   methods: {
     dateFormat(value) {
-      return toDay(value)
+      return toDay(value);
     },
     percentFormat(value) {
-      return percent(value)
+      return percent(value);
     },
   },
-}
+};
 </script>

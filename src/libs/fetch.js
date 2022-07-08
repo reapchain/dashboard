@@ -26,6 +26,7 @@ import {
   validatorsUnbondingDummy,
 } from "./testdata";
 import { ethToReap } from "./metamask/addressConverter";
+import coinoneAxios, { tempChartData } from "./common/coinone";
 
 function commonProcess(res) {
   if (res && Object.keys(res).includes("result")) {
@@ -233,9 +234,8 @@ export default class ChainFetch {
 
   async getMintingInflation() {
     if (isTypeofEvmos(this.config.chain_name)) {
-      return this.get("/evmos/inflation/v1/inflation_rate").then((data) =>
-        Number(data.inflation_rate / 100 || 0)
-      );
+      const data = await this.get("/evmos/inflation/v1/inflation_rate");
+      return Number(data.inflation_rate / 100 || 0);
     }
     if (this.isModuleLoaded("minting")) {
       return this.get("/minting/inflation").then((data) =>
@@ -388,13 +388,6 @@ export default class ChainFetch {
         (data) => data.params
       );
       await this.get("/evmos/inflation/v1/period").then((data) => {
-        Object.entries(data).forEach((x) => {
-          const k = x[0];
-          const v = x[1];
-          result[k] = v;
-        });
-      });
-      await this.get("/evmos/inflation/v1/total_supply").then((data) => {
         Object.entries(data).forEach((x) => {
           const k = x[0];
           const v = x[1];
@@ -756,18 +749,27 @@ export default class ChainFetch {
     );
   }
 
-  async getMarketChart(days = 14, coin = null) {
-    const conf = this.getSelectedConfig();
-    const currency = getUserCurrency();
-    if (conf.assets[0] && conf.assets[0].coingecko_id) {
-      return ChainFetch.fetch(
-        " https://api.coingecko.com",
-        `/api/v3/coins/${coin ||
-          conf.assets[0]
-            .coingecko_id}/market_chart?vs_currency=${currency}&days=${days}`
+  async getMarketChart() {
+    const currency = "krw";
+    const coin = "reap";
+
+    try {
+      const { data } = await coinoneAxios.get(
+        `/public/v2/chart/${currency}/${coin}?interval=1h`
       );
+      if (data.result && data.result === "success") {
+        const chartDataPrices = data.chart.map((chartData) => {
+          return [Number(chartData.timestamp), Number(chartData.close)];
+        });
+        return {
+          prices: chartDataPrices,
+        };
+      }
+      return null;
+    } catch (error) {
+      console.log(error);
+      return null;
     }
-    return null;
   }
 
   // CoinMarketCap

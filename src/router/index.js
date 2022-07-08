@@ -111,29 +111,29 @@ const router = new VueRouter({
       alias: "/:chain",
       component: () => import("@/views/Summary.vue"),
       meta: {
-        pageTitle: "Home",
+        pageTitle: "Summary",
         breadcrumb: [
           {
-            text: "Home",
+            text: "Summary",
             active: true,
           },
         ],
       },
     },
-    {
-      path: "/:chain/statesync",
-      name: "statesync",
-      component: () => import("@/views/StateSync.vue"),
-      meta: {
-        pageTitle: "State Sync",
-        breadcrumb: [
-          {
-            text: "State Synchronization",
-            active: true,
-          },
-        ],
-      },
-    },
+    // {
+    //   path: "/:chain/statesync",
+    //   name: "statesync",
+    //   component: () => import("@/views/StateSync.vue"),
+    //   meta: {
+    //     pageTitle: "State Sync!!",
+    //     breadcrumb: [
+    //       {
+    //         text: "State Synchronization",
+    //         active: true,
+    //       },
+    //     ],
+    //   },
+    // },
     {
       path: "/:chain/uptime",
       name: "uptime",
@@ -203,55 +203,55 @@ const router = new VueRouter({
       name: "staking-valiator",
       component: () => import("@/views/StakingValidator.vue"),
       meta: {
-        pageTitle: "Staking Validator",
+        pageTitle: "Validator Details",
         breadcrumb: [
           {
             text: "Staking",
             active: true,
           },
           {
-            text: "Validator",
+            text: "Validator Details",
             active: true,
           },
         ],
       },
     },
-    {
-      path: "/:chain/gov",
-      name: "governance",
-      component: () => import("@/views/Governance.vue"),
-      meta: {
-        pageTitle: "Governance",
-        breadcrumb: [
-          {
-            text: "Governance",
-            active: true,
-          },
-          {
-            text: "Proposals",
-            active: true,
-          },
-        ],
-      },
-    },
-    {
-      path: "/:chain/gov/:proposalid",
-      name: "proposal",
-      component: () => import("@/views/GovernanceProposalView.vue"),
-      meta: {
-        pageTitle: "Governance",
-        breadcrumb: [
-          {
-            text: "Governance",
-            active: true,
-          },
-          {
-            text: "Proposal Detail",
-            active: true,
-          },
-        ],
-      },
-    },
+    // {
+    //   path: "/:chain/gov",
+    //   name: "governance",
+    //   component: () => import("@/views/Governance.vue"),
+    //   meta: {
+    //     pageTitle: "Governance",
+    //     breadcrumb: [
+    //       {
+    //         text: "Governance",
+    //         active: true,
+    //       },
+    //       {
+    //         text: "Proposals",
+    //         active: true,
+    //       },
+    //     ],
+    //   },
+    // },
+    // {
+    //   path: "/:chain/gov/:proposalid",
+    //   name: "proposal",
+    //   component: () => import("@/views/GovernanceProposalView.vue"),
+    //   meta: {
+    //     pageTitle: "Governance",
+    //     breadcrumb: [
+    //       {
+    //         text: "Governance",
+    //         active: true,
+    //       },
+    //       {
+    //         text: "Proposal Detail",
+    //         active: true,
+    //       },
+    //     ],
+    //   },
+    // },
     {
       path: "/:chain/blocks",
       name: "blocks",

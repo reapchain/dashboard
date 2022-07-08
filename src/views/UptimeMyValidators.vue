@@ -8,7 +8,11 @@
         md="4"
         class="text-truncate"
       >
-        <uptime-my-chain-blocks :chain="x" :validators="chainVals[x]" />
+        <uptime-my-chain-blocks
+          v-if="x !== 'false'"
+          :chain="x"
+          :validators="chainVals[x]"
+        />
       </b-col>
     </b-row>
     <b-alert class="mt-2" variant="success" show>
@@ -68,6 +72,7 @@ export default {
       const configs = getLocalChains();
       Object.keys(pinned).forEach((x) => {
         const cached = JSON.parse(getCachedValidators(x));
+        console.log("cached : ", cached);
         if (cached) {
           const validators = [];
           pinned[x].forEach((address) => {
@@ -79,6 +84,7 @@ export default {
           chainVals[x] = validators;
         } else {
           this.$http.getValidatorList(configs[x]).then((vals) => {
+            console.log("vals: ", vals);
             const validators = [];
             pinned[x].forEach((address) => {
               const val = vals.find(

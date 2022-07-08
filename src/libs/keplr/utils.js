@@ -1,7 +1,6 @@
 import axios from "../common/axios";
 import { getAccounts } from "@/libs/keplr/keplr";
 import { generateEndpointAccount } from "@tharsis/provider";
-
 import { makeSignDoc } from "@cosmjs/launchpad";
 import {
   AuthInfo,
@@ -14,11 +13,13 @@ import {
   MsgBeginRedelegate,
   MsgUndelegate,
 } from "@keplr-wallet/proto-types/cosmos/staking/v1beta1/tx";
-import { MsgWithdrawDelegatorReward } from "@keplr-wallet/proto-types/cosmos/distribution/v1beta1/tx";
+import {
+  MsgWithdrawDelegatorReward,
+  MsgWithdrawValidatorCommission,
+} from "@keplr-wallet/proto-types/cosmos/distribution/v1beta1/tx";
 import { MsgSend } from "@keplr-wallet/proto-types/cosmos/bank/v1beta1/tx";
 import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
 import { SignMode } from "@keplr-wallet/proto-types/cosmos/tx/signing/v1beta1/signing";
-import { createTxMsgWithdrawDelegatorReward } from "@tharsis/transactions";
 
 const chain = {
   chainId: process.env.VUE_APP_CHAIN_ID,
@@ -194,6 +195,26 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
                 "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
               value: MsgWithdrawDelegatorReward.encode({
                 delegatorAddress: msgValue.delegatorAddress,
+                validatorAddress: msgValue.validatorAddress,
+              }).finish(),
+            },
+          ],
+        };
+      case "WithdrawCommission":
+        return {
+          aminoMsgs: [
+            {
+              type: "cosmos-sdk/MsgWithdrawValidatorCommission",
+              value: {
+                validator_address: msgValue.validatorAddress,
+              },
+            },
+          ],
+          protoMsgs: [
+            {
+              typeUrl:
+                "/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission",
+              value: MsgWithdrawValidatorCommission.encode({
                 validatorAddress: msgValue.validatorAddress,
               }).finish(),
             },

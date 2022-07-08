@@ -13,6 +13,7 @@ import {
   createTxMsgBeginRedelegate,
   createTxMsgMultipleWithdrawDelegatorReward,
   createTxMsgUndelegate,
+  // createTxMsgWithdraw
 } from "@tharsis/transactions";
 
 import { ethToReap } from "./addressConverter";
@@ -299,6 +300,7 @@ export const connectMetamaskWallet = async () => {
   }
 
   const accountList = await ethereum.request({ method: "eth_requestAccounts" });
+  console.log("accountList : ", accountList);
 
   if (!accountList || accountList.length < 1) {
     return null;

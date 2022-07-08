@@ -24,7 +24,7 @@
         </b-card>
       </b-col>
     </b-row>
-    <b-row>
+    <b-row v-if="false">
       <b-col>
         <summary-assets-component />
       </b-col>
@@ -39,7 +39,7 @@
         <summary-parmeters-component :data="staking" />
       </b-col>
     </b-row>
-    <b-row v-if="gov.items.length > 0">
+    <b-row v-if="gov.items.length > 0 && false">
       <b-col>
         <summary-parmeters-component :data="gov" />
       </b-col>
@@ -143,7 +143,7 @@ export default {
           labels,
           datasets: [
             {
-              label: `Price (${getUserCurrency().toUpperCase()})`,
+              label: `Price (KRW)`,
               data,
               backgroundColor: "rgba(54, 162, 235, 0.2)",
               borderColor: "rgba(54, 162, 235, 1)",
@@ -176,7 +176,10 @@ export default {
     });
 
     this.$http.getStakingParameters().then((res) => {
-      this.staking = this.normalize(res, "Staking Parameters");
+      this.staking = this.normalize(
+        { ...res, bond_denom: "reap" },
+        "Staking Parameters"
+      );
       Promise.all([
         this.$http.getStakingPool(),
         this.$http.getBankTotal(res.bond_denom),
@@ -222,7 +225,10 @@ export default {
         this.$set(this.chain.items[chainIndex], "title", `${percent(res)}%`);
       });
       this.$http.getMintParameters().then((res) => {
-        this.mint = this.normalize(res, "Minting Parameters");
+        this.mint = this.normalize(
+          { ...res, mint_denom: "reap" },
+          "Minting Parameters"
+        );
       });
     }
 
