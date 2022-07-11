@@ -66,19 +66,16 @@ module.exports = {
   transpileDependencies: ["vue-echarts", "resize-detector"],
   devServer: {
     proxy: {
-      // "/api": {
-      //   target: "http://localhost:8080",
-      //   changeOrigin: true,
-      //   pathRewrite: {
-      //     "^/api": "",
-      //   },
-      // },
+      "/api": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        pathRewrite: {
+          "^/api": "",
+        },
+      },
       "/public/v2": {
         target: "https://api.coinone.co.kr",
         changeOrigin: true,
-        // pathRewrite: {
-        //   "^/public": "",
-        // },
       },
     },
   },

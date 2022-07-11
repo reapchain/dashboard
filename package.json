@@ -31,6 +31,7 @@
     "@ledgerhq/hw-app-cosmos": "^6.3.0",
     "@ledgerhq/hw-transport-web-ble": "^6.3.0",
     "@ledgerhq/hw-transport-webusb": "^6.3.0",
+    "@metamask/detect-provider": "^1.2.0",
     "@tharsis/provider": "^0.2.4",
     "@tharsis/transactions": "^0.2.2",
     "@vue/composition-api": "^1.4.9",

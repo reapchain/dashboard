@@ -15,6 +15,7 @@ import {
   createTxMsgUndelegate,
   // createTxMsgWithdraw
 } from "@tharsis/transactions";
+import detectEthereumProvider from "@metamask/detect-provider";
 
 import { ethToReap } from "./addressConverter";
 import { Secp256k1 } from "@cosmjs/crypto";
@@ -24,6 +25,19 @@ const chain = {
   chainId: process.env.VUE_APP_CHAIN_ID,
   cosmosChainId: process.env.VUE_APP_CHAIN_ID_COSMOS,
 };
+
+const chainAddParams = {
+  chainId: "0x7E6",
+  chainName: "reapchain",
+  nativeCurrency: {
+    name: "Reapchain",
+    symbol: "REAP",
+    decimals: 18,
+  },
+  rpcUrls: ["https://192.168.100.44:27400"],
+  blockExplorerUrls: ["http://192.168.100.44:8080/reapchain_local"],
+};
+
 const pubkeyType = "/ethermint.crypto.v1.ethsecp256k1.PubKey";
 
 export const metamaskSendTx = async (type, txData) => {
@@ -228,7 +242,7 @@ const getLocalPubkey = (ethAddress) => {
 };
 
 const setLocalPubkey = async (ethAddress) => {
-  let data = localStorage.getItem(`ethPubkey`) || {};
+  let data = JSON.parse(localStorage.getItem(`ethPubkey`)) || {};
 
   if (data.ethAddress) {
     return;
@@ -293,21 +307,52 @@ export const metamaskGetAccount = async () => {
 };
 
 export const connectMetamaskWallet = async () => {
+  const provider = await detectEthereumProvider();
+  if (!provider) {
+    console.log("Please install MetaMask!");
+    return;
+  } else {
+    if (provider !== window.ethereum) {
+      console.error("Do you have multiple wallets installed?");
+      return;
+    }
+  }
   const enable = await window.ethereum.enable();
   if (!enable || enable.length < 1) {
     console.log("metamask is not enable");
     return null;
   }
 
+  try {
+    await ethereum.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: chainAddParams.chainId }],
+    });
+  } catch (switchError) {
+    if (switchError.code === 4902) {
+      // try {
+      //   await ethereum.request({
+      //     method: "wallet_addEthereumChain",
+      //     params: [chainAddParams],
+      //   });
+      // } catch (addError) {
+      //   console.error(eddError);
+      //   return;
+      // }
+    }
+    console.error(switchError);
+    return;
+  }
+
   const accountList = await ethereum.request({ method: "eth_requestAccounts" });
-  console.log("accountList : ", accountList);
 
   if (!accountList || accountList.length < 1) {
     return null;
   }
 
-  const ethAddress = enable[0];
+  const ethAddress = await enable[0];
   const pubkey = getLocalPubkey(ethAddress);
+
   if (!pubkey) {
     await setLocalPubkey(ethAddress);
   }
