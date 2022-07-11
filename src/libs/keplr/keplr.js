@@ -144,6 +144,6 @@ const chainConfig_local = {
     average: 25000000000,
     high: 40000000000,
   },
-  features: ["ibc-transfer", "stargate", "no-legacy-stdTx", "ibc-go"],
+  features: ["ibc-transfer", "ibc-go", "eth-address-gen", "eth-key-sign"],
   beta: true,
 };
