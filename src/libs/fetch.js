@@ -187,6 +187,14 @@ export default class ChainFetch {
     );
   }
 
+  async getTxsBySenderPagination(sender, page = 1, size = 10) {
+    const limit = size;
+    const offset = page * size - size;
+    return this.get(
+      `/cosmos/tx/v1beta1/txs?events=message.sender='${sender}'&pagination.reverse=true&order_by=ORDER_BY_DESC&pagination.limit=${limit}&pagination.offset=${offset}`
+    );
+  }
+
   async getTxsByRecipient(recipient) {
     return this.get(`/txs?message.recipient=${recipient}`);
   }

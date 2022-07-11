@@ -255,12 +255,11 @@
             </router-link>
           </template>
         </b-table>
-
         <b-pagination
-          v-if="Number(transactions.page_total) > 1"
-          :total-rows="transactions.total_count"
-          :per-page="transactions.limit"
-          :value="transactions.page_number"
+          v-if="Number(pagination.totalPage) > 1"
+          :total-rows="pagination.totalCount"
+          :per-page="pagination.pageSize"
+          :value="pagination.currentPage"
           align="center"
           class="mt-1"
           @change="pageload"
@@ -597,11 +596,28 @@ export default {
       stakingParameters: {},
       operationModalType: "",
       error: null,
+      pagination: {
+        currentPage: 1,
+        pageSize: 10,
+        totalCount: 0,
+        totalPage: 0,
+      },
     };
   },
   computed: {
     address() {
       return this.$route.params.address;
+    },
+    txs() {
+      if (this.transactions.txs) {
+        return this.transactions.tx_responses.map((x) => ({
+          height: Number(x.height),
+          txhash: x.txhash,
+          msgs: abbrMessage(x.tx.body.messages),
+          time: toDay(x.timestamp),
+        }));
+      }
+      return [];
     },
     walletAccount() {
       const key = this.$store.state.chains.defaultWallet;
@@ -621,17 +637,6 @@ export default {
         return this.account.type.substring(this.account.type.indexOf("/") + 1);
       }
       return "Profile";
-    },
-    txs() {
-      if (this.transactions.txs) {
-        return this.transactions.tx_responses.map((x) => ({
-          height: Number(x.height),
-          txhash: x.txhash,
-          msgs: abbrMessage(x.tx.body.messages),
-          time: toDay(x.timestamp),
-        }));
-      }
-      return [];
     },
     assetTable() {
       let total = [];
@@ -793,9 +798,15 @@ export default {
       .then((acc) => {
         this.account = acc;
         this.initial();
-        this.$http.getTxsBySender(this.address).then((res) => {
-          this.transactions = res;
-        });
+        this.$http
+          .getTxsBySenderPagination(
+            this.address,
+            this.pagination.currentPage,
+            this.pagination.pageSize
+          )
+          .then((res) => {
+            this.applyPaginationAndTxs(res);
+          });
         this.$http.getStakingParameters().then((res) => {
           this.stakingParameters = res;
         });
@@ -817,9 +828,15 @@ export default {
         .then((acc) => {
           this.account = acc;
           this.initial();
-          this.$http.getTxsBySender(this.address).then((res) => {
-            this.transactions = res;
-          });
+          this.$http
+            .getTxsBySenderPagination(
+              this.address,
+              this.pagination.currentPage,
+              this.pagination.pageSize
+            )
+            .then((res) => {
+              this.applyPaginationAndTxs(res);
+            });
           this.$http.getStakingParameters().then((res) => {
             this.stakingParameters = res;
           });
@@ -856,9 +873,12 @@ export default {
       return numberWithCommas(v);
     },
     pageload(v) {
-      this.$http.getTxsBySender(this.address, v).then((res) => {
-        this.transactions = res;
-      });
+      this.pagination.currentPage = v;
+      this.$http
+        .getTxsBySenderPagination(this.address, v, this.pagination.pageSize)
+        .then((res) => {
+          this.applyPaginationAndTxs(res);
+        });
     },
     selectValue(v, type) {
       this.selectedValidator = v;
@@ -916,6 +936,22 @@ export default {
     },
     ethaddress() {
       return toETHAddress(this.address);
+    },
+    applyPaginationAndTxs(res) {
+      if (!res.pagination || !res.txs) {
+        res.txs = [];
+        return;
+      }
+
+      this.pagination = {
+        ...this.pagination,
+        totalCount: res.pagination.total,
+        totalPage: Math.ceil(
+          Number(res.pagination.total) / this.pagination.pageSize
+        ),
+      };
+
+      this.transactions = res;
     },
   },
 };
