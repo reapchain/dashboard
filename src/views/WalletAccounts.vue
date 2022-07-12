@@ -553,7 +553,6 @@ export default {
     },
     init() {
       this.accounts = getLocalAccounts();
-      console.log("MyAccount this.accounts : ", this.accounts);
       if (!this.accounts) {
         return;
       }

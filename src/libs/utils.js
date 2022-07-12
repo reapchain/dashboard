@@ -595,10 +595,24 @@ export function formatTokenAmount(
   if (amount > 10) {
     if (format) {
       return numberWithCommas(parseFloat(amount.toFixed(decimals)));
+      // return numberWithCommas(amount.toFixed(decimals));
     }
+    // return amount.toFixed(decimals);
     return parseFloat(amount.toFixed(decimals));
+  } else if (amount === 0) {
+    return "0";
+  } else if (amount < 1) {
+    return removeLastZero(amount.toFixed(exp));
   }
-  return parseFloat(amount.toFixed(exp));
+
+  return amount.toFixed(exp);
+}
+
+export function removeLastZero(stringFloat) {
+  if (stringFloat.indexOf(".") === -1 && stringFloat.length < 2) {
+    return stringFloat;
+  }
+  return stringFloat.replace(/[0]+$/, "");
 }
 
 export function isTestnet() {
