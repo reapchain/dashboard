@@ -19,6 +19,22 @@
             <div class="d-flex flex-column ml-1">
               <div class="mb-1">
                 <h4 class="mb-0">
+                  <template v-if="isMyAccount">
+                    <template v-if="myDevice == 'keplr'">
+                      <img
+                        src="@/assets/images/wallet/keplr-logo.svg"
+                        width="20"
+                        alt="keplr"
+                      />
+                    </template>
+                    <template v-else-if="myDevice == 'metamask'">
+                      <img
+                        src="@/assets/images/wallet/metamask-logo.svg"
+                        width="20"
+                        alt="metamask"
+                      />
+                    </template>
+                  </template>
                   {{ validator.description.moniker }}
                 </h4>
                 <span class="card-text">{{
@@ -172,6 +188,7 @@
             :data="distribution"
             :validator="validator.operator_address"
             :address="accountAddress"
+            :withdrawDisabled="!isMyAccount || !(myDevice == 'keplr')"
           />
         </b-col>
         <b-col lg="4" md="12">
@@ -199,10 +216,10 @@
               </template>
             </b-table>
             <b-pagination
-              v-if="Number(transactions.page_total) > 1"
-              :total-rows="transactions.total_count"
-              :per-page="transactions.limit"
-              :value="transactions.page_number"
+              v-if="Number(pagination.totalPage) > 1"
+              :total-rows="pagination.totalCount"
+              :per-page="pagination.pageSize"
+              :value="pagination.currentPage"
               align="center"
               class="mt-1"
               @change="pageload"
@@ -250,6 +267,7 @@ import OperationModal from "@/views/components/OperationModal/index.vue";
 import StakingAddressComponent from "./StakingAddressComponent.vue";
 import StakingCommissionComponent from "./StakingCommissionComponent.vue";
 import StakingRewardComponent from "./StakingRewardComponent.vue";
+import { getLocalAccounts } from "@/libs/utils";
 
 export default {
   components: {
@@ -293,9 +311,31 @@ export default {
       blocks: Array.from("0".repeat(100)).map((x) => [Boolean(x), Number(x)]),
       distribution: {},
       transactions: {},
+      pagination: {
+        currentPage: 1,
+        pageSize: 10,
+        totalCount: 0,
+        totalPage: 0,
+      },
     };
   },
   computed: {
+    isMyAccount() {
+      return this.walletAccount == this.accountAddress && this.myDevice;
+    },
+    walletAccount() {
+      const key = this.$store.state.chains.defaultWallet;
+      return key || "";
+    },
+    myDevice() {
+      const accounts = getLocalAccounts();
+      const selectedWallet = this.$store.state.chains.defaultWallet || "";
+
+      if (accounts && selectedWallet) {
+        return accounts[selectedWallet].device || "";
+      }
+      return "";
+    },
     txs() {
       if (this.transactions.txs) {
         return this.transactions.tx_responses.map((x) => ({
@@ -333,9 +373,7 @@ export default {
         this.validator = data;
 
         this.processAddress(data.operator_address, data.consensus_pubkey);
-        this.$http.getTxsBySender(this.accountAddress).then((res) => {
-          this.transactions = res;
-        });
+        this.pageload(1);
 
         const { identity } = data.description;
         keybase(identity).then((d) => {
@@ -353,9 +391,18 @@ export default {
       });
     },
     pageload(v) {
-      this.$http.getTxsBySender(this.accountAddress, v).then((res) => {
-        this.transactions = res;
-      });
+      console.log("pageload : ", v);
+      this.pagination.currentPage = v;
+      this.$http
+        .getTxsBySenderPagination(
+          this.accountAddress,
+          v,
+          this.pagination.pageSize
+        )
+        .then((res) => {
+          console.log("res : ", res);
+          this.applyPaginationAndTxs(res);
+        });
     },
     formatHash: abbrAddress,
     timeFormat(value) {
@@ -413,6 +460,22 @@ export default {
           ]);
         }
       });
+    },
+    applyPaginationAndTxs(res) {
+      if (!res.pagination || !res.txs) {
+        res.txs = [];
+        return;
+      }
+
+      this.pagination = {
+        ...this.pagination,
+        totalCount: res.pagination.total,
+        totalPage: Math.ceil(
+          Number(res.pagination.total) / this.pagination.pageSize
+        ),
+      };
+
+      this.transactions = res;
     },
   },
 };
