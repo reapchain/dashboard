@@ -268,38 +268,36 @@
 
       <b-card v-if="account" title="Profile" class="text-trancate">
         <b-table-simple stacked="sm">
-          <b-tbody v-if="account.type === 'cosmos-sdk/BaseAccount'">
+          <b-tbody v-if="account.value.base_account">
+            <b-tr> <b-td> Account Type </b-td><b-td>Base Account</b-td> </b-tr>
             <b-tr>
-              <b-td> Account Type </b-td><b-td> {{ account.type }} </b-td>
+              <b-td> Address </b-td
+              ><b-td>{{ account.value.base_account.address }}</b-td>
             </b-tr>
             <b-tr>
               <b-td class="max-width:100px;"> Account Number </b-td
-              ><b-td> {{ account.value.account_number }} </b-td>
+              ><b-td> {{ account.value.base_account.account_number }} </b-td>
             </b-tr>
             <b-tr>
-              <b-td> Sequence </b-td><b-td> {{ account.value.sequence }} </b-td>
+              <b-td> Sequence </b-td
+              ><b-td> {{ account.value.base_account.sequence }} </b-td>
             </b-tr>
             <b-tr>
               <b-td> Public Key </b-td
               ><b-td>
                 <object-field-component
-                  :tablefield="account.value.public_key"
+                  :tablefield="account.value.base_account.public_key"
                 />
               </b-td>
             </b-tr>
           </b-tbody>
-          <b-tbody
-            v-else-if="
-              account.type === 'cosmos-sdk/PeriodicVestingAccount' &&
-                account.value.base_vesting_account
-            "
-          >
+          <b-tbody v-else-if="account.value.base_vesting_account">
             <b-tr>
               <b-td>
                 Account Type
               </b-td>
               <b-td>
-                {{ account.type }}
+                Vesting Account
               </b-td>
             </b-tr>
             <b-tr>
@@ -357,7 +355,7 @@
             <b-tr>
               <b-td> Vesting Time </b-td
               ><b-td>
-                {{ formatTime(account.value.start_time) }} -
+                {{ formatTime(new Date(account.value.start_time)) }} -
                 {{
                   formatTime(account.value.base_vesting_account.end_time)
                 }}</b-td
@@ -368,6 +366,7 @@
               <b-td>
                 <b-table-simple>
                   <th>Length</th>
+                  <th>End Date</th>
                   <th>Amount</th>
                   <b-tr
                     v-for="(p, index) in account.value.vesting_periods"
@@ -380,80 +379,19 @@
                         }}</small
                       >
                     </td>
+                    <td>
+                      {{
+                        formatTime(
+                          reduceTimestamp(
+                            account.value.vesting_periods.slice(0, index + 1)
+                          )
+                        )
+                      }}
+                    </td>
                     <td>{{ formatToken(p.amount) }}</td>
                   </b-tr>
                 </b-table-simple>
               </b-td>
-            </b-tr>
-          </b-tbody>
-          <b-tbody
-            v-else-if="
-              account.type === 'cosmos-sdk/DelayedVestingAccount' &&
-                account.value.base_vesting_account
-            "
-          >
-            <b-tr>
-              <b-td> Account Type </b-td><b-td> {{ account.type }} </b-td>
-            </b-tr>
-            <b-tr>
-              <b-td style="max-width:100px;"> Account Number </b-td
-              ><b-td>
-                {{
-                  account.value.base_vesting_account.base_account.account_number
-                }}
-              </b-td>
-            </b-tr>
-            <b-tr>
-              <b-td> Sequence </b-td
-              ><b-td>
-                {{ account.value.base_vesting_account.base_account.sequence }}
-              </b-td>
-            </b-tr>
-            <b-tr>
-              <b-td> Public Key </b-td
-              ><b-td>
-                <object-field-component
-                  :tablefield="
-                    account.value.base_vesting_account.base_account.public_key
-                  "
-                />
-              </b-td>
-            </b-tr>
-            <b-tr>
-              <b-td> Original Vesting </b-td
-              ><b-td>
-                {{
-                  formatToken(
-                    account.value.base_vesting_account.original_vesting
-                  )
-                }}
-              </b-td>
-            </b-tr>
-            <b-tr>
-              <b-td> Delegated Free </b-td
-              ><b-td>
-                {{
-                  formatToken(account.value.base_vesting_account.delegated_free)
-                }}
-              </b-td>
-            </b-tr>
-            <b-tr>
-              <b-td> Delegated Vesting </b-td
-              ><b-td>
-                {{
-                  formatToken(
-                    account.value.base_vesting_account.delegated_vesting
-                  )
-                }}
-              </b-td>
-            </b-tr>
-            <b-tr>
-              <b-td> End Time </b-td
-              ><b-td>
-                {{
-                  formatTime(account.value.base_vesting_account.end_time)
-                }}</b-td
-              >
             </b-tr>
           </b-tbody>
           <object-field-component
@@ -907,6 +845,9 @@ export default {
         return parseFloat((qty * price).toFixed(2));
       }
       return 0;
+    },
+    reduceTimestamp(arr) {
+      return arr.reduce((acc, curr) => acc + Number(curr.length), 0);
     },
     formatDate: (v) => dayjs(v).format("YYYY-MM-DD HH:mm:ss"),
     formatTime: (v) => toDay(Number(v) * 1000),
