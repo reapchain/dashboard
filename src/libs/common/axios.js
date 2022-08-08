@@ -1,7 +1,8 @@
 import axios from "axios";
+import { chainInfo } from "@/chains/config/reapchain.config";
 
 const axiosInstance = axios.create({
-  baseURL: process.env.VUE_APP_API_BASEURL || "/",
+  baseURL: chainInfo.restEndPoint,
   headers: { "Content-Type": "application/json" },
   responseType: "json",
   timeout: 5000,

@@ -20,11 +20,7 @@ import {
 import { MsgSend } from "@keplr-wallet/proto-types/cosmos/bank/v1beta1/tx";
 import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
 import { SignMode } from "@keplr-wallet/proto-types/cosmos/tx/signing/v1beta1/signing";
-
-const chain = {
-  chainId: process.env.VUE_APP_CHAIN_ID,
-  cosmosChainId: process.env.VUE_APP_CHAIN_ID_COSMOS,
-};
+import { chainInfo } from "@/chains/config/reapchain.config";
 
 export const keplrSendTx = async (type, txData) => {
   try {
@@ -41,13 +37,18 @@ export const keplrSendTx = async (type, txData) => {
       console.log("error : account Info...");
     }
 
+    let baseAccountEntry;
+    if (apiAccount.account.base_vesting_account) {
+      baseAccountEntry = apiAccount.account.base_vesting_account.base_account;
+    } else if (apiAccount.account.base_account) {
+      baseAccountEntry = apiAccount.account.base_account;
+    }
     const sender = {
       accountAddress: keplrAccount.address,
-      sequence: apiAccount.account.base_account.sequence,
-      accountNumber: apiAccount.account.base_account.account_number,
       pubkey: keplrAccount.pubkey.key || "",
+      sequence: baseAccountEntry.sequence,
+      accountNumber: baseAccountEntry.account_number,
     };
-
     const txMessageSet = createKeplrTxMessageSet(type, txData, sender);
 
     const fee = {
@@ -61,14 +62,14 @@ export const keplrSendTx = async (type, txData) => {
     const signDoc = makeSignDoc(
       txMessageSet.aminoMsgs,
       fee,
-      chain.cosmosChainId,
+      chainInfo.cosmosChainId,
       txData.memo,
-      apiAccount.account.base_account.account_number,
-      apiAccount.account.base_account.sequence
+      baseAccountEntry.account_number,
+      baseAccountEntry.sequence
     );
 
     const signResponse = await window.keplr.signAmino(
-      chain.cosmosChainId,
+      chainInfo.cosmosChainId,
       keplrAccount.address,
       signDoc
     );
@@ -110,7 +111,7 @@ export const keplrSendTx = async (type, txData) => {
     }).finish();
 
     const sendTxRes = await window.keplr?.sendTx(
-      chain.cosmosChainId,
+      chainInfo.cosmosChainId,
       signedTx,
       "async"
     );

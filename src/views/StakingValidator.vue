@@ -391,7 +391,6 @@ export default {
       });
     },
     pageload(v) {
-      console.log("pageload : ", v);
       this.pagination.currentPage = v;
       this.$http
         .getTxsBySenderPagination(
@@ -400,7 +399,6 @@ export default {
           this.pagination.pageSize
         )
         .then((res) => {
-          console.log("res : ", res);
           this.applyPaginationAndTxs(res);
         });
     },

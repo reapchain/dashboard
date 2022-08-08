@@ -1,12 +1,13 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import store from "../store";
+import { chainInfo } from "@/chains/config/reapchain.config";
 
 Vue.use(VueRouter);
 
 const router = new VueRouter({
   mode: "history",
-  base: process.env.BASE_URL,
+  base: "",
   scrollBehavior() {
     return { x: 0, y: 0 };
   },
@@ -14,7 +15,7 @@ const router = new VueRouter({
     {
       path: "/",
       name: "home",
-      redirect: process.env.VUE_APP_CHAIN_NAME || "/",
+      redirect: chainInfo.chainName,
       component: () => import("@/views/Home.vue"),
       meta: {
         layout: "full",

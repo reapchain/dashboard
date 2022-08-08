@@ -410,7 +410,6 @@ export default {
                 gas: this.gas,
               },
             });
-            console.log("res : ", res);
           } else {
             this.showResult = false;
             this.error = "walletType error...";

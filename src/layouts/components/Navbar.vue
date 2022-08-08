@@ -258,6 +258,7 @@ import { getLocalAccounts, timeIn, toDay } from "@/libs/utils";
 import { connectKeplrWallet, initKeplr } from "@/libs/keplr/keplr";
 import { connectMetamaskWallet } from "@/libs/metamask/utils";
 import { ethToReap } from "@/libs/metamask/addressConverter";
+import { chainInfo } from "@/chains/config/reapchain.config";
 
 export default {
   components: {
@@ -296,7 +297,7 @@ export default {
       index: 0,
       chainid: "",
       chainInfo: {
-        chainName: process.env.VUE_APP_CHAIN_NAME,
+        chainName: chainInfo.chainName,
       },
       wallet: {
         isConnected: false,

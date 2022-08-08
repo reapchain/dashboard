@@ -26,7 +26,7 @@ import {
   validatorsUnbondingDummy,
 } from "./testdata";
 import { ethToReap } from "./metamask/addressConverter";
-import coinoneAxios, { tempChartData } from "./common/coinone";
+import coinoneAxios from "./common/coinone";
 
 function commonProcess(res) {
   if (res && Object.keys(res).includes("result")) {
@@ -98,20 +98,10 @@ const validatorFilter = (
 };
 
 export default class ChainFetch {
-  constructor() {
-    this.osmosis = new OsmosAPI();
-    this.EndpointVersion = {
-      certik: "v1alpha1",
-    };
-  }
-
-  getEndpointVersion() {
-    return this.EndpointVersion[this.config.chain_name] || "v1beta1";
-  }
-
   getSelectedConfig() {
     let chain = store.state.chains.selected;
     const lschains = localStorage.getItem("chains");
+
     if (lschains) {
       chain = JSON.parse(lschains)[chain.chain_name];
     }
@@ -134,13 +124,6 @@ export default class ChainFetch {
   }
 
   async getLatestBlock(config = null) {
-    const conf = config || this.getSelectedConfig();
-    if (conf.chain_name === "injective") {
-      return ChainFetch.fetch(
-        "https://tm.injective.network",
-        "/block"
-      ).then((data) => Block.create(commonProcess(data)));
-    }
     return this.get(
       `/blocks/latest?${new Date().getTime()}`,
       config
@@ -288,9 +271,6 @@ export default class ChainFetch {
       const validatorsAll = validatorsBonded.validators
         .concat(validatorsUnbonding.validators)
         .concat(validatorsUnbonded.validators);
-      // const validatorsAll = validatorsDummy.validators
-      //   .concat(validatorsUnbondedDummy.validators)
-      //   .concat(validatorsUnbondingDummy.validators);
       const validatorActive = validatorFilter(validatorsAll, {
         type: "",
         active: "active",
@@ -852,7 +832,6 @@ export default class ChainFetch {
       (Array.isArray(conf.api)
         ? conf.api[this.getApiIndex(config)]
         : conf.api) + url;
-    // finalurl = finalurl.replaceAll('v1beta1', this.getEndpointVersion())
     const ret = await fetch(finalurl).then((response) => response.json());
     return ret;
   }

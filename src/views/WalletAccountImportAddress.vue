@@ -283,6 +283,7 @@ import {
 import { toHex } from "@cosmjs/encoding";
 import { metamaskGetAccount } from "@/libs/metamask/utils";
 import { getAccounts } from "@/libs/keplr/keplr";
+import { chainInfo } from "@/chains/config/reapchain.config";
 
 export default {
   components: {
@@ -507,8 +508,8 @@ export default {
       const string = localStorage.getItem("accounts");
       const accounts = string ? JSON.parse(string) : {};
 
-      const selected = process.env.VUE_APP_CHAIN_NAME || "reapchain";
-      const thisChain = this.chains[process.env.VUE_APP_CHAIN_NAME];
+      const selected = chainInfo.chainName;
+      const thisChain = this.chains[chainInfo.chainName];
 
       accounts[this.name] = {
         name: this.name,

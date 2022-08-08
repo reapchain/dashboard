@@ -16,15 +16,10 @@ import {
   // createTxMsgWithdraw
 } from "@tharsis/transactions";
 import detectEthereumProvider from "@metamask/detect-provider";
-
 import { ethToReap } from "./addressConverter";
 import { Secp256k1 } from "@cosmjs/crypto";
 import { utils } from "ethers";
-
-const chain = {
-  chainId: process.env.VUE_APP_CHAIN_ID,
-  cosmosChainId: process.env.VUE_APP_CHAIN_ID_COSMOS,
-};
+import { chainInfo } from "@/chains/config/reapchain.config";
 
 const chainAddParams = {
   chainId: "0x7E6",
@@ -34,8 +29,8 @@ const chainAddParams = {
     symbol: "REAP",
     decimals: 18,
   },
-  rpcUrls: ["https://192.168.100.44:27400"],
-  blockExplorerUrls: ["http://192.168.100.44:8080/reapchain_local"],
+  rpcUrls: [chainInfo.evmRpcEndPoint],
+  blockExplorerUrls: [chainInfo.dashboardUrl],
 };
 
 const pubkeyType = "/ethermint.crypto.v1.ethsecp256k1.PubKey";

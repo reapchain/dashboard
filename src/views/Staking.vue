@@ -244,6 +244,7 @@
               <span class="font-weight-bolder d-block text-nowrap">
                 <router-link :to="`./staking/${data.item.operator_address}`">
                   {{ data.item.description.moniker }}
+                  {{ data.item.jailed ? " [Jailed]" : "" }}
                   <!-- {{ data.item.type ? `(${data.item.type})` : "" }} -->
                 </router-link>
               </span>
@@ -436,6 +437,7 @@ export default {
           const previous = this.previousPower[x.consensus_pubkey.value] || 0;
           xh.changes = latest - previous;
         }
+
         return xh;
       });
     },

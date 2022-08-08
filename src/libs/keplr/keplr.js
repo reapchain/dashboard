@@ -1,13 +1,12 @@
-export const connectKeplrWallet = async () => {
-  console.log("Checking keplr");
+import { chainInfo } from "@/chains/config/reapchain.config";
+const chainId = chainInfo.cosmosChainId;
 
+export const connectKeplrWallet = async () => {
   if (!window.getOfflineSignerOnlyAmino || !window.keplr) {
     const error = "Please install Keplr extension";
     console.error(error);
     return null;
   }
-
-  const chainId = process.env.VUE_APP_CHAIN_ID_COSMOS || "";
 
   await window.keplr.enable(chainId);
 
@@ -15,7 +14,7 @@ export const connectKeplrWallet = async () => {
   const accounts = await offlineSigner.getAccounts();
 
   if (accounts.length > 0) {
-    const keyInfo = await keplr.getKey(process.env.VUE_APP_CHAIN_ID_COSMOS);
+    const keyInfo = await keplr.getKey(chainId);
     if (keyInfo) {
       return keyInfo;
     }
@@ -52,12 +51,9 @@ export const getAccounts = async () => {
     return [];
   }
 
-  const chainId = process.env.VUE_APP_CHAIN_ID_COSMOS || "";
   await window.keplr.enable(chainId);
   const offlineSigner = window.getOfflineSigner(chainId);
   const accounts = await offlineSigner.getAccounts();
-
-  console.log("accounts : ", accounts);
 
   return {
     address: accounts[0].address,
@@ -73,7 +69,6 @@ export const getOfflineSigner = () => {
   if (!window.getOfflineSigner || !window.keplr) {
     return null;
   }
-  const chainId = process.env.VUE_APP_CHAIN_ID_COSMOS || "";
   const offlineSigner = window.getOfflineSigner(chainId);
   return offlineSigner;
 };
@@ -100,20 +95,20 @@ export const initKeplr = async () => {
 };
 
 const chainConfig_local = {
-  rpc: process.env.VUE_APP_API_RPC_ENDPOINT,
+  rpc: chainInfo.rpcEndPoint,
   rpcConfig: undefined,
-  rest: process.env.VUE_APP_API_BASEURL,
+  rest: chainInfo.restEndPoint,
   restConfig: undefined,
-  chainId: process.env.VUE_APP_CHAIN_ID_COSMOS,
-  chainName: process.env.VUE_APP_CHAIN_NAME,
+  chainId: chainInfo.cosmosChainId,
+  chainName: chainInfo.chainName,
   stakeCurrency: {
     coinDenom: "reap",
     coinMinimalDenom: "areap",
     coinDecimals: 18,
     coinGeckoId: "reap",
   },
-  walletUrl: "http://explorer.reapchain.com/reapchain",
-  walletUrlForStaking: "http://explorer.reapchain.com/reapchain",
+  walletUrl: chainInfo.dashboardUrl,
+  walletUrlForStaking: chainInfo.dashboardUrl,
   bip44: {
     coinType: 60,
   },
