@@ -3,9 +3,9 @@ export const chainInfo = {
   chainName: "reapchain_local",
   chainId: "2022",
   cosmosChainId: "mercury_2022-2",
-  restEndPoint: "http://192.168.100.44:1317",
-  rpcEndPoint: "http://192.168.100.44:27100",
-  evmRpcEndPoint: "http://192.168.100.44:27400",
+  restEndPoint: "http://13.125.20.241:1317",
+  rpcEndPoint: "http://13.125.20.241:27100",
+  evmRpcEndPoint: "http://13.125.20.241:27400",
   dashboardUrl: "https://dashboard.reapchain.com",
 };
 
