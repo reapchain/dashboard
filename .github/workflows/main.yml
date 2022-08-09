@@ -32,11 +32,11 @@ jobs:
         run: |
           aws s3 rm s3://${{ secrets.AWS_S3_BUCKET_NAME }} \
             --recursive \
-            --region ap-northeast-2 \
+            --region ap-northeast-2
           aws s3 cp \
             --recursive \
             --region ap-northeast-2 \
-            dist s3://${{ secrets.AWS_S3_BUCKET_NAME }}
+            build s3://${{ secrets.AWS_S3_BUCKET_NAME }}
       - name: Cloudfront Invalidate
         uses: awact/cloudfront-action@master
         env:
