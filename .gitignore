@@ -20,6 +20,9 @@ yarn-error.log*
 
 !.vscode/*.code-snippets
 
+# env
+.env.*
+
 # script
 /vuexy-scripts
 
