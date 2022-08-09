@@ -32,4 +32,4 @@ export const networkInfo = {
 };
 
 export const coinoneApi =
-  "https://thingproxy.freeboard.io/fetch/https://api.coinone.co.kr";
+  "https://cors-anywhere.herokuapp.com/https://api.coinone.co.kr";
