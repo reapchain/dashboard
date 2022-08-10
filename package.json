@@ -8,13 +8,8 @@
     "start": "vue-cli-service serve",
     "local": "vue-cli-service serve --mode local",
     "dev": "vue-cli-service serve --mode dev",
-    "dev-test": "vue-cli-service serve --mode test",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "build-dev": "vue-cli-service build --mode dev",
-    "build-local": "vue-cli-service build --mode local",
-    "build-test": "vue-cli-service build --mode test",
-    "deploy": "aws s3 sync ./dist s3://dashboard.reapchain.com --profile=narae",
     "lint": "vue-cli-service lint",
     "analyz": "vue-cli-service build --report"
   },
