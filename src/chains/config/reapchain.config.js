@@ -1,11 +1,11 @@
 export const chainInfo = {
-  env: "local",
-  chainName: "reapchain_local",
+  env: "develop",
+  chainName: "reapchain",
   chainId: "2022",
-  cosmosChainId: "mercury_2022-2",
-  restEndPoint: "http://13.125.20.241:1317",
-  rpcEndPoint: "http://13.125.20.241:27100",
-  evmRpcEndPoint: "http://13.125.20.241:27400",
+  cosmosChainId: "mercury_2022-3",
+  restEndPoint: "https://endpoint.reapchain.com:1317",
+  rpcEndPoint: "https://endpoint.reapchain.com:27100",
+  evmRpcEndPoint: "https://endpoint.reapchain.com:27400",
   dashboardUrl: "https://dashboard.reapchain.com",
 };
 
