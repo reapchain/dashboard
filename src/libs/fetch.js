@@ -27,6 +27,7 @@ import {
 } from "./testdata";
 import { ethToReap } from "./metamask/addressConverter";
 import coinoneAxios from "./common/coinone";
+import gateioAxios from "./common/gateio";
 
 function commonProcess(res) {
   if (res && Object.keys(res).includes("result")) {
@@ -748,6 +749,31 @@ export default class ChainFetch {
       if (data.result && data.result === "success") {
         const chartDataPrices = data.chart.map((chartData) => {
           return [Number(chartData.timestamp), Number(chartData.close)];
+        });
+        console.log("getMarketChart : ", chartDataPrices);
+        return {
+          prices: chartDataPrices,
+        };
+      }
+      return null;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async getMarketChartUSDT() {
+    try {
+      const { data } = await gateioAxios.get(
+        `/api2/1/candlestick2/reap_usdt?group_sec=3600&range_hour=168`
+      );
+      if (
+        data.result &&
+        (data.result === "success" || data.result === "true")
+      ) {
+        console.log("getMarketChartUSDT : ", data);
+        const chartDataPrices = data.data.map((chartData) => {
+          return [Number(chartData[0]), Number(chartData[2])];
         });
         return {
           prices: chartDataPrices,

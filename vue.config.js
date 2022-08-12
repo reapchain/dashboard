@@ -73,8 +73,8 @@ module.exports = {
           "^/api": "",
         },
       },
-      "/public/v2": {
-        target: "https://api.coinone.co.kr",
+      "/api2": {
+        target: "https://data.gateapi.io",
         changeOrigin: true,
       },
     },

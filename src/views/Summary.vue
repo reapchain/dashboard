@@ -143,7 +143,7 @@ export default {
           labels,
           datasets: [
             {
-              label: `Price (KRW)`,
+              label: `Price (USD)`,
               data,
               backgroundColor: "rgba(54, 162, 235, 0.2)",
               borderColor: "rgba(54, 162, 235, 1)",
@@ -171,7 +171,10 @@ export default {
       this.latestTime = toDay(res.block.header.time, "long");
     });
 
-    this.$http.getMarketChart().then((res) => {
+    // this.$http.getMarketChart().then((res) => {
+    //   this.marketData = res;
+    // });
+    this.$http.getMarketChartUSDT().then((res) => {
       this.marketData = res;
     });
 

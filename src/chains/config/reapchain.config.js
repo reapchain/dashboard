@@ -33,3 +33,4 @@ export const networkInfo = {
 
 export const coinoneApi =
   "https://cors-anywhere.herokuapp.com/https://api.coinone.co.kr";
+export const gateioApi = "https://data.gateapi.io";
