@@ -174,7 +174,7 @@ export default {
     // this.$http.getMarketChart().then((res) => {
     //   this.marketData = res;
     // });
-    this.$http.getMarketChartUSDT().then((res) => {
+    this.$http.getMarketChartProxy().then((res) => {
       this.marketData = res;
     });
 

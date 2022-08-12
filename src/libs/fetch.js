@@ -28,6 +28,7 @@ import {
 import { ethToReap } from "./metamask/addressConverter";
 import coinoneAxios from "./common/coinone";
 import gateioAxios from "./common/gateio";
+import chartProxy from "./common/chartProxy";
 
 function commonProcess(res) {
   if (res && Object.keys(res).includes("result")) {
@@ -775,6 +776,27 @@ export default class ChainFetch {
         (data.result === "success" || data.result === "true")
       ) {
         console.log("getMarketChartUSDT : ", data);
+        const chartDataPrices = data.data.map((chartData) => {
+          return [Number(chartData[0]), Number(chartData[2])];
+        });
+        return {
+          prices: chartDataPrices,
+        };
+      }
+      return null;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async getMarketChartProxy() {
+    try {
+      const { data } = await chartProxy.get(`default/MY_PROXY`);
+      if (
+        data.result &&
+        (data.result === "success" || data.result === "true")
+      ) {
         const chartDataPrices = data.data.map((chartData) => {
           return [Number(chartData[0]), Number(chartData[2])];
         });
