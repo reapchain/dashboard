@@ -179,6 +179,7 @@ export default {
     });
 
     this.$http.getStakingParameters().then((res) => {
+      delete res["max_validators"];
       this.staking = this.normalize(
         { ...res, bond_denom: "reap" },
         "Staking Parameters"
