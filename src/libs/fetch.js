@@ -239,10 +239,6 @@ export default class ChainFetch {
 
   async getStakingParameters() {
     return this.get("/staking/parameters").then((data) => {
-      if (data) {
-        delete data.result["max_validators"];
-        console.log("getStakingParameters : ", data);
-      }
       this.getSelectedConfig();
       return StakingParameters.create(
         commonProcess(data),
