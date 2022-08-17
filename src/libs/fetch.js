@@ -792,7 +792,7 @@ export default class ChainFetch {
 
   async getMarketChartProxy() {
     try {
-      const { data } = await chartProxy.get(`default/MY_PROXY`);
+      const { data } = await chartProxy.get(`default/chart`);
       if (
         data.result &&
         (data.result === "success" || data.result === "true")
@@ -800,6 +800,7 @@ export default class ChainFetch {
         const chartDataPrices = data.data.map((chartData) => {
           return [Number(chartData[0]), Number(chartData[2])];
         });
+
         return {
           prices: chartDataPrices,
         };
