@@ -2,6 +2,8 @@ import { chainInfo } from "@/chains/config/reapchain.config";
 const chainId = chainInfo.cosmosChainId;
 
 export const connectKeplrWallet = async () => {
+  await initKeplr();
+
   if (!window.getOfflineSignerOnlyAmino || !window.keplr) {
     const error = "Please install Keplr extension";
     console.error(error);
@@ -74,23 +76,27 @@ export const getOfflineSigner = () => {
 };
 
 export const initKeplr = async () => {
-  window.onload = async () => {
-    if (!window.getOfflineSigner || !window.keplr) {
-      alert("Please install keplr extension");
-      return null;
-    } else {
-      if (window.keplr.experimentalSuggestChain) {
-        try {
-          await window.keplr.experimentalSuggestChain(chainConfig_local);
-        } catch (error) {
-          console.log(error);
-          alert("Failed to suggest the chain");
-          return null;
-        }
-      } else {
-        alert("Please use the recent version of keplr extension");
+  if (!window.getOfflineSigner || !window.keplr) {
+    alert("Please install keplr extension");
+    return null;
+  } else {
+    if (window.keplr.experimentalSuggestChain) {
+      try {
+        await window.keplr.experimentalSuggestChain(chainConfig_local);
+      } catch (error) {
+        console.log(error);
+        alert("Failed to suggest the chain");
+        return null;
       }
+    } else {
+      alert("Please use the recent version of keplr extension");
     }
+  }
+};
+
+export const onloadKeplr = async () => {
+  window.onload = async () => {
+    initKeplr();
   };
 };
 

@@ -348,7 +348,6 @@ export default {
     },
   },
   mounted() {
-    initKeplr();
     const walletTypeCheck = localStorage.getItem("walletType");
     if (walletTypeCheck == "keplr") {
       this.connectWithKeplr();
