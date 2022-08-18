@@ -6,7 +6,7 @@ export const chainInfo = {
   restEndPoint: "https://endpoint.reapchain.com:1317",
   rpcEndPoint: "https://endpoint.reapchain.com:27100",
   evmRpcEndPoint: "https://endpoint.reapchain.com:27400",
-  dashboardUrl: "https://dashboard.reapchain.com",
+  dashboardUrl: `https://dashboard.reapchain.com/reapchain/staking`,
 };
 
 export const networkInfo = {
