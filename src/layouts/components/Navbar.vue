@@ -150,6 +150,11 @@
             <feather-icon icon="LogOutIcon" size="16" />
             <span class="align-middle ml-50">Disconnect</span>
           </b-dropdown-item>
+
+          <b-dropdown-item @click="testFunction">
+            <feather-icon icon="LogOutIcon" size="16" />
+            <span class="align-middle ml-50">Test</span>
+          </b-dropdown-item>
         </template>
       </b-dropdown>
     </b-navbar-nav>
@@ -259,6 +264,7 @@ import { connectKeplrWallet, initKeplr } from "@/libs/keplr/keplr";
 import { connectMetamaskWallet } from "@/libs/metamask/utils";
 import { ethToReap } from "@/libs/metamask/addressConverter";
 import { chainInfo } from "@/chains/config/reapchain.config";
+import { keplrSendTxTest } from "../../libs/keplr/utils";
 
 export default {
   components: {
@@ -419,6 +425,10 @@ export default {
       }
       localStorage.setItem("walletType", "");
       this.updateDefaultWallet("");
+    },
+    testFunction() {
+      console.log("testFunction");
+      keplrSendTxTest();
     },
     formatAddr(v) {
       return v.substring(0, 10).concat("...", v.substring(v.length - 10));

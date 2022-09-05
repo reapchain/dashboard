@@ -65,18 +65,14 @@ module.exports = {
   },
   transpileDependencies: ["vue-echarts", "resize-detector"],
   devServer: {
-    proxy: {
-      "/api": {
-        target: "http://localhost:8080",
-        changeOrigin: true,
-        pathRewrite: {
-          "^/api": "",
-        },
-      },
-      "/api2": {
-        target: "https://data.gateapi.io",
-        changeOrigin: true,
-      },
-    },
+    // proxy: {
+    //   "/api": {
+    //     target: "http://localhost:8080",
+    //     changeOrigin: true,
+    //     pathRewrite: {
+    //       "^/api": "",
+    //     },
+    //   },
+    // },
   },
 };
