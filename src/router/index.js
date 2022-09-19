@@ -108,14 +108,29 @@ const router = new VueRouter({
     // chain modules
     {
       path: "/:chain/",
-      name: "info",
+      name: "dashboard",
       alias: "/:chain",
-      component: () => import("@/views/Summary.vue"),
+      component: () => import("@/views/Dashboard.vue"),
       meta: {
-        pageTitle: "Summary",
+        pageTitle: "Dashboard",
         breadcrumb: [
           {
-            text: "Summary",
+            text: "Dashboard",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: "/:chain/parameters",
+      name: "parameters",
+      alias: "/:chain/parameters",
+      component: () => import("@/views/Parameters.vue"),
+      meta: {
+        pageTitle: "Parameters",
+        breadcrumb: [
+          {
+            text: "Parameters",
             active: true,
           },
         ],
@@ -180,6 +195,24 @@ const router = new VueRouter({
           },
           {
             text: "Detail",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: "/:chain/account/:address/receive",
+      name: "chain-receive",
+      component: () => import("@/views/WalletAccountReceive.vue"),
+      meta: {
+        pageTitle: "Accounts",
+        breadcrumb: [
+          {
+            text: "Accounts",
+            active: true,
+          },
+          {
+            text: "Pay Me",
             active: true,
           },
         ],

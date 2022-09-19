@@ -227,7 +227,8 @@ export default class ChainFetch {
 
   async getMintingInflation() {
     if (isTypeofEvmos(this.config.chain_name)) {
-      const data = await this.get("/reapchain/inflation/v1/inflation_rate");
+      // const data = await this.get("/cosmos/mint/v1beta1/inflation");
+      const data = await this.get("/evmos/inflation/v1/inflation_rate");
       return Number(data.inflation_rate / 100 || 0);
     }
     if (this.isModuleLoaded("minting")) {
@@ -374,10 +375,12 @@ export default class ChainFetch {
 
   async getMintParameters() {
     if (isTypeofEvmos(this.config.chain_name)) {
-      const result = await this.get("/reapchain/inflation/v1/params").then(
+      // const result = await this.get("/reapchain/inflation/v1/params").then(
+      const result = await this.get("/evmos/inflation/v1/params").then(
         (data) => data.params
       );
-      await this.get("/reapchain/inflation/v1/period").then((data) => {
+      // await this.get("/reapchain/inflation/v1/period").then((data) => {
+      await this.get("/evmos/inflation/v1/period").then((data) => {
         Object.entries(data).forEach((x) => {
           const k = x[0];
           const v = x[1];
@@ -668,6 +671,13 @@ export default class ChainFetch {
     );
   }
 
+  async getCommunityPool(config = null) {
+    return this.get(
+      "/cosmos/distribution/v1beta1/community_pool",
+      config
+    ).then((data) => commonProcess(data));
+  }
+
   async getAllIBCDenoms(config = null) {
     const conf = config || this.getSelectedConfig();
     const sdkVersion = conf.sdk_version;
@@ -742,29 +752,59 @@ export default class ChainFetch {
     );
   }
 
-  async getMarketChart() {
-    const currency = "krw";
-    const coin = "reap";
-
-    try {
-      const { data } = await coinoneAxios.get(
-        `/public/v2/chart/${currency}/${coin}?interval=1h`
-      );
-      if (data.result && data.result === "success") {
-        const chartDataPrices = data.chart.map((chartData) => {
-          return [Number(chartData.timestamp), Number(chartData.close)];
-        });
-        console.log("getMarketChart : ", chartDataPrices);
-        return {
-          prices: chartDataPrices,
-        };
-      }
-      return null;
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
+  async getCoinInfo() {
+    return ChainFetch.fetch(
+      "https://api.coingecko.com",
+      `/api/v3/coins/reapchain`
+    );
   }
+
+  async getMarketChart(days = 14) {
+    const conf = this.getSelectedConfig();
+    return ChainFetch.fetch(
+      "https://api.coingecko.com",
+      `/api/v3/coins/reapchain/market_chart?vs_currency=usd&days=${days}`
+    );
+    return null;
+  }
+
+  // async getMarketChart(days = 14, coin = null) {
+  //   const conf = this.getSelectedConfig();
+  //   const currency = getUserCurrency();
+  //   if (conf.assets[0] && conf.assets[0].coingecko_id) {
+  //     return ChainFetch.fetch(
+  //       "https://api.coingecko.com",
+  //       `/api/v3/coins/${coin ||
+  //         conf.assets[0]
+  //           .coingecko_id}/market_chart?vs_currency=${currency}&days=${days}`
+  //     );
+  //   }
+  //   return null;
+  // }
+
+  // async getMarketChart() {
+  //   const currency = "krw";
+  //   const coin = "reap";
+
+  //   try {
+  //     const { data } = await coinoneAxios.get(
+  //       `/public/v2/chart/${currency}/${coin}?interval=1h`
+  //     );
+  //     if (data.result && data.result === "success") {
+  //       const chartDataPrices = data.chart.map((chartData) => {
+  //         return [Number(chartData.timestamp), Number(chartData.close)];
+  //       });
+  //       console.log("getMarketChart : ", chartDataPrices);
+  //       return {
+  //         prices: chartDataPrices,
+  //       };
+  //     }
+  //     return null;
+  //   } catch (error) {
+  //     console.log(error);
+  //     return null;
+  //   }
+  // }
 
   async getMarketChartUSDT() {
     try {

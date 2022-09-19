@@ -65,7 +65,10 @@
                       />
                     </template>
                     <b-dropdown-item :to="`/${data.chain_name}/`">
-                      Summary
+                      Dashboard
+                    </b-dropdown-item>
+                    <b-dropdown-item :to="`/${data.chain_name}/parameters`">
+                      Parameters
                     </b-dropdown-item>
                     <b-dropdown-item :to="`/${data.chain_name}/staking`">
                       Staking

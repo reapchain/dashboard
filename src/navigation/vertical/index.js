@@ -1,11 +1,15 @@
 import store from "@/store";
-import { isTestnet } from "../../libs/utils";
 
 const modules = [
+  // {
+  //   scope: "normal",
+  //   title: "summary",
+  //   route: "info",
+  // },
   {
     scope: "normal",
-    title: "summary",
-    route: "info",
+    title: "dashboard",
+    route: "dashboard",
   },
   {
     scope: "normal",
@@ -16,6 +20,11 @@ const modules = [
     scope: "normal",
     title: "staking",
     route: "staking",
+  },
+  {
+    scope: "normal",
+    title: "parameters",
+    route: "parameters",
   },
   // {
   //   scope: "normal",

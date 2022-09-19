@@ -10,50 +10,40 @@
     </b-alert>
     <b-row>
       <b-col>
-        <summary-parmeters-component :data="chain" />
-      </b-col>
-    </b-row>
-    <b-row v-if="marketChartData && false">
-      <b-col>
-        <b-card>
-          <summary-price-chart
-            :chart-data="marketChartData"
-            :height="150"
-            :min-height="150"
-          />
-        </b-card>
+        <parameters-module-component :data="chain" />
       </b-col>
     </b-row>
     <b-row v-if="false">
       <b-col>
-        <summary-assets-component />
+        <parameters-module-component :data="mint" />
       </b-col>
     </b-row>
     <b-row>
       <b-col>
-        <summary-parmeters-component :data="mint" />
+        <parameters-module-component :data="staking" />
+      </b-col>
+    </b-row>
+    <b-row v-if="gov.items.length > 0">
+      <b-col>
+        <parameters-module-component :data="gov" />
       </b-col>
     </b-row>
     <b-row>
       <b-col>
-        <summary-parmeters-component :data="staking" />
-      </b-col>
-    </b-row>
-    <b-row v-if="gov.items.length > 0 && false">
-      <b-col>
-        <summary-parmeters-component :data="gov" />
+        <parameters-module-component :data="distribution" />
       </b-col>
     </b-row>
     <b-row>
       <b-col>
-        <summary-parmeters-component :data="distribution" />
+        <parameters-module-component :data="slashing" />
       </b-col>
     </b-row>
-    <b-row>
-      <b-col>
-        <summary-parmeters-component :data="slashing" />
-      </b-col>
-    </b-row>
+    <b-card title="Application Version">
+      <object-field-component :tablefield="appVersion" />
+    </b-card>
+    <b-card title="Node Information">
+      <object-field-component :tablefield="nodeVersion" />
+    </b-card>
   </div>
 </template>
 
@@ -62,7 +52,6 @@ import { BRow, BCol, BAlert, BCard } from "bootstrap-vue";
 import {
   formatNumber,
   formatTokenAmount,
-  getUserCurrency,
   isToken,
   percent,
   timeIn,
@@ -71,9 +60,8 @@ import {
   tokenFormatter,
 } from "@/libs/utils";
 
-import SummaryParmetersComponent from "./SummaryParmetersComponent.vue";
-import SummaryAssetsComponent from "./SummaryAssetsComponent.vue";
-import SummaryPriceChart from "./SummaryPriceChart.vue";
+import ParametersModuleComponent from "./components/parameters/ParametersModuleComponent.vue";
+import ObjectFieldComponent from "./components/ObjectFieldComponent.vue";
 
 export default {
   components: {
@@ -81,9 +69,8 @@ export default {
     BCol,
     BAlert,
     BCard,
-    SummaryParmetersComponent,
-    SummaryAssetsComponent,
-    SummaryPriceChart,
+    ParametersModuleComponent,
+    ObjectFieldComponent,
   },
   data() {
     return {
@@ -132,30 +119,9 @@ export default {
         title: "Governance Parameters",
         items: [],
       },
+      appVersion: null,
+      nodeVersion: null,
     };
-  },
-  computed: {
-    marketChartData() {
-      // if (this.marketData && this.marketData.prices) {
-      //   const labels = this.marketData.prices.map((x) => x[0]);
-      //   const data = this.marketData.prices.map((x) => x[1]);
-      //   return {
-      //     labels,
-      //     datasets: [
-      //       {
-      //         label: `Price (USD)`,
-      //         data,
-      //         backgroundColor: "rgba(54, 162, 235, 0.2)",
-      //         borderColor: "rgba(54, 162, 235, 1)",
-      //         borderWidth: 1,
-      //         pointStyle: "dash",
-      //         barThickness: 15,
-      //       },
-      //     ],
-      //   };
-      // }
-      return null;
-    },
   },
   created() {
     this.$http.getLatestBlock().then((res) => {
@@ -171,19 +137,8 @@ export default {
       this.latestTime = toDay(res.block.header.time, "long");
     });
 
-    // this.$http.getMarketChart().then((res) => {
-    //   this.marketData = res;
-    // });
-    // this.$http.getMarketChartProxy().then((res) => {
-    //   this.marketData = res;
-    // });
-
     this.$http.getStakingParameters().then((res) => {
-      delete res["max_validators"];
-      this.staking = this.normalize(
-        { ...res, bond_denom: "reap" },
-        "Staking Parameters"
-      );
+      this.staking = this.normalize(res, "Staking Parameters");
       Promise.all([
         this.$http.getStakingPool(),
         this.$http.getBankTotal(res.bond_denom),
@@ -229,10 +184,7 @@ export default {
         this.$set(this.chain.items[chainIndex], "title", `${percent(res)}%`);
       });
       this.$http.getMintParameters().then((res) => {
-        this.mint = this.normalize(
-          { ...res, mint_denom: "reap" },
-          "Minting Parameters"
-        );
+        this.mint = this.normalize(res, "Minting Parameters");
       });
     }
 
@@ -256,6 +208,11 @@ export default {
         this.$set(this.gov, "items", items);
       });
     }
+    this.$http.getNodeInfo().then((res) => {
+      console.log(res);
+      this.appVersion = res.application_version;
+      this.nodeVersion = res.default_node_info;
+    });
   },
   methods: {
     normalize(data, title) {
@@ -288,7 +245,7 @@ export default {
         return v2;
       }
       const d = parseFloat(v);
-      if (d === 0) return 0;
+      if (d === 0) return "0";
       if (d < 1.01) {
         return `${percent(d)}%`;
       }
