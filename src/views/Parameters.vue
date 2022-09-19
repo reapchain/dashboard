@@ -209,7 +209,6 @@ export default {
       });
     }
     this.$http.getNodeInfo().then((res) => {
-      console.log(res);
       this.appVersion = res.application_version;
       this.nodeVersion = res.default_node_info;
     });
