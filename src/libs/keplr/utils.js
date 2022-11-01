@@ -52,13 +52,14 @@ export const keplrSendTx = async (type, txData) => {
     const txMessageSet = createKeplrTxMessageSet(type, txData, sender);
 
     const fee = {
-      amount: {
-        amount: txData.fee.amount,
-        denom: txData.fee.denom,
-      },
+      amount: [
+        {
+          amount: txData.fee.amount,
+          denom: txData.fee.denom,
+        },
+      ],
       gas: txData.fee.gas,
     };
-
     const signDoc = makeSignDoc(
       txMessageSet.aminoMsgs,
       fee,
@@ -121,10 +122,10 @@ export const keplrSendTx = async (type, txData) => {
       txhash: Buffer.from(sendTxRes).toString("hex") || "",
     };
   } catch (error) {
-    console.error(error);
     return {
       result: false,
       txhash: "",
+      msg: error,
     };
   }
 };

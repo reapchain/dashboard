@@ -249,7 +249,7 @@ export default class ChainFetch {
     });
   }
 
-  async getValidatorList_pre(config = null) {
+  async getValidatorList(config = null) {
     return this.get("/staking/validators", config).then((data) => {
       const vals = commonProcess(data).map((i) => new Validator().init(i));
       localStorage.setItem(
@@ -260,7 +260,7 @@ export default class ChainFetch {
     });
   }
 
-  async getValidatorList(config = null) {
+  async getValidatorList_filter(config = null) {
     try {
       const validatorsBonded = await this.get(
         "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED"

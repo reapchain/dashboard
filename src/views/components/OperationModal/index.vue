@@ -388,7 +388,6 @@ export default {
       this.$refs.simpleRules.validate().then(async (ok) => {
         if (ok) {
           const walletType = getDefaultAccountDevice();
-          console.log("walletType : ", walletType);
           let res;
           if (walletType === "metamask") {
             res = await metamaskSendTx(this.type, {
@@ -416,6 +415,7 @@ export default {
             this.showDismissibleAlert = true;
             return;
           }
+
           if (res.result) {
             this.showResult = true;
             this.txHash = res.txhash;

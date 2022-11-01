@@ -9,17 +9,6 @@ export const chainInfo = {
   dashboardUrl: `https://dashboard.reapchain.com/reapchain/staking`,
 };
 
-// export const chainInfo = {
-//   env: "develop",
-//   chainName: "reapchain",
-//   chainId: "2022",
-//   cosmosChainId: "mercury_2022-3",
-//   restEndPoint: "http://192.168.100.44:1317",
-//   rpcEndPoint: "http://192.168.100.44:27000",
-//   evmRpcEndPoint: "http://192.168.100.44:27400",
-//   dashboardUrl: `https://dashboard.reapchain.com/reapchain/staking`,
-// };
-
 export const networkInfo = {
   chain_name: chainInfo.chainName,
   coingecko: "",
