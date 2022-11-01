@@ -228,7 +228,7 @@ export default class ChainFetch {
   async getMintingInflation() {
     if (isTypeofEvmos(this.config.chain_name)) {
       // const data = await this.get("/cosmos/mint/v1beta1/inflation");
-      const data = await this.get("/evmos/inflation/v1/inflation_rate");
+      const data = await this.get("/reapchain/inflation/v1/inflation_rate");
       return Number(data.inflation_rate / 100 || 0);
     }
     if (this.isModuleLoaded("minting")) {
@@ -376,11 +376,11 @@ export default class ChainFetch {
   async getMintParameters() {
     if (isTypeofEvmos(this.config.chain_name)) {
       // const result = await this.get("/reapchain/inflation/v1/params").then(
-      const result = await this.get("/evmos/inflation/v1/params").then(
+      const result = await this.get("/reapchain/inflation/v1/params").then(
         (data) => data.params
       );
       // await this.get("/reapchain/inflation/v1/period").then((data) => {
-      await this.get("/evmos/inflation/v1/period").then((data) => {
+      await this.get("/reapchain/inflation/v1/period").then((data) => {
         Object.entries(data).forEach((x) => {
           const k = x[0];
           const v = x[1];
