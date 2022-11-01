@@ -209,7 +209,11 @@ export default {
       });
     }
     this.$http.getNodeInfo().then((res) => {
-      this.appVersion = res.application_version;
+      const tempAppVersion = {
+        ...res.application_version,
+        name: "reapchain",
+      };
+      this.appVersion = tempAppVersion;
       this.nodeVersion = res.default_node_info;
     });
   },
