@@ -37,11 +37,11 @@ const modules = [
     title: "uptime",
     route: "uptime",
   },
-  // {
-  //   scope: "normal",
-  //   title: "statesync",
-  //   route: "statesync",
-  // },
+  {
+    scope: "normal",
+    title: "statesync",
+    route: "statesync",
+  },
   {
     scope: "cos-mos",
     title: "gravity",
