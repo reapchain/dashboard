@@ -22,7 +22,7 @@ import { utils } from "ethers";
 import { chainInfo } from "@/chains/config/reapchain.config";
 
 const chainAddParams = {
-  chainId: "0x7E6",
+  chainId: "0x7e6",
   chainName: "reapchain",
   nativeCurrency: {
     name: "Reapchain",
@@ -31,6 +31,7 @@ const chainAddParams = {
   },
   rpcUrls: [chainInfo.evmRpcEndPoint],
   blockExplorerUrls: [chainInfo.dashboardUrl],
+  iconUrls: ["https://dashboard.reapchain.com/reapchain_logo.png"],
 };
 
 const pubkeyType = "/ethermint.crypto.v1.ethsecp256k1.PubKey";
@@ -325,17 +326,16 @@ export const connectMetamaskWallet = async () => {
     });
   } catch (switchError) {
     if (switchError.code === 4902) {
-      // try {
-      //   await ethereum.request({
-      //     method: "wallet_addEthereumChain",
-      //     params: [chainAddParams],
-      //   });
-      // } catch (addError) {
-      //   console.error(eddError);
-      //   return;
-      // }
+      try {
+        await ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [chainAddParams],
+        });
+      } catch (addError) {
+        console.error(addError);
+        return;
+      }
     }
-    console.error(switchError);
     return;
   }
 
