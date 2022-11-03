@@ -116,7 +116,7 @@
           <b-link v-if="address" :to="`./${chain}/account/${address}`">
             More
           </b-link>
-          <b-link v-else :to="`/wallet/accounts`">
+          <b-link v-else :to="`/wallet/accounts`" v-show="false">
             Not connected?
           </b-link>
         </small>
@@ -154,7 +154,7 @@
           />
         </b-col>
       </b-row>
-      <b-row v-if="stakingList && stakingList.length > 0">
+      <b-row v-if="address && stakingList && stakingList.length > 0">
         <b-col>
           <b-table
             :items="stakingList"
@@ -200,7 +200,7 @@
         </b-col>
       </b-row>
 
-      <b-row v-if="unbonding && unbonding.length > 0">
+      <b-row v-if="address && unbonding && unbonding.length > 0">
         <b-col>
           <b-card>
             <b-card-header class="pt-0 pl-0 pr-0">
@@ -265,7 +265,7 @@
         </b-col>
       </b-row>
     </b-card>
-    <router-link to="/wallet/import">
+    <router-link to="/wallet/import" v-show="false">
       <b-card class="addzone text-center">
         <feather-icon icon="PlusIcon" />
         Connect Wallet
@@ -392,6 +392,17 @@ export default {
       walletUnbonding: "-",
       address: null,
     };
+  },
+  watch: {
+    walletName(to, from) {
+      if (to === "Wallet") {
+        this.address = null;
+        this.walletBalances = "-";
+        this.walletStaking = "-";
+        this.walletRewards = "-";
+        this.walletUnbonding = "-";
+      }
+    },
   },
   computed: {
     walletName() {

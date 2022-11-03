@@ -305,8 +305,9 @@ export default {
       }
       return "";
     },
-    async isOwner() {
-      const accounts = await this.accounts;
+    isOwner() {
+      const accounts = this.accounts;
+
       if (accounts) {
         this.updateWallet(accounts.device);
         if (

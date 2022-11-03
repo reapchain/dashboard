@@ -2,27 +2,16 @@
   <div>
     <b-row>
       <b-col>
-        <b-form-group
-          label="Sender"
-          label-for="sender"
-        >
+        <b-form-group label="Sender" label-for="sender">
           <b-input-group class="mb-25">
-
-            <b-form-input
-              name="sender"
-              :value="address"
-              readonly
-            />
+            <b-form-input name="sender" :value="address" readonly />
           </b-input-group>
         </b-form-group>
       </b-col>
     </b-row>
     <b-row>
       <b-col>
-        <b-form-group
-          label="Recipient"
-          label-for="Recipient"
-        >
+        <b-form-group label="Recipient" label-for="Recipient">
           <validation-provider
             #default="{ errors }"
             rules="required"
@@ -32,7 +21,7 @@
               <b-form-input
                 id="Recipient"
                 v-model="recipient"
-                :state="errors.length > 0 ? false:null"
+                :state="errors.length > 0 ? false : null"
               />
             </b-input-group>
             <small class="text-danger">{{ errors[0] }}</small>
@@ -42,18 +31,13 @@
     </b-row>
     <b-row>
       <b-col>
-        <b-form-group
-          label="Available Token"
-          label-for="Token"
-        >
+        <b-form-group label="Available Token" label-for="Token">
           <validation-provider
             #default="{ errors }"
             rules="required"
             name="Token"
           >
-            <b-form-select
-              v-model="token"
-            >
+            <b-form-select v-model="token">
               <b-form-select-option
                 v-for="item in balanceOptions"
                 :key="item.denom"
@@ -69,10 +53,7 @@
     </b-row>
     <b-row>
       <b-col>
-        <b-form-group
-          label="Amount"
-          label-for="Amount"
-        >
+        <b-form-group label="Amount" label-for="Amount">
           <validation-provider
             v-slot="{ errors }"
             rules="required|regex:^([0-9\.]+)$"
@@ -82,7 +63,7 @@
               <b-form-input
                 id="Amount"
                 v-model="amount"
-                :state="errors.length > 0 ? false:null"
+                :state="errors.length > 0 ? false : null"
                 placeholder="Input a number"
                 type="number"
               />
@@ -92,8 +73,11 @@
             </b-input-group>
             <small class="text-danger">{{ errors[0] }}</small>
           </validation-provider>
-          <b-form-text>
-            ≈ <strong class="text-primary">{{ currencySign }}{{ valuation }}</strong>
+          <b-form-text v-show="false">
+            ≈
+            <strong class="text-primary"
+              >{{ currencySign }}{{ valuation }}</strong
+            >
           </b-form-text>
         </b-form-group>
       </b-col>
@@ -102,20 +86,41 @@
 </template>
 
 <script>
-import { ValidationProvider } from 'vee-validate'
+import { ValidationProvider } from "vee-validate";
 import {
-  BRow, BCol, BInputGroup, BInputGroupAppend, BFormInput, BFormGroup,
-  BFormSelect, BFormSelectOption, BFormText,
-} from 'bootstrap-vue'
+  BRow,
+  BCol,
+  BInputGroup,
+  BInputGroupAppend,
+  BFormInput,
+  BFormGroup,
+  BFormSelect,
+  BFormSelectOption,
+  BFormText,
+} from "bootstrap-vue";
 import {
-  required, email, url, between, alpha, integer, password, min, digits, alphaDash, length,
-} from '@validations'
+  required,
+  email,
+  url,
+  between,
+  alpha,
+  integer,
+  password,
+  min,
+  digits,
+  alphaDash,
+  length,
+} from "@validations";
 import {
-  formatToken, formatTokenDenom, getUnitAmount, getUserCurrency, getUserCurrencySign,
-} from '@/libs/utils'
+  formatToken,
+  formatTokenDenom,
+  getUnitAmount,
+  getUserCurrency,
+  getUserCurrencySign,
+} from "@/libs/utils";
 
 export default {
-  name: 'TransforDialogue',
+  name: "TransforDialogue",
   components: {
     BRow,
     BCol,
@@ -127,12 +132,11 @@ export default {
     BFormSelect,
     BFormSelectOption,
     ValidationProvider,
-
   },
   props: {
     address: {
       type: String,
-      default: '',
+      default: "",
     },
     balance: {
       type: Array,
@@ -143,9 +147,9 @@ export default {
     return {
       currency: getUserCurrency(),
       currencySign: getUserCurrencySign(),
-      token: '',
+      token: "",
       amount: null,
-      recipient: '',
+      recipient: "",
       required,
       password,
       email,
@@ -157,13 +161,13 @@ export default {
       digits,
       length,
       alphaDash,
-    }
+    };
   },
   computed: {
     msg() {
       return [
         {
-          typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+          typeUrl: "/cosmos.bank.v1beta1.MsgSend",
           value: {
             fromAddress: this.address,
             toAddress: this.recipient,
@@ -175,47 +179,46 @@ export default {
             ],
           },
         },
-      ]
+      ];
     },
     balanceOptions() {
-      return this.setupBalance()
+      return this.setupBalance();
     },
     IBCDenom() {
-      return this.$store.state.chains.denoms
+      return this.$store.state.chains.denoms;
     },
     valuation() {
-      const { amount } = this
+      const { amount } = this;
       if (amount) {
-        const d2 = this.printDenom()
-        const quote = this.$store.state.chains.quotes[d2]
-        const price = quote ? quote[this.currency] : 0
-        return parseFloat((amount * price).toFixed(2))
+        const d2 = this.printDenom();
+        const quote = this.$store.state.chains.quotes[d2];
+        const price = quote ? quote[this.currency] : 0;
+        return parseFloat((amount * price).toFixed(2));
       }
-      return 0
+      return 0;
     },
   },
   mounted() {
-    this.$emit('update', {
-      modalTitle: 'Transfer Tokens',
-      historyName: 'send',
-    })
+    this.$emit("update", {
+      modalTitle: "Transfer Tokens",
+      historyName: "send",
+    });
   },
 
   methods: {
     setupBalance() {
       if (this.balance && this.balance.length > 0) {
-        this.token = this.balance[0].denom
-        return this.balance
+        this.token = this.balance[0].denom;
+        return this.balance;
       }
-      return []
+      return [];
     },
     format(v) {
-      return formatToken(v, this.IBCDenom, 6)
+      return formatToken(v, this.IBCDenom, 6);
     },
     printDenom() {
-      return formatTokenDenom(this.IBCDenom[this.token] || this.token)
+      return formatTokenDenom(this.IBCDenom[this.token] || this.token);
     },
   },
-
-}
+};
 </script>
