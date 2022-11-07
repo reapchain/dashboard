@@ -65,13 +65,7 @@
       </div>
     </b-card-body>
     <b-card-body class="pt-0">
-      <b-button
-        v-b-modal.WithdrawCommission
-        block
-        :disabled="withdrawDisabled"
-        size="sm"
-        variant="primary"
-      >
+      <b-button v-b-modal.WithdrawCommission block size="sm" variant="primary">
         Withdraw Commission
       </b-button>
     </b-card-body>
@@ -123,10 +117,6 @@ export default {
     },
     address: {
       type: String,
-      required: true,
-    },
-    withdrawDisabled: {
-      type: Boolean,
       required: true,
     },
   },

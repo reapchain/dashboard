@@ -34,6 +34,11 @@ const chainAddParams = {
   iconUrls: ["https://dashboard.reapchain.com/reapchain_logo.png"],
 };
 
+const chain = {
+  chainId: Number(chainInfo.chainId),
+  cosmosChainId: chainInfo.cosmosChainId,
+};
+
 const pubkeyType = "/ethermint.crypto.v1.ethsecp256k1.PubKey";
 
 export const metamaskSendTx = async (type, txData) => {
@@ -302,7 +307,7 @@ export const metamaskGetAccount = async () => {
   };
 };
 
-export const connectMetamaskWallet = async () => {
+export const connectMetamaskWallet = async (isRetry) => {
   const provider = await detectEthereumProvider();
   if (!provider) {
     console.log("Please install MetaMask!");
@@ -331,6 +336,9 @@ export const connectMetamaskWallet = async () => {
           method: "wallet_addEthereumChain",
           params: [chainAddParams],
         });
+        if (!isRetry) {
+          connectMetamaskWallet(true);
+        }
       } catch (addError) {
         console.error(addError);
         return;

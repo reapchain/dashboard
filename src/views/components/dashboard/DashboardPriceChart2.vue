@@ -373,9 +373,7 @@ export default {
     },
     telegram() {
       if (this.coinInfo.links) {
-        return this.coinInfo.links.telegram_channel_identifier
-          ? `https://t.me/${this.coinInfo.links.telegram_channel_identifier}`
-          : "#";
+        return "https://t.me/joinchat/MbaQ7RaZchMzjAam9yMS0Q";
       }
       return "#";
     },
