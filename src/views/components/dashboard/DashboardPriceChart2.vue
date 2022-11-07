@@ -147,6 +147,7 @@
         <b-button
           :href="homepage"
           class="mr-1"
+          target="_blank"
           variant="outline-secondary"
           size="sm"
         >
@@ -154,6 +155,7 @@
         </b-button>
         <b-button
           :href="twitter"
+          target="_blank"
           class="mr-1"
           variant="outline-secondary"
           size="sm"
@@ -162,6 +164,7 @@
         </b-button>
         <b-button
           :href="github"
+          target="_blank"
           class="mr-1"
           variant="outline-secondary"
           size="sm"
@@ -170,6 +173,7 @@
         </b-button>
         <b-button
           :href="telegram"
+          target="_blank"
           class="mr-1"
           variant="outline-secondary"
           size="sm"
@@ -186,6 +190,7 @@
           <b-dropdown-item
             v-for="site in coinInfo.links.blockchain_site.filter((x) => x)"
             :key="site"
+            target="_blank"
             :href="site"
             >{{ site }}</b-dropdown-item
           >
