@@ -16,8 +16,9 @@ export const chainInfo = {
   cosmosChainId: "mercury_2022-3",
   restEndPoint: "http://192.168.100.44:1317",
   rpcEndPoint: "http://192.168.100.44:27000",
-  evmRpcEndPoint: "http://192.168.100.44:27400",
+  evmRpcEndPoint: "https://endpoint.reapchain.com:27400",
   dashboardUrl: `https://dashboard.reapchain.com/reapchain/staking`,
+  ethAccountExplorerUrl: `https://dashboard.reapchain.com/reapchain/account`,
 };
 
 export const networkInfo = {
