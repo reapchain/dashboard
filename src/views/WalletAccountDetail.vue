@@ -486,6 +486,7 @@ import OperationModal from "@/views/components/OperationModal/index.vue";
 import ObjectFieldComponent from "./ObjectFieldComponent.vue";
 import ChartComponentDoughnut from "./ChartComponentDoughnut.vue";
 import { getLocalAccounts } from "@/libs/utils";
+import { ethToReap } from "@/libs/metamask/addressConverter";
 
 export default {
   components: {
@@ -731,6 +732,13 @@ export default {
     },
   },
   created() {
+    console.log("WalletAccountDetail!!!");
+    if (this.address.substring(0, 2) === "0x") {
+      const tempAddress = ethToReap(this.address);
+      this.$router.push(
+        `/${this.$http.config.chain_name}/account/${tempAddress}`
+      );
+    }
     this.$http
       .getAuthAccount(this.address)
       .then((acc) => {

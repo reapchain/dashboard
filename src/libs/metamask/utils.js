@@ -30,7 +30,7 @@ const chainAddParams = {
     decimals: 18,
   },
   rpcUrls: [chainInfo.evmRpcEndPoint],
-  blockExplorerUrls: [chainInfo.dashboardUrl],
+  blockExplorerUrls: [chainInfo.ethAccountExplorerUrl],
   iconUrls: ["https://dashboard.reapchain.com/reapchain_logo.png"],
 };
 

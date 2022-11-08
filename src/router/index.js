@@ -201,6 +201,24 @@ const router = new VueRouter({
       },
     },
     {
+      path: "/:chain/account/address/:address",
+      name: "chain-account-eth",
+      component: () => import("@/views/WalletAccountDetail.vue"),
+      meta: {
+        pageTitle: "Accounts",
+        breadcrumb: [
+          {
+            text: "Accounts",
+            active: true,
+          },
+          {
+            text: "Detail",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
       path: "/:chain/account/:address/receive",
       name: "chain-receive",
       component: () => import("@/views/WalletAccountReceive.vue"),

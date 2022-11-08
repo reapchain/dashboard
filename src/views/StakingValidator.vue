@@ -188,7 +188,6 @@
             :data="distribution"
             :validator="validator.operator_address"
             :address="accountAddress"
-            :withdrawDisabled="!isMyAccount || !(myDevice == 'keplr')"
           />
         </b-col>
         <b-col lg="4" md="12">
