@@ -83,6 +83,7 @@
             :variant="color"
             class="mt-1"
             :href="selectedTicker.trade_url"
+            target="_blank"
           >
             Buy {{ String(coinInfo.symbol).toUpperCase() }}
           </b-button>
