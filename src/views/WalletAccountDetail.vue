@@ -732,7 +732,6 @@ export default {
     },
   },
   created() {
-    console.log("WalletAccountDetail!!!");
     if (this.address.substring(0, 2) === "0x") {
       const tempAddress = ethToReap(this.address);
       this.$router.push(
