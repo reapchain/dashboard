@@ -34,6 +34,11 @@ const chainAddParams = {
   iconUrls: ["https://dashboard.reapchain.com/reapchain_logo.png"],
 };
 
+const chain = {
+  chainId: "0x7e6",
+  cosmosChainId: "mercury_2022-3",
+};
+
 const pubkeyType = "/ethermint.crypto.v1.ethsecp256k1.PubKey";
 
 export const metamaskSendTx = async (type, txData) => {
@@ -74,6 +79,8 @@ export const metamaskSendTx = async (type, txData) => {
       pubkey: myAccount.account.base_account.pub_key.key || "",
     };
     const msg = createMetamaskTxMessage(type, txData, sender);
+    console.log(msg);
+    debugger;
 
     let signature = await window.ethereum.request({
       method: "eth_signTypedData_v4",
