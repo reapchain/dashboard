@@ -3,7 +3,7 @@
     <b-card no-body class="text-truncate">
       <b-card-header>
         <b-card-title>
-          Blocks
+          Latest Blocks
         </b-card-title>
       </b-card-header>
       <b-table
