@@ -96,18 +96,14 @@
                   <span class="ml-25">{{ token.percent }}%</span>
                 </div>
                 <div class="d-flex flex-column">
-                  <span
-                    v-b-tooltip.hover.top="token.denom"
-                    class="text-right"
-                    >{{ formatToken(token) }}</span
-                  >
-                  <small class="text-right"
+                  <span class="text-right">{{ formatToken(token) }}</span>
+                  <small class="text-right" v-if="false"
                     >{{ currency }}{{ formatNumber(token.currency) }}</small
                   >
                 </div>
               </div>
               <!--/ tokens -->
-              <div class="text-right border-top pt-1">
+              <div class="text-right border-top pt-1" v-if="false">
                 <h2>
                   Total: {{ currency }}{{ formatNumber(assetTable.currency) }}
                 </h2>
@@ -847,6 +843,7 @@ export default {
       const d2 = this.formatDenom(denom);
       const userCurrency = getUserCurrency();
       const quote = this.$store.state.chains.quotes[d2];
+
       if (quote) {
         const price = quote[userCurrency];
         return parseFloat((qty * price).toFixed(2));
