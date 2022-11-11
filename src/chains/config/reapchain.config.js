@@ -1,21 +1,10 @@
-// export const chainInfo = {
-//   env: "develop",
-//   chainName: "reapchain",
-//   chainId: "2022",
-//   cosmosChainId: "mercury_2022-3",
-//   restEndPoint: "https://endpoint.reapchain.com:1317",
-//   rpcEndPoint: "https://endpoint.reapchain.com:27100",
-//   evmRpcEndPoint: "https://endpoint.reapchain.com:27400",
-//   dashboardUrl: `https://dashboard.reapchain.com/reapchain/staking`,
-// };
-
 export const chainInfo = {
-  env: "develop",
+  env: "test",
   chainName: "reapchain",
   chainId: "2022",
   cosmosChainId: "mercury_2022-3",
-  restEndPoint: "http://192.168.100.44:1317",
-  rpcEndPoint: "http://192.168.100.44:27000",
+  restEndPoint: "https://endpoint.reapchain.com:1317",
+  rpcEndPoint: "https://endpoint.reapchain.com:27000",
   evmRpcEndPoint: "https://endpoint.reapchain.com:27400",
   dashboardUrl: `https://dashboard.reapchain.com/reapchain/staking`,
   ethAccountExplorerUrl: `https://dashboard.reapchain.com/reapchain/account`,
