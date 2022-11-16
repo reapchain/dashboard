@@ -21,6 +21,7 @@ import localeData from "dayjs/plugin/localeData";
 import { $themeColors } from "@themeConfig";
 // import { SigningStargateClient } from '@cosmjs/stargate'
 import PingWalletClient from "./data/signing";
+import Decimal from "decimal.js";
 
 dayjs.extend(localeData);
 dayjs.extend(duration);
@@ -581,7 +582,7 @@ export function formatTokenAmount(
   const denom = tokenDenom.denom_trace
     ? tokenDenom.denom_trace.base_denom
     : tokenDenom;
-  let amount = 0;
+
   let exp = String(denom).startsWith("areap") ? 18 : 6;
   const config = Object.values(getLocalChains());
 
@@ -591,21 +592,20 @@ export function formatTokenAmount(
       if (asset) exp = asset.exponent;
     }
   });
-  amount = Number(Number(tokenAmount)) / 10 ** exp;
-  if (amount > 10) {
-    if (format) {
-      return numberWithCommas(parseFloat(amount.toFixed(decimals)));
-      // return numberWithCommas(amount.toFixed(decimals));
-    }
-    // return amount.toFixed(decimals);
-    return parseFloat(amount.toFixed(decimals));
-  } else if (amount === 0) {
-    return "0";
-  } else if (amount < 1) {
-    return removeLastZero(amount.toFixed(exp));
+
+  let amount = new Decimal(tokenAmount);
+  amount = amount.div(10 ** exp);
+
+  if (amount === 0) {
+    return 0;
   }
 
-  return amount.toFixed(exp);
+  const tempAmount = removeLastZero(amount.toFixed(8).toString());
+  if (tempAmount[tempAmount.length - 1] === ".") {
+    return tempAmount.substring(0, tempAmount.length - 1);
+  } else {
+    return tempAmount;
+  }
 }
 
 export function removeLastZero(stringFloat) {
