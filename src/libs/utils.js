@@ -600,7 +600,7 @@ export function formatTokenAmount(
     return 0;
   }
 
-  const tempAmount = removeLastZero(amount.toFixed(8).toString());
+  const tempAmount = removeLastZero(amount.toFixed(decimals).toString());
   if (tempAmount[tempAmount.length - 1] === ".") {
     return tempAmount.substring(0, tempAmount.length - 1);
   } else {
@@ -674,9 +674,9 @@ export function formatNumber(count, withAbbr = false, decimals = 2) {
 
 export function tokenFormatter(tokens, denoms = {}) {
   if (Array.isArray(tokens)) {
-    return tokens.map((t) => formatToken(t, denoms, 6)).join(", ");
+    return tokens.map((t) => formatToken(t, denoms, 18)).join(", ");
   }
-  return formatToken(tokens, denoms, 6);
+  return formatToken(tokens, denoms, 18);
 }
 
 export function getCachedValidators(chainName) {
