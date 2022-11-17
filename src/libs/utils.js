@@ -672,11 +672,11 @@ export function formatNumber(count, withAbbr = false, decimals = 2) {
   return result;
 }
 
-export function tokenFormatter(tokens, denoms = {}) {
+export function tokenFormatter(tokens, denoms = {}, fixed = 18) {
   if (Array.isArray(tokens)) {
-    return tokens.map((t) => formatToken(t, denoms, 18)).join(", ");
+    return tokens.map((t) => formatToken(t, denoms, fixed)).join(", ");
   }
-  return formatToken(tokens, denoms, 18);
+  return formatToken(tokens, denoms, fixed);
 }
 
 export function getCachedValidators(chainName) {

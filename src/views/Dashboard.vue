@@ -529,7 +529,7 @@ export default {
             amount: reduce[k],
           }));
         }
-        return tokenFormatter(nativeToken, {}, 0);
+        return tokenFormatter(nativeToken, {}, 4);
       }
       return "-";
     },
