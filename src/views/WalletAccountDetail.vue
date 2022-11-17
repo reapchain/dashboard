@@ -64,7 +64,7 @@
           </div>
         </b-card-header>
         <b-card-body class="pl-0 pr-0">
-          <b-row v-if="assetTable.currency">
+          <b-row v-if="assetTable.items.length > 1">
             <b-col xm="12" md="4">
               <chart-component-doughnut
                 v-if="chartData"
