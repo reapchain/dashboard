@@ -64,7 +64,7 @@
           </div>
         </b-card-header>
         <b-card-body class="pl-0 pr-0">
-          <b-row>
+          <b-row v-if="assetTable.currency">
             <b-col xm="12" md="4">
               <chart-component-doughnut
                 v-if="chartData"
@@ -106,6 +106,15 @@
               <div class="text-right border-top pt-1" v-if="false">
                 <h2>
                   Total: {{ currency }}{{ formatNumber(assetTable.currency) }}
+                </h2>
+              </div>
+            </b-col>
+          </b-row>
+          <b-row v-else>
+            <b-col xm="12" md="12">
+              <div class="text-right pt-1">
+                <h2>
+                  No Accounts...
                 </h2>
               </div>
             </b-col>
