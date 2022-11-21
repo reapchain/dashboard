@@ -10,7 +10,6 @@
   >
     <b-link
       class="d-flex align-items-center"
-      style="background: #fff"
       @click="() => updateGroupOpen(!isOpen)"
     >
       <b-avatar
