@@ -379,7 +379,7 @@ export default {
     },
     telegram() {
       if (this.coinInfo.links) {
-        return "https://t.me/joinchat/MbaQ7RaZchMzjAam9yMS0Q";
+        return "https://t.me/ReapchianOfficial";
       }
       return "#";
     },
