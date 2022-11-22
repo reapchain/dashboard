@@ -748,15 +748,7 @@ export default {
       .then((acc) => {
         this.account = acc;
         this.initial();
-        this.$http
-          .getTxsBySenderPagination(
-            this.address,
-            this.pagination.currentPage,
-            this.pagination.pageSize
-          )
-          .then((res) => {
-            this.applyPaginationAndTxs(res);
-          });
+        this.getTxsInfo();
         this.$http.getStakingParameters().then((res) => {
           this.stakingParameters = res;
         });
@@ -778,15 +770,6 @@ export default {
         .then((acc) => {
           this.account = acc;
           this.initial();
-          this.$http
-            .getTxsBySenderPagination(
-              this.address,
-              this.pagination.currentPage,
-              this.pagination.pageSize
-            )
-            .then((res) => {
-              this.applyPaginationAndTxs(res);
-            });
           this.$http.getStakingParameters().then((res) => {
             this.stakingParameters = res;
           });
@@ -818,17 +801,14 @@ export default {
       this.$http.getStakingUnbonding(this.address).then((res) => {
         this.unbonding = res.unbonding_responses || res;
       });
+      this.getTxsInfo();
     },
     formatNumber(v) {
       return numberWithCommas(v);
     },
     pageload(v) {
       this.pagination.currentPage = v;
-      this.$http
-        .getTxsBySenderPagination(this.address, v, this.pagination.pageSize)
-        .then((res) => {
-          this.applyPaginationAndTxs(res);
-        });
+      this.getTxsInfo();
     },
     selectValue(v, type) {
       this.selectedValidator = v;
@@ -890,6 +870,17 @@ export default {
     },
     ethaddress() {
       return toETHAddress(this.address);
+    },
+    getTxsInfo() {
+      this.$http
+        .getTxsBySenderPagination(
+          this.address,
+          this.pagination.currentPage,
+          this.pagination.pageSize
+        )
+        .then((res) => {
+          this.applyPaginationAndTxs(res);
+        });
     },
     applyPaginationAndTxs(res) {
       if (!res.pagination || !res.txs) {
