@@ -75,7 +75,7 @@
     <b-navbar-nav class="nav align-items-center ml-auto">
       <dark-Toggler class="d-none d-lg-block" />
       <search-bar />
-      <locale />
+      <!-- <locale /> -->
       <b-dropdown class="ml-1" variant="link" no-caret toggle-class="p-0" right>
         <template #button-content>
           <b-button
