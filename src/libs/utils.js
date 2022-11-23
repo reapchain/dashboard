@@ -600,12 +600,11 @@ export function formatTokenAmount(
     return 0;
   }
 
-  const tempAmount = removeLastZero(amount.toFixed(decimals).toString());
-  if (tempAmount[tempAmount.length - 1] === ".") {
-    return tempAmount.substring(0, tempAmount.length - 1);
-  } else {
-    return tempAmount;
-  }
+  const amountWithComma = amount
+    .toFixed(decimals)
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return amountWithComma;
 }
 
 export function removeLastZero(stringFloat) {
@@ -675,6 +674,9 @@ export function formatNumber(count, withAbbr = false, decimals = 2) {
 export function tokenFormatter(tokens, denoms = {}, fixed = 18) {
   if (Array.isArray(tokens)) {
     return tokens.map((t) => formatToken(t, denoms, fixed)).join(", ");
+  }
+  if (!tokens.amount) {
+    return "0 REAP";
   }
   return formatToken(tokens, denoms, fixed);
 }

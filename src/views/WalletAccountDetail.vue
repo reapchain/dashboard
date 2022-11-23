@@ -155,7 +155,7 @@
                         amount: data.item.initial_balance,
                       },
                       {},
-                      18,
+                      6,
                       true
                     )
                   }}
@@ -825,7 +825,7 @@ export default {
       return formatTokenAmount(v, dec, denom, format);
     },
     formatToken(v) {
-      return tokenFormatter(v, this.denoms);
+      return tokenFormatter(v, this.denoms, 2);
     },
     formatCurrency(amount, denom) {
       const qty = this.formatAmount(amount, 2, denom, false);
