@@ -166,24 +166,57 @@ export default {
       const vals = this.validators.map((x) => ({
         value: x.operator_address,
         label: `${x.description.moniker} (${Number(x.commission.rate) * 100}%)`,
+        type: x.type,
+        disabled:
+          !this.$store?.state?.chains?.defaultWallet ||
+          (x.type === "steering" &&
+            this.$store?.state?.chains?.defaultWallet.substring(5, 37) !==
+              x.operator_address.substring(12, 44)),
       }));
+
       if (vals.length > 0) {
-        options.push({ value: null, label: "=== ACTIVE VALIDATORS ===" });
-        options = options.concat(vals);
+        const activeSteering = vals.filter(
+          (validator) => validator.type === "steering" && !validator.disabled
+        );
+        if (activeSteering > 0) {
+          options.push({
+            value: null,
+            label: "=== MY STEERING VALIDATOR ===",
+          });
+          options = options.concat(activeSteering);
+        }
+
+        options.push({
+          value: null,
+          label: "=== ACTIVE STANDING VALIDATORS ===",
+        });
+
+        const activeStandingList = vals.filter(
+          (validator) => validator.type === "standing"
+        );
+        options = options.concat(activeStandingList);
       }
+
       const unbunded = this.unbundValidators.map((x) => ({
         value: x.operator_address,
         label: `* ${x.description.moniker} (${Number(x.commission.rate) *
           100}%)`,
+        type: x.type,
       }));
+
+      const inactiveStandingList = unbunded.filter(
+        (validator) => validator.type === "standing"
+      );
+
       if (unbunded.length > 0) {
         options.push({
           value: null,
-          label: "=== INACTIVE VALIDATORS ===",
+          label: "=== INACTIVE STANDING VALIDATORS ===",
           disabled: true,
         });
-        options = options.concat(unbunded);
+        options = options.concat(inactiveStandingList);
       }
+
       return options;
     },
     balanceOptions() {
