@@ -139,7 +139,7 @@ export default {
       return numberWithCommas(intValue);
     },
     formatDenom(value) {
-      return formatToken(value, this.denoms, 2);
+      return formatToken(value, this.denoms, 6);
     },
   },
 };

@@ -576,8 +576,7 @@ export function numberWithCommas(x) {
 export function formatTokenAmount(
   tokenAmount,
   decimals = 6,
-  tokenDenom = "areap",
-  format = true
+  tokenDenom = "areap"
 ) {
   const denom = tokenDenom.denom_trace
     ? tokenDenom.denom_trace.base_denom
@@ -634,7 +633,7 @@ export function formatToken(
         denom
       )} ${formatTokenDenom(denom)}`;
     }
-    return formatTokenAmount(token.amount, decimals, denom);
+    return formatTokenAmount(token.amount, decimals, denom, fixed);
   }
   return token;
 }

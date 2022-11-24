@@ -418,10 +418,14 @@ export default {
         });
     },
     tokenFormatter(token) {
-      return formatToken({
-        amount: token,
-        denom: this.stakingParameter.bond_denom,
-      });
+      return formatToken(
+        {
+          amount: token,
+          denom: this.stakingParameter.bond_denom,
+        },
+        {},
+        0
+      );
     },
     apr(rate) {
       return `${percent((1 - rate) * this.mintInflation)} %`;
