@@ -386,6 +386,10 @@ export default {
     async connectWithMetamask() {
       const myAccount = await connectMetamaskWallet();
 
+      if (!myAccount) {
+        return;
+      }
+
       if (myAccount) {
         this.wallet = {
           isConnected: true,

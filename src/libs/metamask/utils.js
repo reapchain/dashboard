@@ -310,9 +310,13 @@ export const metamaskGetAccount = async () => {
 };
 
 export const connectMetamaskWallet = async () => {
+  if (!window.ethereum) {
+    alert("Please install MetaMask!");
+    return;
+  }
+
   const provider = await detectEthereumProvider();
   if (!provider) {
-    console.log("Please install MetaMask!");
     return;
   } else {
     if (provider !== window.ethereum) {
