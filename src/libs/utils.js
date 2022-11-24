@@ -660,7 +660,8 @@ const COUNT_ABBRS = [
   "St",
 ];
 
-export function formatNumber(count, withAbbr = false, decimals = 2) {
+export function formatNumber(countValue, withAbbr = false, decimals = 2) {
+  const count = Number(countValue.replaceAll(",", ""));
   const i = count === 0 ? count : Math.floor(Math.log(count) / Math.log(1000));
   let result = parseFloat((count / 1000 ** i).toFixed(decimals));
   if (withAbbr && COUNT_ABBRS[i]) {
