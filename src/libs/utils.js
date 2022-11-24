@@ -600,18 +600,16 @@ export function formatTokenAmount(
     return 0;
   }
 
-  const amountWithComma = amount
-    .toFixed(decimals)
-    .toString()
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  return amountWithComma;
-}
+  const amountWithComma = amount.toFixed(decimals).toString();
+  const splitAmount = amountWithComma.toString().split(".");
+  splitAmount[0] = splitAmount[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const amountValue = splitAmount.join(".");
 
-export function removeLastZero(stringFloat) {
-  if (stringFloat.indexOf(".") === -1 && stringFloat.length < 2) {
-    return stringFloat;
+  if (amountValue.indexOf(".") > -1) {
+    return amountValue.replace(/(\.?0+$)/, "");
   }
-  return stringFloat.replace(/[0]+$/, "");
+
+  return amountValue;
 }
 
 export function isTestnet() {
