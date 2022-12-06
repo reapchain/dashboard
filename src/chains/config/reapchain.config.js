@@ -1,5 +1,5 @@
 export const chainInfo = {
-  env: "test",
+  env: "main",
   chainName: "reapchain",
   chainId: "2022",
   cosmosChainId: "mercury_2022-3",
