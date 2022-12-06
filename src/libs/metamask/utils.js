@@ -79,8 +79,6 @@ export const metamaskSendTx = async (type, txData) => {
       pubkey: myAccount.account.base_account.pub_key.key || "",
     };
     const msg = createMetamaskTxMessage(type, txData, sender);
-    console.log(msg);
-    debugger;
 
     let signature = await window.ethereum.request({
       method: "eth_signTypedData_v4",

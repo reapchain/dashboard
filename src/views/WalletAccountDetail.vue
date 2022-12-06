@@ -50,17 +50,6 @@
                 >Transfer</small
               >
             </b-button>
-            <!-- <b-button
-              v-b-modal.operation-modal
-              variant="danger"
-              size="sm"
-              @click="setOperationModalType('IBCTransfer')"
-            ><feather-icon
-               icon="SendIcon"
-               class="d-md-none"
-             />
-              <span class="d-none d-md-block">IBC Transfer</span>
-            </b-button> -->
           </div>
         </b-card-header>
         <b-card-body class="pl-0 pr-0">
@@ -711,7 +700,7 @@ export default {
               e.delegation.validator_address,
               8
             ),
-            token: formatToken(e.balance, {}, 2),
+            token: formatToken(e.balance, {}, 4),
             reward: tokenFormatter(reward.reward, this.denoms),
             action: e.delegation.validator_address,
           });
@@ -835,7 +824,7 @@ export default {
 
       if (quote) {
         const price = quote[userCurrency];
-        return parseFloat((qty * price).toFixed(2));
+        return parseFloat((qty * price).toFixed(4));
       }
       return 0;
     },

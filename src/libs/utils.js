@@ -563,8 +563,11 @@ export function getUnitAmount(amount, tokenDenom) {
       if (asset) exp = asset.exponent;
     }
   });
-  // eslint-disable-next-line no-undef
-  return String(BigInt(Number(amount) * 10 ** exp));
+
+  let decimalAmount = new Decimal(amount);
+  decimalAmount = decimalAmount.mul(10 ** exp);
+
+  return decimalAmount.toString();
 }
 
 export function numberWithCommas(x) {
