@@ -76,6 +76,11 @@ const modules_main = [
     title: "uptime",
     route: "uptime",
   },
+  {
+    scope: "normal",
+    title: "statesync",
+    route: "statesync",
+  },
 ];
 
 function processMenu() {

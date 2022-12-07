@@ -545,6 +545,20 @@ const router_main = new VueRouter({
       },
     },
     {
+      path: "/:chain/statesync",
+      name: "statesync",
+      component: () => import("@/views/StateSync.vue"),
+      meta: {
+        pageTitle: "State Sync",
+        breadcrumb: [
+          {
+            text: "State Synchronization",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
       path: "/:chain/account/:address",
       name: "chain-account",
       component: () => import("@/views/WalletAccountDetail.vue"),
