@@ -3,9 +3,9 @@ export const chainInfo = {
   chainName: "reapchain",
   chainId: "2022",
   cosmosChainId: "mercury_2022-3",
-  restEndPoint: "https://test-lcd-endpoint.reapchain.com",
-  rpcEndPoint: "https://test-rpc-endpoint.reapchain.com",
-  evmRpcEndPoint: "https://test-eth-endpoint.reapchain.com",
+  restEndPoint: "https://lcd-endpoint.reapchain.com",
+  rpcEndPoint: "https://rpc-endpoint.reapchain.com",
+  evmRpcEndPoint: "https://eth-endpoint.reapchain.com",
   dashboardUrl: `https://dashboard.reapchain.com/reapchain/staking`,
   ethAccountExplorerUrl: `https://dashboard.reapchain.com/reapchain/account`,
 };
