@@ -1,4 +1,5 @@
 import store from "@/store";
+import { chainInfo } from "@/chains/config/reapchain.config";
 
 const modules = [
   // {
@@ -54,6 +55,29 @@ const modules = [
   },
 ];
 
+const modules_main = [
+  {
+    scope: "normal",
+    title: "dashboard",
+    route: "dashboard",
+  },
+  {
+    scope: "normal",
+    title: "blocks",
+    route: "blocks",
+  },
+  {
+    scope: "normal",
+    title: "validators",
+    route: "validators",
+  },
+  {
+    scope: "normal",
+    title: "uptime",
+    route: "uptime",
+  },
+];
+
 function processMenu() {
   const chainMenus = [];
   Object.keys(store.state.chains.config).forEach((chain) => {
@@ -63,7 +87,9 @@ function processMenu() {
     };
     const { excludes } = store.state.chains.config[chain];
     const children = [];
-    modules.forEach((m) => {
+
+    const tempModules = chainInfo.env === "main" ? modules_main : modules;
+    tempModules.forEach((m) => {
       if (excludes === undefined || excludes.indexOf(m.route) === -1) {
         if (m.scope.match("normal") || m.scope.match(chain)) {
           children.push({

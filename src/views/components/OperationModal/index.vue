@@ -11,14 +11,16 @@
     @hidden="resetModal"
     @show="initialize"
   >
-    <b-overlay :show="!isOwner" rounded="sm">
+    <b-overlay :show="!isOwner || chainInfo.env === 'main'" rounded="sm">
       <template #overlay>
         <div class="text-center">
           <b-avatar font-scale="3" variant="danger" animation="cylon">
             <feather-icon icon="XCircleIcon" size="16" />
           </b-avatar>
           <p class="mt-1 font-weight-bolder">
-            {{ blockingMsg }}
+            {{
+              chainInfo.env === "main" ? "It will be added soon.." : blockingMsg
+            }}
           </p>
         </div>
       </template>
@@ -178,10 +180,10 @@ import Vote from "./components/Vote.vue";
 import WithdrawCommission from "./components/WithdrawCommission.vue";
 import GovDeposit from "./components/GovDeposit.vue";
 import TransactionResult from "./TransactionResult.vue";
-
 import { metamaskSendTx } from "@/libs/metamask/utils";
 import { getDefaultAccountDevice } from "@/libs/account/utils";
 import { keplrSendTx } from "@/libs/keplr/utils";
+import { chainInfo } from "@/chains/config/reapchain.config";
 
 export default {
   name: "DelegateDialogue",
@@ -289,6 +291,7 @@ export default {
       digits,
       length,
       alphaDash,
+      chainInfo,
     };
   },
   computed: {
@@ -306,6 +309,10 @@ export default {
       return "";
     },
     isOwner() {
+      if (chainInfo.env === "main") {
+        return false;
+      }
+
       const accounts = this.accounts;
 
       if (accounts) {

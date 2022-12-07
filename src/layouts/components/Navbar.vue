@@ -76,7 +76,14 @@
       <dark-Toggler class="d-none d-lg-block" />
       <search-bar />
       <!-- <locale /> -->
-      <b-dropdown class="ml-1" variant="link" no-caret toggle-class="p-0" right>
+      <b-dropdown
+        class="ml-1"
+        variant="link"
+        no-caret
+        toggle-class="p-0"
+        right
+        v-if="chainInfo.env !== 'main'"
+      >
         <template #button-content>
           <b-button
             v-ripple.400="'rgba(255, 255, 255, 0.15)'"
@@ -85,7 +92,7 @@
           >
             <template v-if="!wallet.isConnected">
               <feather-icon icon="LinkIcon" />
-              {{ "Connect Wallet" }}
+              Connect Wallet
             </template>
             <template v-else-if="wallet.isConnected && wallet.type == 'keplr'">
               <img
@@ -296,9 +303,7 @@ export default {
       tips: "Synced",
       index: 0,
       chainid: "",
-      chainInfo: {
-        chainName: chainInfo.chainName,
-      },
+      chainInfo,
       wallet: {
         isConnected: false,
         name: "",
@@ -348,6 +353,10 @@ export default {
     },
   },
   mounted() {
+    if (chainInfo.env === "main") {
+      return;
+    }
+
     const walletTypeCheck = localStorage.getItem("walletType");
     if (walletTypeCheck == "keplr") {
       this.connectWithKeplr();
