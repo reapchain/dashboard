@@ -109,6 +109,7 @@
       border-variant="primary"
       bg-variant="transparent"
       class="shadow-none"
+      v-if="chainInfo.env !== 'main'"
     >
       <b-card-title class="d-flex justify-content-between">
         <span>{{ walletName }} Assets </span>
@@ -323,6 +324,7 @@ import DashboardCardHorizontal from "./components/dashboard/DashboardCardHorizon
 import DashboardCardVertical from "./components/dashboard/DashboardCardVertical.vue";
 import DashboardPriceChart2 from "./components/dashboard/DashboardPriceChart2.vue";
 import FeatherIcon from "../@core/components/feather-icon/FeatherIcon.vue";
+import { chainInfo } from "@/chains/config/reapchain.config";
 
 export default {
   components: {
@@ -385,12 +387,12 @@ export default {
         ABSTAIN: "info",
         NO_WITH_VETO: "danger",
       },
-
       walletBalances: "-",
       walletStaking: "-",
       walletRewards: "-",
       walletUnbonding: "-",
       address: null,
+      chainInfo,
     };
   },
   watch: {
