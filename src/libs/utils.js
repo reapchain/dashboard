@@ -567,7 +567,7 @@ export function getUnitAmount(amount, tokenDenom) {
   let decimalAmount = new Decimal(amount);
   decimalAmount = decimalAmount.mul(10 ** exp);
 
-  return decimalAmount.toString();
+  return decimalAmount.toFixed();
 }
 
 export function numberWithCommas(x) {
