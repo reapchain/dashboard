@@ -347,7 +347,7 @@
               </b-td>
             </b-tr>
             <b-tr>
-              <b-td> Vesting Time </b-td
+              <b-td> Vesting/Lockup Time </b-td
               ><b-td>
                 {{ formatTime(new Date(account.value.start_time)) }} -
                 {{
@@ -356,28 +356,49 @@
               >
             </b-tr>
             <b-tr>
-              <b-td> Vesting Periods </b-td>
+              <b-td> Vesting/Lockup Periods </b-td>
               <b-td>
                 <b-table-simple>
+                  <th>Type</th>
                   <th>Length</th>
                   <th>End Date</th>
                   <th>Amount</th>
                   <b-tr
                     v-for="(p, index) in account.value.vesting_periods"
-                    :key="index"
+                    :key="`vesting_${index}`"
                   >
                     <td>
-                      <small
-                        >{{ p.length }} <br />{{
-                          formatLength(p.length)
-                        }}</small
-                      >
+                      <small>Vesting</small>
+                    </td>
+                    <td>
+                      <small>{{ formatLength(p.length) }}</small>
                     </td>
                     <td>
                       {{
                         formatTime(
                           reduceTimestamp(
                             account.value.vesting_periods.slice(0, index + 1)
+                          )
+                        )
+                      }}
+                    </td>
+                    <td>{{ formatToken(p.amount) }}</td>
+                  </b-tr>
+                  <b-tr
+                    v-for="(p, index) in account.value.lockup_periods"
+                    :key="`lockup_${index}`"
+                  >
+                    <td>
+                      <small>Lockup</small>
+                    </td>
+                    <td>
+                      <small>{{ formatLength(p.length) }}</small>
+                    </td>
+                    <td>
+                      {{
+                        formatTime(
+                          reduceTimestamp(
+                            account.value.lockup_periods.slice(0, index + 1)
                           )
                         )
                       }}
@@ -832,8 +853,18 @@ export default {
       return arr.reduce((acc, curr) => acc + Number(curr.length), 0);
     },
     formatDate: (v) => dayjs(v).format("YYYY-MM-DD HH:mm:ss"),
-    formatTime: (v) => toDay(Number(v) * 1000),
-    formatLength: (v) => toDuration(Number(v) * 1000),
+    formatTime: (v) => {
+      if (isNaN(v)) {
+        return "-";
+      }
+      return toDay(Number(v) * 1000);
+    },
+    formatLength: (v) => {
+      if (isNaN(v)) {
+        return "-";
+      }
+      return toDuration(Number(v) * 1000);
+    },
     copy() {
       this.$copyText(this.address).then(
         () => {
