@@ -351,9 +351,15 @@
               ><b-td>
                 {{ formatTime(new Date(account.value.start_time)) }} -
                 {{
-                  formatTime(account.value.base_vesting_account.end_time)
+                  formatToTime(account.value.base_vesting_account.end_time)
                 }}</b-td
               >
+            </b-tr>
+            <b-tr>
+              <b-td> Funder Address </b-td>
+              <b-td>
+                {{ account.value.funder_address }}
+              </b-td>
             </b-tr>
             <b-tr>
               <b-td> Vesting/Lockup Periods </b-td>
@@ -375,7 +381,7 @@
                     </td>
                     <td>
                       {{
-                        formatTime(
+                        formatTimestampTime(
                           reduceTimestamp(
                             account.value.vesting_periods.slice(0, index + 1)
                           )
@@ -396,7 +402,7 @@
                     </td>
                     <td>
                       {{
-                        formatTime(
+                        formatTimestampTime(
                           reduceTimestamp(
                             account.value.lockup_periods.slice(0, index + 1)
                           )
@@ -857,7 +863,20 @@ export default {
       if (isNaN(v)) {
         return "-";
       }
-      return toDay(Number(v) * 1000);
+      return toDay(Number(v));
+    },
+    formatTimestampTime(v) {
+      if (isNaN(v)) {
+        return "-";
+      }
+      const startTime = new Date(this.account.value.start_time);
+      return toDay(Number(v * 1000) + startTime.getTime());
+    },
+    formatToTime(v) {
+      if (isNaN(v)) {
+        return "-";
+      }
+      return toDay(Number(v * 1000));
     },
     formatLength: (v) => {
       if (isNaN(v)) {
