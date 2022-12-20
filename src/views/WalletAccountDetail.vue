@@ -319,7 +319,7 @@
               </b-td>
             </b-tr>
             <b-tr>
-              <b-td> Original Vesting </b-td
+              <b-td> Original Vesting/Lockup </b-td
               ><b-td>
                 {{
                   formatToken(
@@ -369,48 +369,62 @@
                   <th>Length</th>
                   <th>End Date</th>
                   <th>Amount</th>
-                  <b-tr
-                    v-for="(p, index) in account.value.vesting_periods"
-                    :key="`vesting_${index}`"
+                  <template
+                    v-if="
+                      account.value.vesting_periods[0].length ||
+                        !account.value.lockup_periods[0].length
+                    "
                   >
-                    <td>
-                      <small>Vesting</small>
-                    </td>
-                    <td>
-                      <small>{{ formatLength(p.length) }}</small>
-                    </td>
-                    <td>
-                      {{
-                        formatTimestampTime(
-                          reduceTimestamp(
-                            account.value.vesting_periods.slice(0, index + 1)
+                    <b-tr
+                      v-for="(p, index) in account.value.vesting_periods"
+                      :key="`vesting_${index}`"
+                    >
+                      <td>
+                        <small>Vesting</small>
+                      </td>
+                      <td>
+                        <small>{{ formatLength(p.length) }}</small>
+                      </td>
+                      <td>
+                        {{
+                          formatTimestampTime(
+                            reduceTimestamp(
+                              account.value.vesting_periods.slice(0, index + 1)
+                            )
                           )
-                        )
-                      }}
-                    </td>
-                    <td>{{ formatToken(p.amount) }}</td>
-                  </b-tr>
-                  <b-tr
-                    v-for="(p, index) in account.value.lockup_periods"
-                    :key="`lockup_${index}`"
+                        }}
+                      </td>
+                      <td>{{ formatToken(p.amount) }}</td>
+                    </b-tr>
+                  </template>
+                  <template
+                    v-if="
+                      account.value.lockup_periods[0].length ||
+                        !account.value.vesting_periods[0].length
+                    "
                   >
-                    <td>
-                      <small>Lockup</small>
-                    </td>
-                    <td>
-                      <small>{{ formatLength(p.length) }}</small>
-                    </td>
-                    <td>
-                      {{
-                        formatTimestampTime(
-                          reduceTimestamp(
-                            account.value.lockup_periods.slice(0, index + 1)
+                    <b-tr
+                      v-for="(p, index) in account.value.lockup_periods"
+                      :key="`lockup_${index}`"
+                    >
+                      <td>
+                        <small>Lockup</small>
+                      </td>
+                      <td>
+                        <small>{{ formatLength(p.length) }}</small>
+                      </td>
+                      <td>
+                        {{
+                          formatTimestampTime(
+                            reduceTimestamp(
+                              account.value.lockup_periods.slice(0, index + 1)
+                            )
                           )
-                        )
-                      }}
-                    </td>
-                    <td>{{ formatToken(p.amount) }}</td>
-                  </b-tr>
+                        }}
+                      </td>
+                      <td>{{ formatToken(p.amount) }}</td>
+                    </b-tr>
+                  </template>
                 </b-table-simple>
               </b-td>
             </b-tr>
