@@ -319,7 +319,7 @@
               </b-td>
             </b-tr>
             <b-tr>
-              <b-td> Original Vesting </b-td
+              <b-td> Original Vesting/Lockup </b-td
               ><b-td>
                 {{
                   formatToken(
@@ -347,43 +347,84 @@
               </b-td>
             </b-tr>
             <b-tr>
-              <b-td> Vesting Time </b-td
+              <b-td> Vesting/Lockup Time </b-td
               ><b-td>
                 {{ formatTime(new Date(account.value.start_time)) }} -
                 {{
-                  formatTime(account.value.base_vesting_account.end_time)
+                  formatToTime(account.value.base_vesting_account.end_time)
                 }}</b-td
               >
             </b-tr>
             <b-tr>
-              <b-td> Vesting Periods </b-td>
+              <b-td> Funder Address </b-td>
+              <b-td>
+                {{ account.value.funder_address }}
+              </b-td>
+            </b-tr>
+            <b-tr>
+              <b-td> Vesting/Lockup Periods </b-td>
               <b-td>
                 <b-table-simple>
+                  <th>Type</th>
                   <th>Length</th>
                   <th>End Date</th>
                   <th>Amount</th>
-                  <b-tr
-                    v-for="(p, index) in account.value.vesting_periods"
-                    :key="index"
+                  <template
+                    v-if="
+                      account.value.vesting_periods[0].length ||
+                        !account.value.lockup_periods[0].length
+                    "
                   >
-                    <td>
-                      <small
-                        >{{ p.length }} <br />{{
-                          formatLength(p.length)
-                        }}</small
-                      >
-                    </td>
-                    <td>
-                      {{
-                        formatTime(
-                          reduceTimestamp(
-                            account.value.vesting_periods.slice(0, index + 1)
+                    <b-tr
+                      v-for="(p, index) in account.value.vesting_periods"
+                      :key="`vesting_${index}`"
+                    >
+                      <td>
+                        <small>Vesting</small>
+                      </td>
+                      <td>
+                        <small>{{ formatLength(p.length) }}</small>
+                      </td>
+                      <td>
+                        {{
+                          formatTimestampTime(
+                            reduceTimestamp(
+                              account.value.vesting_periods.slice(0, index + 1)
+                            )
                           )
-                        )
-                      }}
-                    </td>
-                    <td>{{ formatToken(p.amount) }}</td>
-                  </b-tr>
+                        }}
+                      </td>
+                      <td>{{ formatToken(p.amount) }}</td>
+                    </b-tr>
+                  </template>
+                  <template
+                    v-if="
+                      account.value.lockup_periods[0].length ||
+                        !account.value.vesting_periods[0].length
+                    "
+                  >
+                    <b-tr
+                      v-for="(p, index) in account.value.lockup_periods"
+                      :key="`lockup_${index}`"
+                    >
+                      <td>
+                        <small>Lockup</small>
+                      </td>
+                      <td>
+                        <small>{{ formatLength(p.length) }}</small>
+                      </td>
+                      <td>
+                        {{
+                          formatTimestampTime(
+                            reduceTimestamp(
+                              account.value.lockup_periods.slice(0, index + 1)
+                            )
+                          )
+                        }}
+                      </td>
+                      <td>{{ formatToken(p.amount) }}</td>
+                    </b-tr>
+                  </template>
                 </b-table-simple>
               </b-td>
             </b-tr>
@@ -832,8 +873,31 @@ export default {
       return arr.reduce((acc, curr) => acc + Number(curr.length), 0);
     },
     formatDate: (v) => dayjs(v).format("YYYY-MM-DD HH:mm:ss"),
-    formatTime: (v) => toDay(Number(v) * 1000),
-    formatLength: (v) => toDuration(Number(v) * 1000),
+    formatTime: (v) => {
+      if (isNaN(v)) {
+        return "-";
+      }
+      return toDay(Number(v));
+    },
+    formatTimestampTime(v) {
+      if (isNaN(v)) {
+        return "-";
+      }
+      const startTime = new Date(this.account.value.start_time);
+      return toDay(Number(v * 1000) + startTime.getTime());
+    },
+    formatToTime(v) {
+      if (isNaN(v)) {
+        return "-";
+      }
+      return toDay(Number(v * 1000));
+    },
+    formatLength: (v) => {
+      if (isNaN(v)) {
+        return "-";
+      }
+      return toDuration(Number(v) * 1000);
+    },
     copy() {
       this.$copyText(this.address).then(
         () => {

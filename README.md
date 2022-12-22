@@ -31,7 +31,7 @@ It supports the following features:
 1. Running with npm
 
 ```
-npm run serve
+npm run start
 ```
 
 2. Building for web servers, like nginx
