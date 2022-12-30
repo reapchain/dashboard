@@ -4,7 +4,7 @@
       <b-card-title>
         What's State Sync?
       </b-card-title>
-      The Tendermint Core 0.34 release includes support for state sync, which
+      The Reapchain Core 0.34 release includes support for state sync, which
       allows a new node to join a network by fetching a snapshot of the
       application state at a recent height instead of fetching and replaying all
       historical blocks. This can reduce the time needed to sync with the
@@ -24,7 +24,7 @@
       one currently in use on mainnet.
       <br /><br />
       <b class="mt-1">2. Enable State Sync</b><br />
-      We can configure Tendermint to use state sync in
+      We can configure Reapchain to use state sync in
       <code>$DAEMON_HOME/config/config.toml</code>.
       <ul class="mt-1">
         <li v-for="e in error" :key="e" class="text-danger">
@@ -37,7 +37,7 @@
         :state="valid"
         readonly
         placeholder="Loading..."
-        rows="9"
+        rows="8"
         class="my-1"
         @change="check()"
       />
@@ -49,7 +49,7 @@
       ><br />
       If you are resetting node, run
       <code>{{ daemon }} unsafe-reset-all</code> or
-      <code>{{ daemon }} tendermint unsafe-reset-all --home ~/.HOME</code>
+      <code>{{ daemon }} unsafe-reset-all --home ~/.HOME</code>
       before you start the daemon.
     </b-card>
     <b-card>
@@ -146,7 +146,6 @@ trust_hash = "${this.hash}"
 
 [p2p]
 max_packet_msg_payload_size = 102400
-
 `;
             this.check();
           });
