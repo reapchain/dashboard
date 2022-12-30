@@ -37,7 +37,7 @@
         :state="valid"
         readonly
         placeholder="Loading..."
-        rows="7"
+        rows="9"
         class="my-1"
         @change="check()"
       />
@@ -52,7 +52,6 @@
       <code>{{ daemon }} tendermint unsafe-reset-all --home ~/.HOME</code>
       before you start the daemon.
     </b-card>
-
     <b-card>
       <b-card-title>
         Enable Snapshot For State Sync
@@ -82,7 +81,7 @@ export default {
   },
   data() {
     const { rpc, snapshot_provider } = this.$store.state.chains.selected;
-    let servers = "";
+    let servers = "https://state-sync-rpc.reapchain.org";
     if (rpc && Array.isArray(rpc) && rpc.length > 0) {
       let serv = rpc;
       if (serv.length === 1) {
@@ -116,23 +115,25 @@ export default {
       state: "",
       valid: false,
       daemon: "",
+      configText: ``,
       snapshot: `[state-sync]
 # snapshot-interval specifies the block interval at which local state sync snapshots are
 # taken (0 to disable). Must be a multiple of pruning-keep-every.
-snapshot-interval = 1000
+snapshot-interval = 2400
 
 # snapshot-keep-recent specifies the number of recent snapshots to keep and serve (0 to keep all). Each snapshot is about 500MiB
-snapshot-keep-recent = 2`,
+snapshot-keep-recent = 5
+`,
     };
   },
   created() {
-    const interval = 1000;
+    const interval = 2400;
     this.$http.getLatestBlock().then((l) => {
       const { height } = l.block.header;
-      if (height > interval * 3) {
+      if (height > 2400) {
         this.$http
           .getBlockByHeight(
-            Math.trunc((height - 3 * interval) / interval) * interval
+            Math.trunc((height - interval) / interval) * interval
           )
           .then((x) => {
             this.hash = toHex(fromBase64(x.block_id.hash));
@@ -142,7 +143,11 @@ enable = true
 rpc_servers = "${this.servers}"
 trust_height = ${this.height}
 trust_hash = "${this.hash}"
-trust_period = "168h"  # 2/3 of unbonding time`;
+
+[p2p]
+max_packet_msg_payload_size = 102400
+
+`;
             this.check();
           });
       }
@@ -170,19 +175,16 @@ trust_period = "168h"  # 2/3 of unbonding time`;
           this.error.push("Trust Hash is invalid.");
         }
         if (v[0] === "rpc_servers") {
-          if (v[1].indexOf(",") > 1) {
-            v[1]
-              .replace(/"/g, "")
-              .split(",")
-              .forEach((host) => {
-                const re = /^(.)+:\d+$/g;
-                if (!re.test(host)) {
-                  this.valid = false;
-                  this.error.push(
-                    `"${host}" is not a valid host. Make sure that the port is added.`
-                  );
-                }
-              });
+          if (v[1]) {
+            v[1].replace(/"/g, "").forEach((host) => {
+              const re = /^(.)+:\d+$/g;
+              if (!re.test(host)) {
+                this.valid = false;
+                this.error.push(
+                  `"${host}" is not a valid host. Make sure that the port is added.`
+                );
+              }
+            });
             // valid = true
           } else {
             this.valid = false;
