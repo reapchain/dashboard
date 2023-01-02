@@ -8,12 +8,7 @@
       allows a new node to join a network by fetching a snapshot of the
       application state at a recent height instead of fetching and replaying all
       historical blocks. This can reduce the time needed to sync with the
-      network from days to minutes. Click
-      <a
-        href="https://blog.cosmos.network/cosmos-sdk-state-sync-guide-99e4cf43be2f"
-        >here</a
-      >
-      for more infomation.
+      network from days to minutes. Click here for more infomation.
     </b-card>
     <b-card>
       <b-card-title>
@@ -37,7 +32,7 @@
         :state="valid"
         readonly
         placeholder="Loading..."
-        rows="8"
+        rows="9"
         class="my-1"
         @change="check()"
       />
@@ -62,7 +57,7 @@
         id="snapshot"
         v-model="snapshot"
         readonly
-        rows="8"
+        rows="7"
         class="mt-1"
       />
     </b-card>
@@ -72,6 +67,7 @@
 <script>
 import { BCard, BCardTitle, BFormTextarea } from "bootstrap-vue";
 import { fromBase64, toHex } from "@cosmjs/encoding";
+import { chainInfo } from "@/chains/config/reapchain.config";
 
 export default {
   components: {
@@ -136,16 +132,17 @@ snapshot-keep-recent = 5
             Math.trunc((height - interval) / interval) * interval
           )
           .then((x) => {
-            this.hash = toHex(fromBase64(x.block_id.hash));
+            this.hash = x.block_id.hash; // pre -> this.hash = toHex(fromBase64(x.block_id.hash));
             this.height = x.block.header.height;
             this.state = `[statesync]
 enable = true
-rpc_servers = "${this.servers}"
+rpc_servers = "${chainInfo.stateSyncEndpoint[0]},${chainInfo.stateSyncEndpoint[1]}"
 trust_height = ${this.height}
 trust_hash = "${this.hash}"
 
 [p2p]
-max_packet_msg_payload_size = 102400
+persistent_peers = "${chainInfo.stateSyncNodeId}@${chainInfo.stateSyncP2P}"
+max_packet_msg_payload_size = 10240
 `;
             this.check();
           });

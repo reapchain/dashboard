@@ -29,7 +29,7 @@ const chainAddParams = {
     symbol: "REAP",
     decimals: 18,
   },
-  rpcUrls: [chainInfo.evmRpcEndPoint],
+  rpcUrls: [chainInfo.evmEndpoint],
   blockExplorerUrls: [chainInfo.ethAccountExplorerUrl],
   iconUrls: ["https://dashboard.reapchain.com/reapchain_logo.png"],
 };
