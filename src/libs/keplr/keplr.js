@@ -102,9 +102,9 @@ export const onloadKeplr = async () => {
 };
 
 const chainConfig_local = {
-  rpc: chainInfo.rpcEndPoint,
+  rpc: chainInfo.rpcEndpoint,
   rpcConfig: undefined,
-  rest: chainInfo.restEndPoint,
+  rest: chainInfo.restEndpoint,
   restConfig: undefined,
   chainId: chainInfo.cosmosChainId,
   chainName: chainInfo.chainName,
