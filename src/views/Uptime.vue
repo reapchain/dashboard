@@ -29,8 +29,93 @@
         </b-input-group>
       </b-card>
       <b-row>
+        <b-col>
+          <h4>
+            Standing Validators
+          </h4>
+        </b-col>
+      </b-row>
+      <b-row>
         <b-col
-          v-for="(x, index) in uptime"
+          v-for="(x, index) in uptime.standing"
+          :key="index"
+          sm="12"
+          md="4"
+          xl="3"
+          class="text-truncate"
+        >
+          <div class="d-flex justify-content-between">
+            <b-form-checkbox
+              v-model="pinned"
+              :value="`${chain}#${x.address}`"
+              class="custom-control-warning text-truncate"
+              @change="pinValidator(`${chain}#${x.address}`)"
+              ><span
+                class="d-inline-block text-truncate font-weight-bold align-bottom"
+                >{{ index + 1 }} {{ x.validator.moniker }}</span
+              >
+            </b-form-checkbox>
+            <span v-if="missing[x.address]">
+              <b-badge
+                v-if="missing[x.address].missed_blocks_counter > 0"
+                v-b-tooltip.hover.v-danger
+                variant="light-danger"
+                :title="
+                  `${missing[x.address].missed_blocks_counter} missed blocks`
+                "
+                class="text-danger text-bolder"
+              >
+                {{ missing[x.address].missed_blocks_counter }}
+              </b-badge>
+              <b-badge
+                v-else
+                v-b-tooltip.hover.v-success
+                variant="light-success"
+                title="Perfect! No missed blocks"
+              >
+                0
+              </b-badge>
+            </span>
+          </div>
+          <b-skeleton-wrapper :loading="loading">
+            <template #loading>
+              <b-skeleton width="100%" />
+            </template>
+            <template #default>
+              <div
+                class="d-flex justify-content-between align-self-stretch flex-wrap"
+              >
+                <div v-for="(b, i) in blocks" :key="i" style="width:1.5%;">
+                  <router-link :to="`./blocks/${b.height}`">
+                    <div
+                      v-b-tooltip.hover.v-second
+                      :title="b.height"
+                      :class="
+                        b.sigs && b.sigs[x.address]
+                          ? b.sigs[x.address]
+                          : 'bg-light-success'
+                      "
+                      class="m-auto"
+                    >
+                      &nbsp;
+                    </div>
+                  </router-link>
+                </div>
+              </div>
+            </template>
+          </b-skeleton-wrapper>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col style="margin-top: 25px">
+          <h4>
+            Steering & Candidate Validators
+          </h4>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col
+          v-for="(x, index) in uptime.steering"
           :key="index"
           sm="12"
           md="4"
@@ -169,22 +254,48 @@ export default {
   },
   computed: {
     uptime() {
-      const vals = this.query
+      let standingVals = this.query
         ? this.validators.filter(
             (x) => String(x.description.moniker).indexOf(this.query) > -1
           )
         : this.validators;
-      vals.sort((a, b) => b.delegator_shares - a.delegator_shares);
-      const rets = vals.map((x) => ({
-        validator: x.description,
-        address: consensusPubkeyToHexAddress(x.consensus_pubkey),
-      }));
+      standingVals = standingVals
+        .filter((x) => x.type === "standing")
+        .sort((a, b) => b.delegator_shares - a.delegator_shares);
+
+      let steeringVals = this.query
+        ? this.validators.filter(
+            (x) =>
+              String(x.description.moniker).indexOf(this.query) > -1 &&
+              x.type !== "standing"
+          )
+        : this.validators;
+      steeringVals = steeringVals
+        .filter((x) => x.type === "steering")
+        .sort((a, b) => b.delegator_shares - a.delegator_shares);
+
+      const vals = {
+        standing: standingVals.map((x) => ({
+          validator: x.description,
+          address: consensusPubkeyToHexAddress(x.consensus_pubkey),
+        })),
+        steering: steeringVals.map((x) => ({
+          validator: x.description,
+          address: consensusPubkeyToHexAddress(x.consensus_pubkey),
+        })),
+      };
+
       if (this.missedFilter) {
-        return rets.filter(
-          (x) => this.missing[x.address].missed_blocks_counter > 0
-        );
+        return {
+          standing: vals.standing.filter(
+            (x) => this.missing[x.address].missed_blocks_counter > 0
+          ),
+          steering: vals.steering.filter(
+            (x) => this.missing[x.address].missed_blocks_counter > 0
+          ),
+        };
       }
-      return rets;
+      return vals;
     },
   },
   created() {
