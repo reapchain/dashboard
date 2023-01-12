@@ -218,7 +218,7 @@ const router = new VueRouter({
       },
     },
     {
-      path: "/:chain/account/:address/receive",
+      path: "/account/:address/receive",
       name: "chain-receive",
       component: () => import("@/views/WalletAccountReceive.vue"),
       meta: {
@@ -236,28 +236,28 @@ const router = new VueRouter({
       },
     },
     {
-      path: "/validators",
-      name: "validators",
+      path: "/staking",
+      name: "staking",
       component: () => import("@/views/Staking.vue"),
       meta: {
-        pageTitle: "Validators",
+        pageTitle: "Staking",
         breadcrumb: [
           {
-            text: "Validators",
+            text: "Staking",
             active: true,
           },
         ],
       },
     },
     {
-      path: "/validators/:address",
-      name: "validators-valiator",
+      path: "/staking/:address",
+      name: "staking-valiator",
       component: () => import("@/views/StakingValidator.vue"),
       meta: {
         pageTitle: "Validator Details",
         breadcrumb: [
           {
-            text: "Validator",
+            text: "Staking",
             active: true,
           },
           {
@@ -267,6 +267,42 @@ const router = new VueRouter({
         ],
       },
     },
+    // {
+    //   path: "/gov",
+    //   name: "governance",
+    //   component: () => import("@/views/Governance.vue"),
+    //   meta: {
+    //     pageTitle: "Governance",
+    //     breadcrumb: [
+    //       {
+    //         text: "Governance",
+    //         active: true,
+    //       },
+    //       {
+    //         text: "Proposals",
+    //         active: true,
+    //       },
+    //     ],
+    //   },
+    // },
+    // {
+    //   path: "/gov/:proposalid",
+    //   name: "proposal",
+    //   component: () => import("@/views/GovernanceProposalView.vue"),
+    //   meta: {
+    //     pageTitle: "Governance",
+    //     breadcrumb: [
+    //       {
+    //         text: "Governance",
+    //         active: true,
+    //       },
+    //       {
+    //         text: "Proposal Detail",
+    //         active: true,
+    //       },
+    //     ],
+    //   },
+    // },
     {
       path: "/blocks",
       name: "blocks",
@@ -315,39 +351,39 @@ const router = new VueRouter({
     },
     // custom modules for specified chains
     // 1. cosmos
-    // {
-    //   path: "/cosmos/trade",
-    //   name: "gravity",
-    //   component: () => import("@/views/GravityPool.vue"),
-    //   meta: {
-    //     pageTitle: "Gravity Pools",
-    //     breadcrumb: [
-    //       {
-    //         text: "Gravity",
-    //         active: true,
-    //       },
-    //     ],
-    //   },
-    // },
+    {
+      path: "/cosmos/trade",
+      name: "gravity",
+      component: () => import("@/views/GravityPool.vue"),
+      meta: {
+        pageTitle: "Gravity Pools",
+        breadcrumb: [
+          {
+            text: "Gravity",
+            active: true,
+          },
+        ],
+      },
+    },
     // 2. OSMOSIS
-    // {
-    //   path: "/osmosis/trade/:poolid?",
-    //   name: "osmosis-trade",
-    //   component: () => import("@/views/OsmosisTrade.vue"),
-    //   meta: {
-    //     pageTitle: "Classic Trade",
-    //     breadcrumb: [
-    //       {
-    //         text: "DEX",
-    //         active: true,
-    //       },
-    //       {
-    //         text: "Classic Trade",
-    //         active: true,
-    //       },
-    //     ],
-    //   },
-    // },
+    {
+      path: "/osmosis/trade/:poolid?",
+      name: "osmosis-trade",
+      component: () => import("@/views/OsmosisTrade.vue"),
+      meta: {
+        pageTitle: "Classic Trade",
+        breadcrumb: [
+          {
+            text: "DEX",
+            active: true,
+          },
+          {
+            text: "Classic Trade",
+            active: true,
+          },
+        ],
+      },
+    },
     // common modules
     {
       path: "/error/error-404",
@@ -366,6 +402,10 @@ const router = new VueRouter({
       },
     },
     {
+      path: "/index.php",
+      redirect: "/",
+    },
+    {
       path: "*",
       redirect: "/error/error-404",
     },
@@ -382,7 +422,7 @@ const router_main = new VueRouter({
     {
       path: "/",
       name: "home",
-      redirect: "/dashboard",
+      redirect: chainInfo.chainName,
       component: () => import("@/views/Home.vue"),
       meta: {
         layout: "full",
@@ -390,21 +430,6 @@ const router_main = new VueRouter({
         breadcrumb: [
           {
             text: "Home",
-            active: true,
-          },
-        ],
-      },
-    },
-    {
-      path: "/dashboard",
-      name: "dashboard",
-      alias: "/dashboard",
-      component: () => import("@/views/Dashboard.vue"),
-      meta: {
-        pageTitle: "Dashboard",
-        breadcrumb: [
-          {
-            text: "Dashboard",
             active: true,
           },
         ],
@@ -472,45 +497,15 @@ const router_main = new VueRouter({
       },
     },
     {
-      path: "/wallet/votes",
-      name: "myVotes",
-      component: () => import("@/views/WalletVotes.vue"),
+      path: "/",
+      name: "dashboard",
+      alias: "",
+      component: () => import("@/views/Dashboard.vue"),
       meta: {
-        pageTitle: "My Votes",
+        pageTitle: "Dashboard",
         breadcrumb: [
           {
-            text: "Wallet",
-          },
-          {
-            text: "My Votes",
-          },
-        ],
-      },
-    },
-    {
-      path: "/parameters",
-      name: "parameters",
-      alias: "/parameters",
-      component: () => import("@/views/Parameters.vue"),
-      meta: {
-        pageTitle: "Parameters",
-        breadcrumb: [
-          {
-            text: "Parameters",
-            active: true,
-          },
-        ],
-      },
-    },
-    {
-      path: "/statesync",
-      name: "statesync",
-      component: () => import("@/views/StateSync.vue"),
-      meta: {
-        pageTitle: "State Sync",
-        breadcrumb: [
-          {
-            text: "State Synchronization",
+            text: "Dashboard",
             active: true,
           },
         ],
@@ -543,6 +538,20 @@ const router_main = new VueRouter({
           },
           {
             text: "My Validators",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: "/statesync",
+      name: "statesync",
+      component: () => import("@/views/StateSync.vue"),
+      meta: {
+        pageTitle: "State Sync",
+        breadcrumb: [
+          {
+            text: "State Synchronization",
             active: true,
           },
         ],
@@ -585,7 +594,7 @@ const router_main = new VueRouter({
       },
     },
     {
-      path: "/:chain/account/:address/receive",
+      path: "/account/:address/receive",
       name: "chain-receive",
       component: () => import("@/views/WalletAccountReceive.vue"),
       meta: {
@@ -597,6 +606,38 @@ const router_main = new VueRouter({
           },
           {
             text: "Pay Me",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: "/validators",
+      name: "validators",
+      component: () => import("@/views/Staking.vue"),
+      meta: {
+        pageTitle: "Validators",
+        breadcrumb: [
+          {
+            text: "Validators",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: "/staking/:address",
+      name: "staking-valiator",
+      component: () => import("@/views/StakingValidator.vue"),
+      meta: {
+        pageTitle: "Validator Details",
+        breadcrumb: [
+          {
+            text: "Validators",
+            active: true,
+          },
+          {
+            text: "Validator Details",
             active: true,
           },
         ],
@@ -648,41 +689,6 @@ const router_main = new VueRouter({
         ],
       },
     },
-    // custom modules for specified chains
-    // 1. cosmos
-    // {
-    //   path: "/cosmos/trade",
-    //   name: "gravity",
-    //   component: () => import("@/views/GravityPool.vue"),
-    //   meta: {
-    //     pageTitle: "Gravity Pools",
-    //     breadcrumb: [
-    //       {
-    //         text: "Gravity",
-    //         active: true,
-    //       },
-    //     ],
-    //   },
-    // },
-    // 2. OSMOSIS
-    // {
-    //   path: "/osmosis/trade/:poolid?",
-    //   name: "osmosis-trade",
-    //   component: () => import("@/views/OsmosisTrade.vue"),
-    //   meta: {
-    //     pageTitle: "Classic Trade",
-    //     breadcrumb: [
-    //       {
-    //         text: "DEX",
-    //         active: true,
-    //       },
-    //       {
-    //         text: "Classic Trade",
-    //         active: true,
-    //       },
-    //     ],
-    //   },
-    // },
     // common modules
     {
       path: "/error/error-404",
@@ -699,6 +705,10 @@ const router_main = new VueRouter({
       meta: {
         layout: "full",
       },
+    },
+    {
+      path: "/index.php",
+      redirect: "/",
     },
     {
       path: "*",
@@ -721,12 +731,11 @@ tempRouter.beforeEach((to, from, next) => {
   if (!config || Object.keys(config).findIndex((i) => i === c) > -1) {
     next();
   } else if (c) {
-    // if (c === "index.php") {
-    //   next({ name: "/" });
-    // }
-    // else {
-    //   next({ name: "chain-404" });
-    // }
+    if (c === "index.php") {
+      next({ name: "/" });
+    } else {
+      next({ name: "chain-404" });
+    }
   } else {
     next();
   }
