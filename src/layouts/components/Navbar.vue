@@ -143,7 +143,7 @@
           </b-dropdown-item>
           <b-dropdown-item
             v-else-if="wallet.type == 'metamask'"
-            :to="`/${chainInfo.chainName}/account/${wallet.addressBech32}`"
+            :to="`/account/${wallet.addressBech32}`"
           >
             <feather-icon icon="KeyIcon" size="16" />
             <span class="align-middle ml-50">My Account</span>
@@ -366,9 +366,7 @@ export default {
   },
   methods: {
     handleMyAccount() {
-      this.$router
-        .replace(`/${this.chainInfo.chainName}/account/${this.wallet.address}`)
-        .catch(() => {});
+      this.$router.replace(`/account/${this.wallet.address}`).catch(() => {});
     },
     async connectWithKeplr() {
       const myAccount = await connectKeplrWallet();

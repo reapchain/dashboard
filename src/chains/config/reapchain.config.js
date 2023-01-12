@@ -2,7 +2,7 @@ export const chainInfo = {
   env: "main",
   chainName: "reapchain",
   chainId: "2022",
-  cosmosChainId: "mercury_2022-3",
+  cosmosChainId: "reapchain_2022-1",
   restEndpoint: "https://lcd.reapchain.org",
   rpcEndpoint: "https://rpc.reapchain.org",
   evmEndpoint: "https://eth.reapchain.org",
@@ -12,8 +12,8 @@ export const chainInfo = {
   ],
   stateSyncP2P: "state-sync-p2p.reapchain.org:27100",
   stateSyncNodeId: "090522bf5a8e939553d8fe9257a6350898f697cf",
-  dashboardUrl: `https://dashboard.reapchain.org/reapchain/validators`,
-  ethAccountExplorerUrl: `https://dashboard.reapchain.org/reapchain/account`,
+  dashboardUrl: `https://dashboard.reapchain.org/validators`,
+  ethAccountExplorerUrl: `https://dashboard.reapchain.org/account`,
 };
 
 export const networkInfo = {
@@ -24,7 +24,7 @@ export const networkInfo = {
   snapshot_provider: "",
   sdk_version: "0.45.1",
   coin_type: "60",
-  min_tx_fee: "10000000",
+  min_tx_fee: "15000000",
   addr_prefix: "reap",
   logo: "/logos/reapchain_logo.png",
   assets: [
