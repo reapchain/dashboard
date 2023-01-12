@@ -422,7 +422,7 @@ const router_main = new VueRouter({
     {
       path: "/",
       name: "home",
-      redirect: chainInfo.chainName,
+      redirect: "/dashboard",
       component: () => import("@/views/Home.vue"),
       meta: {
         layout: "full",
@@ -430,6 +430,21 @@ const router_main = new VueRouter({
         breadcrumb: [
           {
             text: "Home",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: "/dashboard",
+      name: "dashboard",
+      alias: "/dashboard",
+      component: () => import("@/views/Dashboard.vue"),
+      meta: {
+        pageTitle: "Dashboard",
+        breadcrumb: [
+          {
+            text: "Dashboard",
             active: true,
           },
         ],
@@ -497,15 +512,45 @@ const router_main = new VueRouter({
       },
     },
     {
-      path: "/",
-      name: "dashboard",
-      alias: "",
-      component: () => import("@/views/Dashboard.vue"),
+      path: "/wallet/votes",
+      name: "myVotes",
+      component: () => import("@/views/WalletVotes.vue"),
       meta: {
-        pageTitle: "Dashboard",
+        pageTitle: "My Votes",
         breadcrumb: [
           {
-            text: "Dashboard",
+            text: "Wallet",
+          },
+          {
+            text: "My Votes",
+          },
+        ],
+      },
+    },
+    {
+      path: "/parameters",
+      name: "parameters",
+      alias: "/parameters",
+      component: () => import("@/views/Parameters.vue"),
+      meta: {
+        pageTitle: "Parameters",
+        breadcrumb: [
+          {
+            text: "Parameters",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: "/statesync",
+      name: "statesync",
+      component: () => import("@/views/StateSync.vue"),
+      meta: {
+        pageTitle: "State Sync",
+        breadcrumb: [
+          {
+            text: "State Synchronization",
             active: true,
           },
         ],
@@ -538,20 +583,6 @@ const router_main = new VueRouter({
           },
           {
             text: "My Validators",
-            active: true,
-          },
-        ],
-      },
-    },
-    {
-      path: "/statesync",
-      name: "statesync",
-      component: () => import("@/views/StateSync.vue"),
-      meta: {
-        pageTitle: "State Sync",
-        breadcrumb: [
-          {
-            text: "State Synchronization",
             active: true,
           },
         ],
@@ -626,14 +657,14 @@ const router_main = new VueRouter({
       },
     },
     {
-      path: "/staking/:address",
-      name: "staking-valiator",
+      path: "/validators/:address",
+      name: "validators-valiator",
       component: () => import("@/views/StakingValidator.vue"),
       meta: {
         pageTitle: "Validator Details",
         breadcrumb: [
           {
-            text: "Validators",
+            text: "Validator",
             active: true,
           },
           {
@@ -684,6 +715,41 @@ const router_main = new VueRouter({
         breadcrumb: [
           {
             text: "Transaction",
+            active: true,
+          },
+        ],
+      },
+    },
+    // custom modules for specified chains
+    // 1. cosmos
+    {
+      path: "/cosmos/trade",
+      name: "gravity",
+      component: () => import("@/views/GravityPool.vue"),
+      meta: {
+        pageTitle: "Gravity Pools",
+        breadcrumb: [
+          {
+            text: "Gravity",
+            active: true,
+          },
+        ],
+      },
+    },
+    // 2. OSMOSIS
+    {
+      path: "/osmosis/trade/:poolid?",
+      name: "osmosis-trade",
+      component: () => import("@/views/OsmosisTrade.vue"),
+      meta: {
+        pageTitle: "Classic Trade",
+        breadcrumb: [
+          {
+            text: "DEX",
+            active: true,
+          },
+          {
+            text: "Classic Trade",
             active: true,
           },
         ],
