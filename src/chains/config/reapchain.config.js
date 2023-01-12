@@ -1,21 +1,3 @@
-// export const chainInfo = {
-//   env: "main",
-//   chainName: "reapchain",
-//   chainId: "2022",
-//   cosmosChainId: "reapchain_2022-1",
-//   restEndpoint: "https://lcd.reapchain.org",
-//   rpcEndpoint: "https://rpc.reapchain.org",
-//   evmEndpoint: "https://eth.reapchain.org",
-//   stateSyncEndpoint: [
-//     "https://state-sync-rpc.reapchain.org:443",
-//     "https://rpc-network.reapchain.org:443",
-//   ],
-//   stateSyncP2P: "state-sync-p2p.reapchain.org:27100",
-//   stateSyncNodeId: "090522bf5a8e939553d8fe9257a6350898f697cf",
-//   dashboardUrl: `https://dashboard.reapchain.org/validators`,
-//   ethAccountExplorerUrl: `https://dashboard.reapchain.org/account`,
-// };
-
 export const chainInfo = {
   env: "test",
   chainName: "reapchain",
