@@ -218,7 +218,7 @@ const router = new VueRouter({
       },
     },
     {
-      path: "/:chain/account/:address/receive",
+      path: "/account/:address/receive",
       name: "chain-receive",
       component: () => import("@/views/WalletAccountReceive.vue"),
       meta: {
@@ -268,7 +268,7 @@ const router = new VueRouter({
       },
     },
     // {
-    //   path: "/:chain/gov",
+    //   path: "/gov",
     //   name: "governance",
     //   component: () => import("@/views/Governance.vue"),
     //   meta: {
@@ -286,7 +286,7 @@ const router = new VueRouter({
     //   },
     // },
     // {
-    //   path: "/:chain/gov/:proposalid",
+    //   path: "/gov/:proposalid",
     //   name: "proposal",
     //   component: () => import("@/views/GovernanceProposalView.vue"),
     //   meta: {
@@ -351,39 +351,39 @@ const router = new VueRouter({
     },
     // custom modules for specified chains
     // 1. cosmos
-    // {
-    //   path: "/cosmos/trade",
-    //   name: "gravity",
-    //   component: () => import("@/views/GravityPool.vue"),
-    //   meta: {
-    //     pageTitle: "Gravity Pools",
-    //     breadcrumb: [
-    //       {
-    //         text: "Gravity",
-    //         active: true,
-    //       },
-    //     ],
-    //   },
-    // },
+    {
+      path: "/cosmos/trade",
+      name: "gravity",
+      component: () => import("@/views/GravityPool.vue"),
+      meta: {
+        pageTitle: "Gravity Pools",
+        breadcrumb: [
+          {
+            text: "Gravity",
+            active: true,
+          },
+        ],
+      },
+    },
     // 2. OSMOSIS
-    // {
-    //   path: "/osmosis/trade/:poolid?",
-    //   name: "osmosis-trade",
-    //   component: () => import("@/views/OsmosisTrade.vue"),
-    //   meta: {
-    //     pageTitle: "Classic Trade",
-    //     breadcrumb: [
-    //       {
-    //         text: "DEX",
-    //         active: true,
-    //       },
-    //       {
-    //         text: "Classic Trade",
-    //         active: true,
-    //       },
-    //     ],
-    //   },
-    // },
+    {
+      path: "/osmosis/trade/:poolid?",
+      name: "osmosis-trade",
+      component: () => import("@/views/OsmosisTrade.vue"),
+      meta: {
+        pageTitle: "Classic Trade",
+        breadcrumb: [
+          {
+            text: "DEX",
+            active: true,
+          },
+          {
+            text: "Classic Trade",
+            active: true,
+          },
+        ],
+      },
+    },
     // common modules
     {
       path: "/error/error-404",
@@ -402,6 +402,10 @@ const router = new VueRouter({
       },
     },
     {
+      path: "/index.php",
+      redirect: "/",
+    },
+    {
       path: "*",
       redirect: "/error/error-404",
     },
@@ -418,7 +422,7 @@ const router_main = new VueRouter({
     {
       path: "/",
       name: "home",
-      redirect: "/dashboard",
+      redirect: chainInfo.chainName,
       component: () => import("@/views/Home.vue"),
       meta: {
         layout: "full",
@@ -492,6 +496,199 @@ const router_main = new VueRouter({
         ],
       },
     },
+    {
+      path: "/",
+      name: "dashboard",
+      alias: "",
+      component: () => import("@/views/Dashboard.vue"),
+      meta: {
+        pageTitle: "Dashboard",
+        breadcrumb: [
+          {
+            text: "Dashboard",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: "/uptime",
+      name: "uptime",
+      component: () => import("@/views/Uptime.vue"),
+      meta: {
+        pageTitle: "Uptime",
+        breadcrumb: [
+          {
+            text: "Uptime",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: "/uptime/my",
+      name: "myuptime",
+      component: () => import("@/views/UptimeMyValidators.vue"),
+      meta: {
+        pageTitle: "Uptime",
+        breadcrumb: [
+          {
+            text: "Uptime",
+            active: true,
+          },
+          {
+            text: "My Validators",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: "/statesync",
+      name: "statesync",
+      component: () => import("@/views/StateSync.vue"),
+      meta: {
+        pageTitle: "State Sync",
+        breadcrumb: [
+          {
+            text: "State Synchronization",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: "/account/:address",
+      name: "chain-account",
+      component: () => import("@/views/WalletAccountDetail.vue"),
+      meta: {
+        pageTitle: "Accounts",
+        breadcrumb: [
+          {
+            text: "Accounts",
+            active: true,
+          },
+          {
+            text: "Detail",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: "/account/address/:address",
+      name: "chain-account-eth",
+      component: () => import("@/views/WalletAccountDetail.vue"),
+      meta: {
+        pageTitle: "Accounts",
+        breadcrumb: [
+          {
+            text: "Accounts",
+            active: true,
+          },
+          {
+            text: "Detail",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: "/account/:address/receive",
+      name: "chain-receive",
+      component: () => import("@/views/WalletAccountReceive.vue"),
+      meta: {
+        pageTitle: "Accounts",
+        breadcrumb: [
+          {
+            text: "Accounts",
+            active: true,
+          },
+          {
+            text: "Pay Me",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: "/validators",
+      name: "validators",
+      component: () => import("@/views/Staking.vue"),
+      meta: {
+        pageTitle: "Validators",
+        breadcrumb: [
+          {
+            text: "Validators",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: "/staking/:address",
+      name: "staking-valiator",
+      component: () => import("@/views/StakingValidator.vue"),
+      meta: {
+        pageTitle: "Validator Details",
+        breadcrumb: [
+          {
+            text: "Validators",
+            active: true,
+          },
+          {
+            text: "Validator Details",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: "/blocks",
+      name: "blocks",
+      component: () => import("@/views/Blocks.vue"),
+      meta: {
+        pageTitle: "Blocks",
+        breadcrumb: [
+          {
+            text: "Blocks",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: "/blocks/:height",
+      name: "block",
+      component: () => import("@/views/Block.vue"),
+      meta: {
+        pageTitle: "Block",
+        breadcrumb: [
+          {
+            text: "Blocks",
+            active: true,
+          },
+          {
+            text: "Block",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: "/tx/:hash",
+      name: "transaction",
+      component: () => import("@/views/Transaction.vue"),
+      meta: {
+        pageTitle: "Transaction",
+        breadcrumb: [
+          {
+            text: "Transaction",
+            active: true,
+          },
+        ],
+      },
+    },
     // common modules
     {
       path: "/error/error-404",
@@ -534,12 +731,11 @@ tempRouter.beforeEach((to, from, next) => {
   if (!config || Object.keys(config).findIndex((i) => i === c) > -1) {
     next();
   } else if (c) {
-    // if (c === "index.php") {
-    //   next({ name: "/" });
-    // }
-    // else {
-    //   next({ name: "chain-404" });
-    // }
+    if (c === "index.php") {
+      next({ name: "/" });
+    } else {
+      next({ name: "chain-404" });
+    }
   } else {
     next();
   }
