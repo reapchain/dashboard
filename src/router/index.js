@@ -418,7 +418,7 @@ const router_main = new VueRouter({
     {
       path: "/",
       name: "home",
-      redirect: chainInfo.chainName,
+      redirect: "/dashboard",
       component: () => import("@/views/Home.vue"),
       meta: {
         layout: "full",
