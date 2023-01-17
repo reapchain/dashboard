@@ -769,9 +769,7 @@ export default {
   created() {
     if (this.address.substring(0, 2) === "0x") {
       const tempAddress = ethToReap(this.address);
-      this.$router.push(
-        `/${this.$http.config.chain_name}/account/${tempAddress}`
-      );
+      this.$router.push(`/account/${tempAddress}`);
     }
     this.$http
       .getAuthAccount(this.address)

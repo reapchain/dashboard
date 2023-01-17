@@ -2,6 +2,7 @@ export const chainInfo = {
   env: "test",
   chainName: "reapchain",
   chainId: "2022",
+  chainIdHex: "0x7e6",
   cosmosChainId: "mercury_2022-3",
   restEndpoint: "https://test-lcd.reapchain.org",
   rpcEndpoint: "https://test-rpc.reapchain.org",

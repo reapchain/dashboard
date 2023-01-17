@@ -35,8 +35,8 @@ const chainAddParams = {
 };
 
 const chain = {
-  chainId: "0x7e6",
-  cosmosChainId: "mercury_2022-3",
+  chainId: chainInfo.chainIdHex,
+  cosmosChainId: chainInfo.cosmosChainId,
 };
 
 const pubkeyType = "/ethermint.crypto.v1.ethsecp256k1.PubKey";
