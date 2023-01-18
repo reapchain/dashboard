@@ -142,7 +142,7 @@ const chainConfig_local = {
     },
   ],
   gasPriceStep: {
-    low: 10000000000,
+    low: 0,
     average: 25000000000,
     high: 40000000000,
   },
