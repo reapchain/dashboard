@@ -212,9 +212,14 @@
                 <b-col cols="12">
                   <span class="font-weight-bolder"
                     >From:
-                    <router-link :to="`../staking/${item.validator_address}`">{{
-                      item.validator_address
-                    }}</router-link></span
+                    <router-link
+                      :to="
+                        `./${
+                          chainInfo.env === 'main' ? 'validators' : 'staking'
+                        }/${item.validator_address}`
+                      "
+                      >{{ item.validator_address }}</router-link
+                    ></span
                   >
                 </b-col>
                 <b-col cols="12">
@@ -360,6 +365,7 @@ export default {
   },
   data() {
     return {
+      chainInfo,
       fields: ["validator", "delegation", "rewards", "action"],
       delegations: [],
       rewards: [],
@@ -392,7 +398,6 @@ export default {
       walletRewards: "-",
       walletUnbonding: "-",
       address: null,
-      chainInfo,
     };
   },
   watch: {

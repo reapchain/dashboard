@@ -92,6 +92,7 @@ import {
 } from "bootstrap-vue";
 import { formatToken, numberWithCommas } from "@/libs/utils";
 import OperationModal from "@/views/components/OperationModal/index.vue";
+import { chainInfo } from "@/chains/config/reapchain.config";
 
 export default {
   components: {
@@ -121,7 +122,9 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      chainInfo,
+    };
   },
   computed: {
     denoms() {

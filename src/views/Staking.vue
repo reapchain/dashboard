@@ -40,7 +40,13 @@
               </b-avatar>
             </template>
             <span class="font-weight-bolder d-block text-nowrap">
-              <router-link :to="`./staking/${data.item.operator_address}`">
+              <router-link
+                :to="
+                  `./${chainInfo.env === 'main' ? 'validators' : 'staking'}/${
+                    data.item.operator_address
+                  }`
+                "
+              >
                 {{ data.item.description.moniker }}
               </router-link>
             </span>
@@ -150,7 +156,13 @@
                 </b-avatar>
               </template>
               <span class="font-weight-bolder d-block text-nowrap">
-                <router-link :to="`./staking/${data.item.operator_address}`">
+                <router-link
+                  :to="
+                    `/${chainInfo.env === 'main' ? 'validators' : 'staking'}/${
+                      data.item.operator_address
+                    }`
+                  "
+                >
                   {{ data.item.description.moniker }}
                   <!-- {{ data.item.type ? `(${data.item.type})` : "" }} -->
                 </router-link>
@@ -242,7 +254,13 @@
                 </b-avatar>
               </template>
               <span class="font-weight-bolder d-block text-nowrap">
-                <router-link :to="`./staking/${data.item.operator_address}`">
+                <router-link
+                  :to="
+                    `./${chainInfo.env === 'main' ? 'validators' : 'staking'}/${
+                      data.item.operator_address
+                    }`
+                  "
+                >
                   {{ data.item.description.moniker }}
                   {{ data.item.jailed ? " [Jailed]" : "" }}
                   <!-- {{ data.item.type ? `(${data.item.type})` : "" }} -->
@@ -335,6 +353,7 @@ import {
 } from "@/libs/utils";
 import { keybase } from "@/libs/fetch";
 import OperationModal from "@/views/components/OperationModal/index.vue";
+import { chainInfo } from "@/chains/config/reapchain.config";
 // import { toHex } from '@cosmjs/encoding'
 // import fetch from 'node-fetch'
 
@@ -359,6 +378,7 @@ export default {
   },
   data() {
     return {
+      chainInfo,
       islive: true,
       validator_address: null,
       mintInflation: 0,
