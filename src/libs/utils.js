@@ -673,6 +673,8 @@ export function formatNumber(countValue, withAbbr = false, decimals = 2) {
 }
 
 export function tokenFormatter(tokens, denoms = {}, fixed = 18) {
+  console.log("tokens : ", tokens);
+  console.log("denoms : ", denoms);
   if (Array.isArray(tokens)) {
     return tokens.map((t) => formatToken(t, denoms, fixed)).join(", ");
   }
