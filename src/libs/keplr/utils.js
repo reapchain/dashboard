@@ -18,6 +18,12 @@ import {
   MsgWithdrawValidatorCommission,
 } from "@keplr-wallet/proto-types/cosmos/distribution/v1beta1/tx";
 import { MsgSend } from "@keplr-wallet/proto-types/cosmos/bank/v1beta1/tx";
+import {
+  MsgSubmitProposal,
+  MsgDeposit,
+  MsgVote,
+} from "@keplr-wallet/proto-types/cosmos/gov/v1beta1/tx";
+import { TextProposal } from "@keplr-wallet/proto-types/cosmos/gov/v1beta1/gov";
 import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
 import { SignMode } from "@keplr-wallet/proto-types/cosmos/tx/signing/v1beta1/signing";
 import { chainInfo } from "@/chains/config/reapchain.config";
@@ -270,6 +276,90 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
             },
           ],
         };
+      case "Vote":
+        return {
+          aminoMsgs: [
+            {
+              type: "cosmos-sdk/MsgVote",
+              value: {
+                option: msgValue.option,
+                proposal_id: msgValue.proposalId.toString(),
+                voter: msgValue.voter,
+              },
+            },
+          ],
+          protoMsgs: [
+            {
+              typeUrl: "/cosmos.gov.v1beta1.MsgVote",
+              value: MsgVote.encode({
+                option: msgValue.option,
+                proposalId: msgValue.proposalId.toString(),
+                voter: msgValue.voter,
+              }).finish(),
+            },
+          ],
+        };
+      case "GovDeposit":
+        return {
+          aminoMsgs: [
+            {
+              type: "cosmos-sdk/MsgDeposit",
+              value: {
+                amount: msgValue.amount,
+                depositor: msgValue.depositor,
+                proposal_id: msgValue.proposalId.toString(),
+              },
+            },
+          ],
+          protoMsgs: [
+            {
+              typeUrl: "/cosmos.gov.v1beta1.MsgDeposit",
+              value: MsgDeposit.encode({
+                amount: msgValue.amount,
+                depositor: msgValue.depositor,
+                proposalId: msgValue.proposalId.toString(),
+              }).finish(),
+            },
+          ],
+        };
+      case "GovProposal":
+        if (msgValue.type === "Text") {
+          return {
+            aminoMsgs: [
+              {
+                type: "cosmos-sdk/MsgSubmitProposal",
+                value: {
+                  content: {
+                    type: "cosmos-sdk/TextProposal",
+                    value: {
+                      title: msgValue.title,
+                      description: msgValue.description,
+                    },
+                  },
+                  initial_deposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                },
+              },
+            ],
+            protoMsgs: [
+              {
+                typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
+                value: MsgSubmitProposal.encode({
+                  content: {
+                    typeUrl: "/cosmos.gov.v1beta1.TextProposal",
+                    value: TextProposal.encode({
+                      title: msgValue.title,
+                      description: msgValue.description,
+                    }).finish(),
+                  },
+                  initialDeposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                }).finish(),
+              },
+            ],
+          };
+        }
+
       default:
         return {};
     }

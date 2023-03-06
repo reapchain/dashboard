@@ -9,7 +9,7 @@ const modules = [
   // },
   {
     scope: "normal",
-    title: "dashboard",
+    title: "Dashboard",
     route: "dashboard",
   },
   {
@@ -24,15 +24,14 @@ const modules = [
   },
   {
     scope: "normal",
-    title: "parameters",
+    title: "Parameters",
     route: "parameters",
   },
-  // {
-  //   scope: "normal",
-  //   title: "governance",
-  //   route: "governance",
-  //   exclude: "emoney",
-  // },
+  {
+    scope: "normal",
+    title: "governance",
+    route: "governance",
+  },
   {
     scope: "normal",
     title: "uptime",
@@ -43,16 +42,16 @@ const modules = [
     title: "statesync",
     route: "statesync",
   },
-  {
-    scope: "cos-mos",
-    title: "gravity",
-    route: "gravity",
-  },
-  {
-    scope: "osmosis",
-    title: "trade",
-    route: "osmosis-trade",
-  },
+  // {
+  //   scope: "cos-mos",
+  //   title: "gravity",
+  //   route: "gravity",
+  // },
+  // {
+  //   scope: "osmosis",
+  //   title: "trade",
+  //   route: "osmosis-trade",
+  // },
 ];
 
 const modules_main = [
@@ -114,7 +113,6 @@ function processMenu() {
   //   href: '',
   //   icon: 'GithubIcon',
   // })
-
   return chainMenus;
 }
 
