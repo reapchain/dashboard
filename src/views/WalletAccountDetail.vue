@@ -119,9 +119,14 @@
             <b-col cols="12">
               <span class="font-weight-bolder"
                 >From:
-                <router-link :to="`../staking/${item.validator_address}`">{{
-                  item.validator_address
-                }}</router-link></span
+                <router-link
+                  :to="
+                    `/${chainInfo.env === 'main' ? 'validators' : 'staking'}/${
+                      item.validator_address
+                    }`
+                  "
+                  >{{ item.validator_address }}</router-link
+                ></span
               >
             </b-col>
             <b-col cols="12">
@@ -522,6 +527,7 @@ import ObjectFieldComponent from "./ObjectFieldComponent.vue";
 import ChartComponentDoughnut from "./ChartComponentDoughnut.vue";
 import { getLocalAccounts } from "@/libs/utils";
 import { ethToReap } from "@/libs/metamask/addressConverter";
+import { chainInfo } from "@/chains/config/reapchain.config";
 
 export default {
   components: {
@@ -556,6 +562,7 @@ export default {
   },
   data() {
     return {
+      chainInfo,
       currency: getUserCurrencySign(),
       selectedValidator: "",
       totalCurrency: 0,

@@ -179,7 +179,7 @@ export default {
         const activeSteering = vals.filter(
           (validator) => validator.type === "steering" && !validator.disabled
         );
-        if (activeSteering > 0) {
+        if (activeSteering.length > 0) {
           options.push({
             value: null,
             label: "=== MY STEERING VALIDATOR ===",

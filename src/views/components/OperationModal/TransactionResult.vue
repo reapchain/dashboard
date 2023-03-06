@@ -1,9 +1,6 @@
 <template>
   <div>
-    <div
-      v-if="false"
-      class="board "
-    >
+    <div v-if="false" class="board ">
       <div class="data">
         <div class="board-row">
           <div class="key">
@@ -32,22 +29,13 @@
       </div>
     </div>
 
-    <p
-      v-if="succeed"
-      class="result-text mt-1 text-success"
-    >
+    <p v-if="succeed" class="result-text mt-1 text-success">
       Congratulations! Transfer completed successfully.
     </p>
-    <p
-      v-else-if="error"
-      class="result-text mt-1 text-danger"
-    >
+    <p v-else-if="error" class="result-text mt-1 text-danger">
       {{ error }}
     </p>
-    <p
-      v-else
-      class="result-text mt-1 text-primary"
-    >
+    <p v-else class="result-text mt-1 text-primary">
       Processing...
     </p>
 
@@ -58,18 +46,9 @@
         :animated="isLoading"
       /> -->
       <b-progress :animated="isLoading">
-        <b-progress-bar
-          variant="success"
-          :value="progresBar[0]"
-        />
-        <b-progress-bar
-          variant="danger"
-          :value="progresBar[1]"
-        />
-        <b-progress-bar
-          variant="info"
-          :value="progresBar[2]"
-        />
+        <b-progress-bar variant="success" :value="progresBar[0]" />
+        <b-progress-bar variant="danger" :value="progresBar[1]" />
+        <b-progress-bar variant="info" :value="progresBar[2]" />
       </b-progress>
       <div class="status-text">
         <span v-if="hash">SUBMITED</span>
@@ -78,9 +57,7 @@
       </div>
     </div>
     <div class="link">
-      <router-link
-        :to="txUrl"
-      >
+      <router-link :to="txUrl">
         View Transaction
       </router-link>
     </div>
@@ -88,7 +65,7 @@
 </template>
 
 <script>
-import { BProgress, BProgressBar } from 'bootstrap-vue'
+import { BProgress, BProgressBar } from "bootstrap-vue";
 
 export default {
   components: {
@@ -109,9 +86,9 @@ export default {
     return {
       isLoading: true,
       succeed: false,
-      error: '',
+      error: "",
       checkTimes: 0,
-    }
+    };
   },
   computed: {
     progresBar() {
@@ -119,57 +96,66 @@ export default {
       // fail: [50, 50, 0]
       // pending: [0, 0, 100]
       if (!this.hash) {
-        return [0, 0, 100]
+        return [0, 0, 100];
       }
       if (this.succeed) {
-        return [100, 0, 0]
+        return [100, 0, 0];
       }
-      return [50, 0, 50]
+      return [50, 0, 50];
     },
     txUrl() {
-      const chain = this.selectedChain ? this.selectedChain.chain_name : this.$store.state.chains.selected.chain_name
-      return `/${chain}/tx/${this.hash}`
+      const chain = this.selectedChain
+        ? this.selectedChain.chain_name
+        : this.$store.state.chains.selected.chain_name;
+      return `/tx/${this.hash}`;
     },
   },
   mounted() {
-    this.timer = setInterval(this.trace, 6000)
+    this.timer = setInterval(this.trace, 6000);
   },
   beforeDestroy() {
-    clearInterval(this.timer)
+    clearInterval(this.timer);
   },
   methods: {
     trace() {
       if (this.hash) {
-        this.error = null
-        this.$http.getTxs(this.hash, this.selectedChain).then(res => {
-          if (res.code === 0) {
-            this.succeed = true
-            this.isLoading = false
-            clearInterval(this.timer)
-            const elem = document.getElementById('txevent')
-            if (elem) {
-              const event = new Event('txcompleted', res)
-              elem.dispatchEvent(event)
+        this.error = null;
+        this.$http
+          .getTxs(this.hash, this.selectedChain)
+          .then(
+            (res) => {
+              if (res.code === 0) {
+                this.succeed = true;
+                this.isLoading = false;
+                clearInterval(this.timer);
+                const elem = document.getElementById("txevent");
+                if (elem) {
+                  const event = new Event("txcompleted", res);
+                  elem.dispatchEvent(event);
+                }
+              } else if (res.code !== 3) {
+                // code 3 is tx unconfirmed(not founded).
+                this.error = res.raw_log;
+                clearInterval(this.timer);
+              }
+            },
+            () => {
+              // error statement
+              this.checkTimes += 1;
+              if (this.checkTimes > 5) {
+                clearInterval(this.timer);
+                this.error = "Timeout";
+              }
             }
-          } else if (res.code !== 3) { // code 3 is tx unconfirmed(not founded).
-            this.error = res.raw_log
-            clearInterval(this.timer)
-          }
-        }, () => {
-          // error statement
-          this.checkTimes += 1
-          if (this.checkTimes > 5) {
-            clearInterval(this.timer)
-            this.error = 'Timeout'
-          }
-        }).catch(e => {
-          this.error = e
-          clearInterval(this.timer)
-        })
+          )
+          .catch((e) => {
+            this.error = e;
+            clearInterval(this.timer);
+          });
       }
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -220,8 +206,7 @@ export default {
   text-align: center;
   a {
     text-decoration: underline;
-    color: var(--purple)
+    color: var(--purple);
   }
-
 }
 </style>

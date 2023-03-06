@@ -179,6 +179,7 @@ import IBCTransfer from "./components/IBCTransfer.vue";
 import Vote from "./components/Vote.vue";
 import WithdrawCommission from "./components/WithdrawCommission.vue";
 import GovDeposit from "./components/GovDeposit.vue";
+import GovProposal from "./components/GovProposal.vue";
 import TransactionResult from "./TransactionResult.vue";
 import { metamaskSendTx } from "@/libs/metamask/utils";
 import { getDefaultAccountDevice } from "@/libs/account/utils";
@@ -219,6 +220,7 @@ export default {
     Vote,
     WithdrawCommission,
     GovDeposit,
+    GovProposal,
     TransactionResult,
   },
   directives: {
@@ -454,6 +456,7 @@ export default {
     },
     async sendTx() {
       const txMsgs = this.$refs.component.msg;
+
       if (txMsgs.length === 0) {
         this.error = "No delegation found";
         return "";
