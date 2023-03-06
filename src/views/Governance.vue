@@ -1,14 +1,31 @@
 <template>
   <div>
-    <b-button-group class="mb-2">
-      <b-button
-        v-for="(t, i) in types"
-        :key="t"
-        :variant="i === type ? 'secondary' : 'outline-secondary'"
-        @click="switchStatus(i)"
-        >{{ t }}</b-button
+    <div>
+      <div
+        style="{align-items: center; justify-content: space-between; display: flex;}"
       >
-    </b-button-group>
+        <b-button-group class="mb-2">
+          <b-button
+            v-for="proposalStatus in proposalStatusOption"
+            :key="proposalStatus.status"
+            :variant="
+              proposalStatus.status === type ? 'secondary' : 'outline-secondary'
+            "
+            @click="switchStatus(proposalStatus.status)"
+            >{{ proposalStatus.name }}</b-button
+          >
+        </b-button-group>
+        <b-button-group class="mb-2" style="margin-left: auto;">
+          <b-button
+            v-b-modal.operation-modal
+            variant="primary"
+            @click="setOperationModalType('GovProposal')"
+          >
+            New Proposal
+          </b-button>
+        </b-button-group>
+      </div>
+    </div>
     <b-row class="match-height">
       <b-col v-for="p in proposals" :key="p.id" lg="6" md="12">
         <proposal-summary-component
@@ -55,6 +72,7 @@ import {
 import Ripple from "vue-ripple-directive";
 import OperationModal from "@/views/components/OperationModal/index.vue";
 import ProposalSummaryComponent from "./components/governance/ProposalSummaryComponent.vue";
+import store from "@/store";
 
 export default {
   components: {
@@ -86,11 +104,12 @@ export default {
       totalPower: 0,
       tallyParam: null,
       type: "2",
-      types: {
-        2: "Voting",
-        3: "Passed",
-        4: "Rejected",
-      },
+      proposalStatusOption: [
+        { status: "2", name: "Voting" },
+        { status: "1", name: "Deposit" },
+        { status: "3", name: "Passed" },
+        { status: "4", name: "Rejected" },
+      ],
     };
   },
   mounted() {
@@ -106,6 +125,13 @@ export default {
         this.type = s;
         this.getList();
       }
+    },
+    goNewProposalPage() {
+      const c = store.state.chains.selected;
+      this.$router.push({
+        name: "newProposal",
+        params: { chain: c.chain_name },
+      });
     },
     getList() {
       this.loading = true;
@@ -128,6 +154,9 @@ export default {
           );
         }
       });
+    },
+    setOperationModalType(type) {
+      this.operationModalType = type;
     },
   },
 };
