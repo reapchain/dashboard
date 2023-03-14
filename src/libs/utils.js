@@ -19,7 +19,7 @@ import utc from "dayjs/plugin/utc";
 import RIPEMD160 from "ripemd160";
 import localeData from "dayjs/plugin/localeData";
 import { $themeColors } from "@themeConfig";
-// import { SigningStargateClient } from '@cosmjs/stargate'
+import { SigningStargateClient } from '@cosmjs/stargate'
 import PingWalletClient from "./data/signing";
 import Decimal from "decimal.js";
 

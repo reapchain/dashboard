@@ -1,3 +1,4 @@
+/* eslint-disable */
 import axios from "../common/axios";
 import { getAccounts } from "@/libs/keplr/keplr";
 import { generateEndpointAccount } from "@tharsis/provider";
@@ -27,6 +28,12 @@ import { TextProposal } from "@keplr-wallet/proto-types/cosmos/gov/v1beta1/gov";
 import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
 import { SignMode } from "@keplr-wallet/proto-types/cosmos/tx/signing/v1beta1/signing";
 import { chainInfo } from "@/chains/config/reapchain.config";
+import { ParameterChangeProposal } from "@terra-money/feather.js";
+import { ParameterChangeProposal as ParameterChangeProposal_pb } from "@terra-money/terra.proto/cosmos/params/v1beta1/params";
+import {
+  SoftwareUpgradeProposal,
+  CancelSoftwareUpgradeProposal,
+} from "@keplr-wallet/proto-types/cosmos/upgrade/v1beta1/upgrade";
 
 export const keplrSendTx = async (type, txData) => {
   try {
@@ -358,6 +365,109 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
               },
             ],
           };
+        } else if (msgValue.type === "Parameter") {
+          const proposalSubObj = new ParameterChangeProposal(
+            msgValue.title,
+            msgValue.description,
+            [
+              {
+                subspace: "inflation",
+                key: "ParamStoreKeyEnableInflation",
+                value: "false",
+              },
+            ]
+          );
+
+          return {
+            aminoMsgs: [
+              {
+                type: "cosmos-sdk/MsgSubmitProposal",
+                value: {
+                  content: proposalSubObj.toAmino(),
+                  initial_deposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                },
+              },
+            ],
+            protoMsgs: [
+              {
+                typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
+                value: MsgSubmitProposal.encode({
+                  content: {
+                    typeUrl: "/cosmos.params.v1beta1.ParameterChangeProposal",
+                    value: ParameterChangeProposal_pb.encode({
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      changes: [
+                        {
+                          subspace: "inflation",
+                          key: "ParamStoreKeyEnableInflation",
+                          value: "false",
+                        },
+                      ],
+                    }).finish(),
+                  },
+                  // content: proposalSubObj.toProto()proposalSubObj.toData(),
+                  initialDeposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                }).finish(),
+              },
+            ],
+          };
+        } else if (msgValue.type === "Upgrade") {
+          return {
+            aminoMsgs: [
+              {
+                type: "cosmos-sdk/MsgSubmitProposal",
+                value: {
+                  content: {
+                    type: "cosmos-sdk/SoftwareUpgradeProposal",
+                    value: {
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      // plan: {
+                      //   name: "name",
+                      //   height: 1000000,
+                      //   info: "info",
+                      // },
+                    },
+                  },
+                  initial_deposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                },
+              },
+            ],
+            protoMsgs: [
+              {
+                typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
+                value: MsgSubmitProposal.encode({
+                  content: {
+                    typeUrl: "/cosmos.upgrade.v1beta1.SoftwareUpgradeProposal",
+                    value: SoftwareUpgradeProposal.encode({
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      // plan: {
+                      //   name: "name",
+                      //   height: 1000000,
+                      //   info: "info",
+                      // },
+                      // plan: {
+                      //   value: Plan.encode({
+                      //     name: "name",
+                      //     height: "10",
+                      //     info: "info",
+                      //   }).finish(),
+                      // },
+                    }).finish(),
+                  },
+                  initialDeposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                }).finish(),
+              },
+            ],
+          };
+        } else {
+          return {};
         }
 
       default:

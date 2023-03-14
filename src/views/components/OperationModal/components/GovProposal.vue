@@ -168,9 +168,11 @@ import {
 
 const proposalTypeOptions = [
   { label: "Text Proposal", value: "Text" },
+  { label: "Parameter Change", value: "Parameter" },
+  { label: "Software Upgrade Proposal", value: "Upgrade" },
+  // {label: "Cancel Software Upgrade Proposal", value: "CancelUpgrade" },
+  // {label: "Execute contract", value: "" },
   // {label: "Community pool spend", value: "Text" },
-  // {label: "Parameter change", value: "Text" },
-  // {label: "Execute contract", value: "Text" },
 ];
 
 export default {
