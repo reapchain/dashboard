@@ -28,12 +28,21 @@ import { TextProposal } from "@keplr-wallet/proto-types/cosmos/gov/v1beta1/gov";
 import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
 import { SignMode } from "@keplr-wallet/proto-types/cosmos/tx/signing/v1beta1/signing";
 import { chainInfo } from "@/chains/config/reapchain.config";
-import { ParameterChangeProposal } from "@terra-money/feather.js";
-import { ParameterChangeProposal as ParameterChangeProposal_pb } from "@terra-money/terra.proto/cosmos/params/v1beta1/params";
 import {
+  ParameterChangeProposal,
+  CommunityPoolSpendProposal,
+  SoftwareUpgradeProposal as SoftwareUpgradeProposal2,
+  Plan as Plan2,
+} from "@terra-money/feather.js";
+import { ParameterChangeProposal as ParameterChangeProposal_pb } from "@terra-money/terra.proto/cosmos/params/v1beta1/params";
+import { CommunityPoolSpendProposal as CommunityPoolSpendProposal_pb } from "@terra-money/terra.proto/cosmos/distribution/v1beta1/distribution";
+import { SoftwareUpgradeProposal as SoftwareUpgradeProposal_pb } from "@terra-money/terra.proto/cosmos/upgrade/v1beta1/upgrade";
+import {
+  Plan,
   SoftwareUpgradeProposal,
   CancelSoftwareUpgradeProposal,
 } from "@keplr-wallet/proto-types/cosmos/upgrade/v1beta1/upgrade";
+import * as Long from "long";
 
 export const keplrSendTx = async (type, txData) => {
   try {
@@ -127,7 +136,7 @@ export const keplrSendTx = async (type, txData) => {
     const sendTxRes = await window.keplr?.sendTx(
       chainInfo.cosmosChainId,
       signedTx,
-      "async"
+      "sync"
     );
 
     return {
@@ -135,6 +144,7 @@ export const keplrSendTx = async (type, txData) => {
       txhash: Buffer.from(sendTxRes).toString("hex") || "",
     };
   } catch (error) {
+    console.log(error);
     return {
       result: false,
       txhash: "",
@@ -369,21 +379,29 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
           const proposalSubObj = new ParameterChangeProposal(
             msgValue.title,
             msgValue.description,
-            [
-              {
-                subspace: "inflation",
-                key: "ParamStoreKeyEnableInflation",
-                value: "false",
-              },
-            ]
+            msgValue.changes
           );
+
+          // {
+          //   subspace: "inflation",
+          //   key: "ParamStoreKeyEnableInflation",
+          //   value: "false",
+          // },
 
           return {
             aminoMsgs: [
               {
                 type: "cosmos-sdk/MsgSubmitProposal",
                 value: {
-                  content: proposalSubObj.toAmino(),
+                  content: {
+                    type: "cosmos-sdk/ParameterChangeProposal",
+                    value: {
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      changes: msgValue.changes,
+                    },
+                  },
+                  // content: proposalSubObj.toAmino(),
                   initial_deposit: msgValue.initialDeposit,
                   proposer: msgValue.proposer,
                 },
@@ -398,13 +416,7 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
                     value: ParameterChangeProposal_pb.encode({
                       title: msgValue.title,
                       description: msgValue.description,
-                      changes: [
-                        {
-                          subspace: "inflation",
-                          key: "ParamStoreKeyEnableInflation",
-                          value: "false",
-                        },
-                      ],
+                      changes: msgValue.changes,
                     }).finish(),
                   },
                   // content: proposalSubObj.toProto()proposalSubObj.toData(),
@@ -414,22 +426,21 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
               },
             ],
           };
-        } else if (msgValue.type === "Upgrade") {
+        } else if (msgValue.type === "Community") {
+          console.log("Community : ", msgValue);
+
           return {
             aminoMsgs: [
               {
                 type: "cosmos-sdk/MsgSubmitProposal",
                 value: {
                   content: {
-                    type: "cosmos-sdk/SoftwareUpgradeProposal",
+                    type: "cosmos-sdk/CommunityPoolSpendProposal",
                     value: {
                       title: msgValue.title,
                       description: msgValue.description,
-                      // plan: {
-                      //   name: "name",
-                      //   height: 1000000,
-                      //   info: "info",
-                      // },
+                      recipient: msgValue.recipient,
+                      amount: msgValue.amount,
                     },
                   },
                   initial_deposit: msgValue.initialDeposit,
@@ -442,22 +453,66 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
                 typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
                 value: MsgSubmitProposal.encode({
                   content: {
-                    typeUrl: "/cosmos.upgrade.v1beta1.SoftwareUpgradeProposal",
-                    value: SoftwareUpgradeProposal.encode({
+                    typeUrl:
+                      "/cosmos.distribution.v1beta1.CommunityPoolSpendProposal",
+                    value: CommunityPoolSpendProposal_pb.encode({
                       title: msgValue.title,
                       description: msgValue.description,
-                      // plan: {
-                      //   name: "name",
-                      //   height: 1000000,
-                      //   info: "info",
-                      // },
-                      // plan: {
-                      //   value: Plan.encode({
-                      //     name: "name",
-                      //     height: "10",
-                      //     info: "info",
-                      //   }).finish(),
-                      // },
+                      recipient: msgValue.recipient,
+                      amount: msgValue.amount,
+                    }).finish(),
+                  },
+                  initialDeposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                }).finish(),
+              },
+            ],
+          };
+        } else if (msgValue.type === "Upgrade") {
+          const testObj = new SoftwareUpgradeProposal2(
+            msgValue.title,
+            msgValue.description,
+            new Plan2("name", undefined, "1000000", "info", {})
+          );
+
+          return {
+            aminoMsgs: [
+              {
+                type: "cosmos-sdk/MsgSubmitProposal",
+                value: {
+                  content: testObj.toAmino(),
+                  // content: {
+                  //   type: "cosmos-sdk/SoftwareUpgradeProposal",
+                  //   value: {
+                  //     title: msgValue.title,
+                  //     description: msgValue.description,
+                  //     plan: {
+                  //       name: "test_upgrade",
+                  //       // height: "10000000",
+                  //       height: new Long(100000000),
+                  //       info: "info",
+                  //     },
+                  //   },
+                  // },
+                  initial_deposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                },
+              },
+            ],
+            protoMsgs: [
+              {
+                typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
+                value: MsgSubmitProposal.encode({
+                  content: {
+                    typeUrl: "/cosmos.upgrade.v1beta1.SoftwareUpgradeProposal",
+                    value: SoftwareUpgradeProposal_pb.encode({
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      plan: {
+                        name: "test_upgrade",
+                        info: "info",
+                        height: new Long(100000000),
+                      },
                     }).finish(),
                   },
                   initialDeposit: msgValue.initialDeposit,

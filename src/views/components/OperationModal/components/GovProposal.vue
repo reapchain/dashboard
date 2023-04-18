@@ -128,6 +128,103 @@
         </b-form-group>
       </b-col>
     </b-row>
+    <b-row v-if="proposalType === 'Parameter'">
+      <b-col>
+        <b-form-group label="Changes" label-for="Changes">
+          <validation-provider
+            #default="{ errors }"
+            rules="required"
+            name="Changes"
+          >
+            <div
+              class="changes"
+              v-for="(change, i) in changes"
+              :key="`change-${i}`"
+            >
+              <span>
+                subspace
+                <b-form-input
+                  :id="`change-${i}`"
+                  prepend="First and last name"
+                  v-model="change.subspace"
+                />
+              </span>
+              <span>
+                key
+                <b-form-input :id="`change-${i}`" v-model="change.key" />
+              </span>
+              <span>
+                value
+                <b-form-input :id="`change-${i}`" v-model="change.value" />
+              </span>
+              <b-button
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                variant="outline-primary"
+                @click="clickChangeButton(i)"
+                class="appendButton"
+                size="sm"
+              >
+                {{ changes.length === i + 1 ? "+" : "-" }}
+              </b-button>
+            </div>
+            <small class="text-danger">{{ errors[0] }}</small>
+          </validation-provider>
+        </b-form-group>
+      </b-col>
+    </b-row>
+    <template v-if="proposalType === 'Community'">
+      <b-row>
+        <b-col>
+          <b-form-group label="Recipient" label-for="Recipient">
+            <validation-provider
+              #default="{ errors }"
+              rules="required"
+              name="Recipient"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="Recipient"
+                  v-model="communityPoolRecipient"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <b-form-group label="Amount" label-for="CommunityPoolAmount">
+            <validation-provider
+              v-slot="{ errors }"
+              rules="required|regex:^([0-9\.]+)$"
+              name="CommunityPoolAmount"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="CommunityPoolAmount"
+                  v-model="communityPoolAmount"
+                  :state="errors.length > 0 ? false : null"
+                  placeholder="Input a number"
+                  type="number"
+                />
+                <b-input-group-append is-text>
+                  {{ printDenom() }}
+                </b-input-group-append>
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+            <b-form-text v-show="false">
+              ≈
+              <strong class="text-primary"
+                >{{ currencySign }}{{ valuation }}</strong
+              >
+            </b-form-text>
+          </b-form-group>
+        </b-col>
+      </b-row>
+    </template>
   </div>
 </template>
 
@@ -136,6 +233,7 @@ import { ValidationProvider } from "vee-validate";
 import {
   BRow,
   BCol,
+  BButton,
   BInputGroup,
   BInputGroupAppend,
   BFormInput,
@@ -165,14 +263,15 @@ import {
   getUserCurrency,
   getUserCurrencySign,
 } from "@/libs/utils";
+import Ripple from "vue-ripple-directive";
 
 const proposalTypeOptions = [
   { label: "Text Proposal", value: "Text" },
   { label: "Parameter Change", value: "Parameter" },
-  { label: "Software Upgrade Proposal", value: "Upgrade" },
+  { label: "Community Pool Spend", value: "Community" },
+  // { label: "Software Upgrade Proposal", value: "Upgrade" },
   // {label: "Cancel Software Upgrade Proposal", value: "CancelUpgrade" },
   // {label: "Execute contract", value: "" },
-  // {label: "Community pool spend", value: "Text" },
 ];
 
 export default {
@@ -180,6 +279,7 @@ export default {
   components: {
     BRow,
     BCol,
+    BButton,
     BInputGroup,
     BInputGroupAppend,
     BFormInput,
@@ -200,6 +300,9 @@ export default {
       default: () => [],
     },
   },
+  directives: {
+    Ripple,
+  },
   data() {
     return {
       currency: getUserCurrency(),
@@ -213,9 +316,17 @@ export default {
       // form data
       proposalType: proposalTypeOptions[0].value,
       proposalTitle: "",
+      changes: [
+        {
+          subspace: "",
+          key: "",
+          value: "",
+        },
+      ],
       proposalDiscription: "",
       proposalDeposit: null,
-
+      communityPoolRecipient: "",
+      communityPoolAmount: null,
       required,
       password,
       email,
@@ -245,6 +356,24 @@ export default {
             proposer: this.address,
             title: this.proposalTitle,
             description: this.proposalDiscription,
+            changes:
+              this.proposalType === "Parameter" ? this.changes : undefined,
+            recipient:
+              this.proposalType === "Community"
+                ? this.communityPoolRecipient
+                : undefined,
+            amount:
+              this.proposalType === "Community"
+                ? [
+                    {
+                      amount: getUnitAmount(
+                        this.communityPoolAmount,
+                        this.token
+                      ),
+                      denom: this.token,
+                    },
+                  ]
+                : undefined,
           },
         },
       ];
@@ -274,6 +403,19 @@ export default {
   },
 
   methods: {
+    clickChangeButton(index) {
+      if (this.changes.length === index + 1) {
+        this.changes.push({
+          subspace: "",
+          key: "",
+          value: "",
+        });
+      } else {
+        const newList = [...this.changes];
+        newList.splice(index, 1);
+        this.changes = newList;
+      }
+    },
     setupBalance() {
       if (this.balance && this.balance.length > 0) {
         this.token = this.balance[0].denom;
@@ -290,3 +432,19 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.changes {
+  display: flex;
+  padding-bottom: 5px;
+  span {
+    padding-right: 10px;
+  }
+}
+.appendButton {
+  width: 50px;
+  font-size: 20px;
+  height: 38px;
+  margin-top: auto;
+}
+</style>

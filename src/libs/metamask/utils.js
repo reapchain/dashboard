@@ -121,7 +121,6 @@ export const metamaskSendTx = async (type, txData) => {
 };
 
 export const createMetamaskTxMessage = (type, txData, sender) => {
-  console.log(type, txData);
   try {
     switch (type) {
       case "Transfer":
