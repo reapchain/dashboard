@@ -99,10 +99,21 @@
     </b-row>
     <b-row>
       <b-col>
-        <b-form-group label="Proposal Deposit" label-for="ProposalDeposit">
+        <b-form-group
+          :label="
+            minInitDepositAmount
+              ? `Proposal Deposit(over ${toNormalFloat(
+                  minInitDepositAmount
+                )} REAP)`
+              : `Proposal Deposit`
+          "
+          label-for="ProposalDeposit"
+        >
           <validation-provider
             v-slot="{ errors }"
-            rules="required|regex:^([0-9\.]+)$"
+            :rules="
+              `required|regex:^([0-9\.]+)$|min-value:${minInitDepositAmount}`
+            "
             name="ProposalDeposit"
           >
             <b-input-group class="mb-25">
@@ -255,6 +266,7 @@ import {
   digits,
   alphaDash,
   length,
+  minValue,
 } from "@validations";
 import {
   formatToken,
@@ -327,6 +339,10 @@ export default {
       proposalDeposit: null,
       communityPoolRecipient: "",
       communityPoolAmount: null,
+
+      initialDepositFactor: 0.5,
+      minInitDepositAmount: null,
+
       required,
       password,
       email,
@@ -338,6 +354,7 @@ export default {
       digits,
       length,
       alphaDash,
+      minValue,
     };
   },
   computed: {
@@ -395,14 +412,22 @@ export default {
       return 0;
     },
   },
-  mounted() {
+  async mounted() {
     this.$emit("update", {
       modalTitle: "New Proposal",
       historyName: "newProposal",
     });
+
+    const depositParams = await this.$http.getGovernanceParameterDeposit();
+    this.minInitDepositAmount =
+      (parseInt(depositParams.min_deposit[0].amount.toString()) / 10 ** 18) *
+      this.initialDepositFactor;
   },
 
   methods: {
+    toNormalFloat(value) {
+      return value.toLocaleString("fullwide", { maximumFractionDigits: 18 });
+    },
     clickChangeButton(index) {
       if (this.changes.length === index + 1) {
         this.changes.push({
