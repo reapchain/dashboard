@@ -374,6 +374,8 @@
                   <th>Length</th>
                   <th>End Date</th>
                   <th>Amount</th>
+                  <th>Status</th>
+                  <th>Ownership</th>
                   <template
                     v-if="
                       account.value.vesting_periods[0].length ||
@@ -400,6 +402,36 @@
                         }}
                       </td>
                       <td>{{ formatToken(p.amount) }}</td>
+                      <td>
+                        {{
+                          displayScheduleStatus(
+                            isExpiredSchedule(
+                              reduceTimestamp(
+                                account.value.vesting_periods.slice(
+                                  0,
+                                  index + 1
+                                )
+                              )
+                            ),
+                            "Vesting"
+                          )
+                        }}
+                      </td>
+                      <td>
+                        {{
+                          displayScheduleOwnership(
+                            isExpiredSchedule(
+                              reduceTimestamp(
+                                account.value.vesting_periods.slice(
+                                  0,
+                                  index + 1
+                                )
+                              )
+                            ),
+                            "Vesting"
+                          )
+                        }}
+                      </td>
                     </b-tr>
                   </template>
                   <template
@@ -428,6 +460,36 @@
                         }}
                       </td>
                       <td>{{ formatToken(p.amount) }}</td>
+                      <td>
+                        {{
+                          displayScheduleStatus(
+                            isExpiredSchedule(
+                              reduceTimestamp(
+                                account.value.vesting_periods.slice(
+                                  0,
+                                  index + 1
+                                )
+                              )
+                            ),
+                            "Lockup"
+                          )
+                        }}
+                      </td>
+                      <td>
+                        {{
+                          displayScheduleOwnership(
+                            isExpiredSchedule(
+                              reduceTimestamp(
+                                account.value.vesting_periods.slice(
+                                  0,
+                                  index + 1
+                                )
+                              )
+                            ),
+                            "Lockup"
+                          )
+                        }}
+                      </td>
                     </b-tr>
                   </template>
                 </b-table-simple>
@@ -876,6 +938,35 @@ export default {
     },
     reduceTimestamp(arr) {
       return arr.reduce((acc, curr) => acc + Number(curr.length), 0);
+    },
+    isExpiredSchedule(time) {
+      const timestamp = time * 1000;
+      const now = new Date().getTime();
+      let result = false;
+      if (timestamp < now) {
+        result = true;
+      } else {
+        result = false;
+      }
+      return result;
+    },
+    displayScheduleStatus(isExpired, type) {
+      if (type === "Lockup") {
+        return isExpired ? "Unlocked" : "Locked";
+      } else if (type === "Vesting") {
+        return isExpired ? "Vested" : "Unvested";
+      } else {
+        return "-";
+      }
+    },
+    displayScheduleOwnership(isExpired, type) {
+      if (type === "Lockup") {
+        return "This Account";
+      } else if (type === "Vesting") {
+        return isExpired ? "This Account" : "Funder";
+      } else {
+        return "-";
+      }
     },
     formatDate: (v) => dayjs(v).format("YYYY-MM-DD HH:mm:ss"),
     formatTime: (v) => {
