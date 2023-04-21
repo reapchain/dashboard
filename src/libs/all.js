@@ -17648,7 +17648,6 @@ $root.cosmos = (function(cosmos) {
                  * @returns {$protobuf.Writer} Writer
                  */
                 TxBody.encode = function encode(message, writer) {
-                    console.log('encoding: ', message)
                     if (!writer)
                         writer = $Writer.create();
                     if (message.messages != null && message.messages.length)

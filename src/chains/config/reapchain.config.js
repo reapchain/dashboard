@@ -17,6 +17,25 @@ export const chainInfo = {
   ethAccountExplorerUrl: `https://test-dashboard.reapchain.org/account`,
 };
 
+// export const chainInfo = {
+//   env: "test",
+//   chainName: "reapchain",
+//   chainId: "2022",
+//   chainIdHex: "0x7e6",
+//   cosmosChainId: "mercury_2022-3",
+//   restEndpoint: "http://192.168.100.39:1317",
+//   rpcEndpoint: "http://192.168.100.39:27000",
+//   evmEndpoint: "http://192.168.100.39:27400",
+//   stateSyncEndpoint: [
+//     "https://test-state-sync-rpc.reapchain.org:443",
+//     "https://test-rpc-network.reapchain.org:443",
+//   ],
+//   stateSyncP2P: "13.125.20.241:27102",
+//   stateSyncNodeId: "05ec7232feb9f0e8af8c2b5e98411043176995b0",
+//   dashboardUrl: `https://test-dashboard.reapchain.org/staking`,
+//   ethAccountExplorerUrl: `https://test-dashboard.reapchain.org/account`,
+// };
+
 export const networkInfo = {
   chain_name: chainInfo.chainName,
   coingecko: "",

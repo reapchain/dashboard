@@ -812,7 +812,6 @@ export default class ChainFetch {
         data.result &&
         (data.result === "success" || data.result === "true")
       ) {
-        console.log("getMarketChartUSDT : ", data);
         const chartDataPrices = data.data.map((chartData) => {
           return [Number(chartData[0]), Number(chartData[2])];
         });

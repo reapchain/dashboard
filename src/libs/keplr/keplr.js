@@ -42,8 +42,6 @@ export const connectKeplrWallet = async () => {
     }
   }
 
-  console.log("No accounts found");
-
   return null;
 };
 
