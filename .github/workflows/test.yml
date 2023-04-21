@@ -11,6 +11,12 @@ jobs:
       - name: Checkout source code.
         uses: actions/checkout@master
 
+      - name: Install NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16.13.0"
+          cache: "npm"
+
       - name: Cache node modules
         uses: actions/cache@v1
         with:
