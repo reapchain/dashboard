@@ -624,14 +624,6 @@ export default {
       selectedValidator: "",
       totalCurrency: 0,
       account: null,
-      lockup: {
-        startTime: "",
-        endTime: "",
-        schedule: {
-          vesting: [],
-          lockup: [],
-        },
-      },
       assets: [],
       reward: [],
       delegations: [],
@@ -884,23 +876,7 @@ export default {
       this.$http
         .getAuthAccount(this.address)
         .then((acc) => {
-          console.log("acc : ", acc);
           this.account = acc;
-
-          //schedule
-          const startTime = new Date(acc.value.start_time);
-          if (startTime.getTime() === 0 && this.isShowSchedule()) {
-            const firstVesting = acc.value.vesting_periods[0].length;
-            const firstLockup = acc.value.lockup_periods[0].length;
-            console.log(firstVesting);
-            console.log(firstLockup);
-            // this.lockup.startTime = this.formatTime(new Date(acc.value.start_time));
-          } else {
-            this.lockup.startTime = this.formatTime(
-              new Date(acc.value.start_time)
-            );
-          }
-
           this.initial();
           this.$http.getStakingParameters().then((res) => {
             this.stakingParameters = res;
