@@ -354,11 +354,16 @@
             <b-tr>
               <b-td> Vesting/Lockup Time </b-td
               ><b-td>
-                {{ formatTime(new Date(account.value.start_time)) }} -
                 {{
-                  formatToTime(account.value.base_vesting_account.end_time)
-                }}</b-td
-              >
+                  isShowSchedule()
+                    ? `${formatTime(
+                        new Date(account.value.start_time)
+                      )} - ${formatToTime(
+                        account.value.base_vesting_account.end_time
+                      )}`
+                    : `${formatTime(new Date(account.value.start_time))} -`
+                }}
+              </b-td>
             </b-tr>
             <b-tr>
               <b-td> Funder Address </b-td>
@@ -376,12 +381,7 @@
                   <th>Amount</th>
                   <th>Status</th>
                   <th>Ownership</th>
-                  <template
-                    v-if="
-                      account.value.vesting_periods[0].length ||
-                        !account.value.lockup_periods[0].length
-                    "
-                  >
+                  <template v-if="isShowSchedule()">
                     <b-tr
                       v-for="(p, index) in account.value.vesting_periods"
                       :key="`vesting_${index}`"
@@ -434,12 +434,7 @@
                       </td>
                     </b-tr>
                   </template>
-                  <template
-                    v-if="
-                      account.value.lockup_periods[0].length ||
-                        !account.value.vesting_periods[0].length
-                    "
-                  >
+                  <template v-if="isShowSchedule()">
                     <b-tr
                       v-for="(p, index) in account.value.lockup_periods"
                       :key="`lockup_${index}`"
@@ -629,6 +624,14 @@ export default {
       selectedValidator: "",
       totalCurrency: 0,
       account: null,
+      lockup: {
+        startTime: "",
+        endTime: "",
+        schedule: {
+          vesting: [],
+          lockup: [],
+        },
+      },
       assets: [],
       reward: [],
       delegations: [],
@@ -840,19 +843,7 @@ export default {
       const tempAddress = ethToReap(this.address);
       this.$router.push(`/account/${tempAddress}`);
     }
-    this.$http
-      .getAuthAccount(this.address)
-      .then((acc) => {
-        this.account = acc;
-        this.initial();
-        this.getTxsInfo();
-        this.$http.getStakingParameters().then((res) => {
-          this.stakingParameters = res;
-        });
-      })
-      .catch((err) => {
-        this.error = err;
-      });
+    this.accountDataProcess();
   },
   mounted() {
     const elem = document.getElementById("txevent");
@@ -862,18 +853,7 @@ export default {
   },
   watch: {
     address(newAddress) {
-      this.$http
-        .getAuthAccount(this.address)
-        .then((acc) => {
-          this.account = acc;
-          this.initial();
-          this.$http.getStakingParameters().then((res) => {
-            this.stakingParameters = res;
-          });
-        })
-        .catch((err) => {
-          this.error = err;
-        });
+      this.accountDataProcess();
     },
   },
   methods: {
@@ -899,6 +879,36 @@ export default {
         this.unbonding = res.unbonding_responses || res;
       });
       this.getTxsInfo();
+    },
+    accountDataProcess() {
+      this.$http
+        .getAuthAccount(this.address)
+        .then((acc) => {
+          console.log("acc : ", acc);
+          this.account = acc;
+
+          //schedule
+          const startTime = new Date(acc.value.start_time);
+          if (startTime.getTime() === 0 && this.isShowSchedule()) {
+            const firstVesting = acc.value.vesting_periods[0].length;
+            const firstLockup = acc.value.lockup_periods[0].length;
+            console.log(firstVesting);
+            console.log(firstLockup);
+            // this.lockup.startTime = this.formatTime(new Date(acc.value.start_time));
+          } else {
+            this.lockup.startTime = this.formatTime(
+              new Date(acc.value.start_time)
+            );
+          }
+
+          this.initial();
+          this.$http.getStakingParameters().then((res) => {
+            this.stakingParameters = res;
+          });
+        })
+        .catch((err) => {
+          this.error = err;
+        });
     },
     formatNumber(v) {
       return numberWithCommas(v);
@@ -937,9 +947,23 @@ export default {
       return 0;
     },
     reduceTimestamp(arr) {
+      if (arr.length < 1) {
+        return [];
+      }
       return arr.reduce((acc, curr) => acc + Number(curr.length), 0);
     },
+    isShowSchedule() {
+      return (
+        this.account.value.vesting_periods &&
+        this.account.value.lockup_periods &&
+        (this.account.value.vesting_periods[0].length ||
+          this.account.value.lockup_periods[0].length)
+      );
+    },
     isExpiredSchedule(time) {
+      if (!time) {
+        return true;
+      }
       const timestamp = time * 1000;
       const now = new Date().getTime();
       let result = false;
