@@ -483,7 +483,7 @@ export default {
     });
 
     this.$http.getCommunityPool().then((res) => {
-      this.communityPool = "-";
+      this.communityPool = this.formatToken(res.pool);
     });
 
     const conf = this.$http.getSelectedConfig();
