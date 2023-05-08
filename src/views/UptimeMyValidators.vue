@@ -72,7 +72,6 @@ export default {
       const configs = getLocalChains();
       Object.keys(pinned).forEach((x) => {
         const cached = JSON.parse(getCachedValidators(x));
-        console.log("cached : ", cached);
         if (cached) {
           const validators = [];
           pinned[x].forEach((address) => {
@@ -84,7 +83,6 @@ export default {
           chainVals[x] = validators;
         } else {
           this.$http.getValidatorList(configs[x]).then((vals) => {
-            console.log("vals: ", vals);
             const validators = [];
             pinned[x].forEach((address) => {
               const val = vals.find(

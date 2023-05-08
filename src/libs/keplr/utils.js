@@ -427,8 +427,6 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
             ],
           };
         } else if (msgValue.type === "Community") {
-          console.log("Community : ", msgValue);
-
           return {
             aminoMsgs: [
               {

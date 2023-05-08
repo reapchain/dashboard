@@ -260,11 +260,7 @@
           </b-button>
         </b-col>
         <b-col cols="6">
-          <b-button
-            block
-            variant="info"
-            :to="`${chain}/account/${address}/receive`"
-          >
+          <b-button block variant="info" :to="`account/${address}/receive`">
             <feather-icon icon="PlusCircleIcon" />
             receive
           </b-button>
@@ -487,7 +483,7 @@ export default {
     });
 
     this.$http.getCommunityPool().then((res) => {
-      this.communityPool = "-";
+      this.communityPool = this.formatToken(res.pool);
     });
 
     const conf = this.$http.getSelectedConfig();

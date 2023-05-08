@@ -7,19 +7,13 @@
     </b-row>
     <b-row>
       <b-col>
-        <b-form-group
-          label="Depositor"
-          label-for="Voter"
-        >
+        <b-form-group label="Depositor" label-for="Voter">
           <validation-provider
             #default="{ errors }"
             rules="required"
             name="Voter"
           >
-            <b-form-input
-              v-model="address"
-              readonly
-            />
+            <b-form-input v-model="address" readonly />
             <small class="text-danger">{{ errors[0] }}</small>
           </validation-provider>
         </b-form-group>
@@ -27,18 +21,13 @@
     </b-row>
     <b-row>
       <b-col>
-        <b-form-group
-          label="Available Token"
-          label-for="Token"
-        >
+        <b-form-group label="Available Token" label-for="Token">
           <validation-provider
             #default="{ errors }"
             rules="required"
             name="Token"
           >
-            <b-form-select
-              v-model="token"
-            >
+            <b-form-select v-model="token">
               <b-form-select-option
                 v-for="item in balanceOptions"
                 :key="item.denom"
@@ -54,10 +43,7 @@
     </b-row>
     <b-row>
       <b-col>
-        <b-form-group
-          label="Amount"
-          label-for="Amount"
-        >
+        <b-form-group label="Amount" label-for="Amount">
           <validation-provider
             v-slot="{ errors }"
             rules="required|regex:^([0-9\.]+)$"
@@ -67,7 +53,7 @@
               <b-form-input
                 id="Amount"
                 v-model="amount"
-                :state="errors.length > 0 ? false:null"
+                :state="errors.length > 0 ? false : null"
                 placeholder="Input a number"
                 type="number"
               />
@@ -84,20 +70,34 @@
 </template>
 
 <script>
-import { ValidationProvider } from 'vee-validate'
+import { ValidationProvider } from "vee-validate";
 import {
-  BRow, BCol, BInputGroup, BFormInput, BFormGroup, BFormSelect,
-  BInputGroupAppend, BFormSelectOption,
-} from 'bootstrap-vue'
+  BRow,
+  BCol,
+  BInputGroup,
+  BFormInput,
+  BFormGroup,
+  BFormSelect,
+  BInputGroupAppend,
+  BFormSelectOption,
+} from "bootstrap-vue";
 import {
-  required, email, url, between, alpha, integer, password, min, digits, alphaDash, length,
-} from '@validations'
-import {
-  formatToken, formatTokenDenom, getUnitAmount,
-} from '@/libs/utils'
+  required,
+  email,
+  url,
+  between,
+  alpha,
+  integer,
+  password,
+  min,
+  digits,
+  alphaDash,
+  length,
+} from "@validations";
+import { formatToken, formatTokenDenom, getUnitAmount } from "@/libs/utils";
 
 export default {
-  name: 'DepositDialogue',
+  name: "DepositDialogue",
   components: {
     BRow,
     BCol,
@@ -130,7 +130,7 @@ export default {
   data() {
     return {
       token: null,
-      amount: '',
+      amount: "",
 
       required,
       password,
@@ -143,52 +143,54 @@ export default {
       digits,
       length,
       alphaDash,
-    }
+    };
   },
   computed: {
     msg() {
-      return [{
-        typeUrl: '/cosmos.gov.v1beta1.MsgDeposit',
-        value: {
-          depositor: this.address,
-          proposalId: String(this.proposalId),
-          amount: [
-            {
-              amount: getUnitAmount(this.amount, this.token),
-              denom: this.token,
-            },
-          ],
+      return [
+        {
+          typeUrl: "/cosmos.gov.v1beta1.MsgDeposit",
+          value: {
+            depositor: this.address,
+            proposalId: String(this.proposalId),
+            amount: [
+              {
+                amount: getUnitAmount(this.amount, this.token),
+                denom: this.token,
+              },
+            ],
+          },
         },
-      }]
+      ];
     },
     balanceOptions() {
-      return this.setupBalance()
+      return this.setupBalance();
     },
   },
   mounted() {
-    this.$emit('update', {
-      modalTitle: 'Deposit',
-      historyName: 'deposit',
-    })
+    this.$emit("update", {
+      modalTitle: "Deposit",
+      historyName: "deposit",
+    });
   },
   methods: {
     printDenom() {
-      return formatTokenDenom(this.token)
+      return formatTokenDenom(this.token);
     },
     format(v) {
-      return formatToken(v)
+      return formatToken(v);
     },
     setupBalance() {
       if (this.balance && this.balance.length > 0) {
-        this.token = this.balance[0].denom
-        return this.balance
+        this.token = this.balance[0].denom;
+        return this.balance;
       }
-      return []
+      return [];
     },
   },
-}
+};
 </script>
 
 <style lang="scss">
-@import '@core/scss/vue/libs/vue-select.scss';
+@import "@core/scss/vue/libs/vue-select.scss";
 </style>
