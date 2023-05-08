@@ -524,8 +524,40 @@ export default {
     });
   },
   methods: {
+    // validatorFilter(validatorList, condition) {
+    //   return validatorList.filter((ele) => ele.type == condition.type);
+    // },
     validatorFilter(validatorList, condition) {
-      return validatorList.filter((ele) => ele.type == condition.type);
+      // validator type check
+      if (condition.type === "standing") {
+        if (condition.active === "active") {
+          return validatorList.filter(
+            (ele) =>
+              ele.type === "standing" &&
+              ele.tokens >= 44000000000000000000000000
+          );
+        } else {
+          return validatorList.filter(
+            (ele) =>
+              ele.type === "standing" && ele.tokens < 44000000000000000000000000
+          );
+        }
+      } else if (condition.type === "steering") {
+        if (condition.active === "active") {
+          return validatorList.filter(
+            (ele) =>
+              ele.type === "steering" && ele.tokens >= 100000000000000000000000
+          );
+        } else {
+          return validatorList.filter(
+            (ele) =>
+              ele.type === "steering" && ele.tokens < 100000000000000000000000
+          );
+        }
+      } else {
+        return [];
+      }
+      // validator jailed check
     },
     initial() {
       this.$http.getValidatorList().then((res) => {
@@ -553,6 +585,7 @@ export default {
         });
         this.validators = temp;
         this.getPreviousPower(this.validators.length);
+        this.getValidatorListByStatus();
       });
     },
     getPreviousPower(length) {
