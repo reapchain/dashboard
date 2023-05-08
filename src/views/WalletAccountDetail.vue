@@ -381,7 +381,9 @@
                   <th>Amount</th>
                   <th>Status</th>
                   <th>Ownership</th>
-                  <template v-if="isShowSchedule()">
+                  <template
+                    v-if="isShowSchedule() && !isEmptySchedule('Vesting')"
+                  >
                     <b-tr
                       v-for="(p, index) in account.value.vesting_periods"
                       :key="`vesting_${index}`"
@@ -434,7 +436,9 @@
                       </td>
                     </b-tr>
                   </template>
-                  <template v-if="isShowSchedule()">
+                  <template
+                    v-if="isShowSchedule() && !isEmptySchedule('Lockup')"
+                  >
                     <b-tr
                       v-for="(p, index) in account.value.lockup_periods"
                       :key="`lockup_${index}`"
@@ -460,10 +464,7 @@
                           displayScheduleStatus(
                             isExpiredSchedule(
                               reduceTimestamp(
-                                account.value.vesting_periods.slice(
-                                  0,
-                                  index + 1
-                                )
+                                account.value.lockup_periods.slice(0, index + 1)
                               )
                             ),
                             "Lockup"
@@ -475,10 +476,7 @@
                           displayScheduleOwnership(
                             isExpiredSchedule(
                               reduceTimestamp(
-                                account.value.vesting_periods.slice(
-                                  0,
-                                  index + 1
-                                )
+                                account.value.lockup_periods.slice(0, index + 1)
                               )
                             ),
                             "Lockup"
@@ -924,7 +922,7 @@ export default {
     },
     reduceTimestamp(arr) {
       if (arr.length < 1) {
-        return [];
+        return 0;
       }
       return arr.reduce((acc, curr) => acc + Number(curr.length), 0);
     },
@@ -936,14 +934,24 @@ export default {
           this.account.value.lockup_periods[0].length)
       );
     },
+    isEmptySchedule(type) {
+      if (type === "Vesting") {
+        return this.account.value.vesting_periods[0].length ? false : true;
+      } else if (type === "Lockup") {
+        return this.account.value.lockup_periods[0].length ? false : true;
+      } else {
+        return false;
+      }
+    },
     isExpiredSchedule(time) {
       if (!time) {
         return true;
       }
-      const timestamp = time * 1000;
+      const startTime = new Date(this.account.value.start_time).getTime();
+      const endTimeStamp = startTime + time * 1000;
       const now = new Date().getTime();
       let result = false;
-      if (timestamp < now) {
+      if (endTimeStamp < now) {
         result = true;
       } else {
         result = false;
@@ -1047,6 +1055,7 @@ export default {
 
       this.transactions = res;
     },
+    // 피보나치 수열 코드
   },
 };
 </script>

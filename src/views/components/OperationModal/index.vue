@@ -273,7 +273,7 @@ export default {
       fee: "1000",
       feeDenom: "",
       wallet: "ledgerUSB",
-      gas: "300000",
+      gas: "500000",
       memo: "",
       blockingMsg: this.address
         ? "You are not the owner"
