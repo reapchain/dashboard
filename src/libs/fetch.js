@@ -406,6 +406,20 @@ export default class ChainFetch {
     });
   }
 
+  async getPermissionParameters() {
+    return this.get("/reapchain/permissions/v1/params").then((data) => {
+      const result = commonProcess(data);
+      if (result) {
+        return {
+          Initial_min_deposit_percentage:
+            result.params.permissions_minimum_initial_deposit_percentage,
+        };
+      } else {
+        return result;
+      }
+    });
+  }
+
   async getGovernanceParameterDeposit() {
     return this.get("/gov/parameters/deposit").then((data) =>
       commonProcess(data)

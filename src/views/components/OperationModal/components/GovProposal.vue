@@ -340,7 +340,6 @@ export default {
       communityPoolRecipient: "",
       communityPoolAmount: null,
 
-      initialDepositFactor: 0.5,
       minInitDepositAmount: null,
 
       required,
@@ -419,9 +418,17 @@ export default {
     });
 
     const depositParams = await this.$http.getGovernanceParameterDeposit();
-    this.minInitDepositAmount =
+    const permissionParams = await this.$http.getPermissionParameters();
+
+    const initialDepositFactor =
+      permissionParams.Initial_min_deposit_percentage;
+
+    const tempInitialDepositFactor = (
       (parseInt(depositParams.min_deposit[0].amount.toString()) / 10 ** 18) *
-      this.initialDepositFactor;
+      parseFloat(initialDepositFactor)
+    ).toFixed();
+
+    this.minInitDepositAmount = tempInitialDepositFactor;
   },
 
   methods: {
