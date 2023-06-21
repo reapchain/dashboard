@@ -118,7 +118,10 @@
                 <b-badge v-if="validator.status === 3" variant="light-success">
                   Active
                 </b-badge>
-                <span v-else>{{ validator.status }}</span>
+                <b-badge v-else variant="light-danger">
+                  Inactive
+                </b-badge>
+                <!-- <span v-else>{{ validator.status }}</span> -->
               </td>
             </tr>
             <tr>
