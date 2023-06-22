@@ -422,18 +422,24 @@ export default {
 
     const initialDepositFactor =
       permissionParams.Initial_min_deposit_percentage;
-
-    const tempInitialDepositFactor = (
-      (parseInt(depositParams.min_deposit[0].amount.toString()) / 10 ** 18) *
-      parseFloat(initialDepositFactor)
-    ).toFixed();
+    const tempInitialDepositFactor =
+      (parseFloat(depositParams.min_deposit[0].amount.toString()) / 10 ** 18) *
+      parseFloat(initialDepositFactor);
 
     this.minInitDepositAmount = tempInitialDepositFactor;
   },
 
   methods: {
     toNormalFloat(value) {
-      return value.toLocaleString("fullwide", { maximumFractionDigits: 18 });
+      let returnValue;
+      if (value > 0) {
+        returnValue = parseInt(value.toFixed(0), 10).toLocaleString();
+      } else {
+        returnValue = value.toLocaleString("fullwide", {
+          maximumFractionDigits: 18,
+        });
+      }
+      return returnValue;
     },
     clickChangeButton(index) {
       if (this.changes.length === index + 1) {
