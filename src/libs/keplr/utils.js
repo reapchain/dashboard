@@ -42,6 +42,11 @@ import {
   SoftwareUpgradeProposal,
   CancelSoftwareUpgradeProposal,
 } from "@keplr-wallet/proto-types/cosmos/upgrade/v1beta1/upgrade";
+import {
+  MsgRegisterStandingMemberProposal as RegisterStandingMemberProposal_pb,
+  MsgRemoveStandingMemberProposal as RemoveStandingMemberProposal_pb,
+  MsgReplaceStandingMemberProposal as ReplaceStandingMemberProposal_pb,
+} from "@/libs/proto/permissions/tx";
 import * as Long from "long";
 
 export const keplrSendTx = async (type, txData) => {
@@ -144,7 +149,7 @@ export const keplrSendTx = async (type, txData) => {
       txhash: Buffer.from(sendTxRes).toString("hex") || "",
     };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return {
       result: false,
       txhash: "",
@@ -511,6 +516,132 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
                         info: "info",
                         height: new Long(100000000),
                       },
+                    }).finish(),
+                  },
+                  initialDeposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                }).finish(),
+              },
+            ],
+          };
+        } else if (msgValue.type === "RegisterStanding") {
+          return {
+            aminoMsgs: [
+              {
+                type: "cosmos-sdk/MsgSubmitProposal",
+                value: {
+                  content: {
+                    type: "permissions/MsgRegisterStandingMemberProposal",
+                    value: {
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      validatorAddress: msgValue.registerValidatorAddress,
+                      accountAddress: msgValue.registerAddress,
+                      moniker: msgValue.registerMoniker,
+                    },
+                  },
+                  initial_deposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                },
+              },
+            ],
+            protoMsgs: [
+              {
+                typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
+                value: MsgSubmitProposal.encode({
+                  content: {
+                    typeUrl:
+                      "/reapchain.permissions.v1.MsgRegisterStandingMemberProposal",
+                    value: RegisterStandingMemberProposal_pb.encode({
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      validatorAddress: msgValue.registerValidatorAddress,
+                      accountAddress: msgValue.registerAddress,
+                      moniker: msgValue.registerMoniker,
+                    }).finish(),
+                  },
+                  initialDeposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                }).finish(),
+              },
+            ],
+          };
+        } else if (msgValue.type === "RemoveStanding") {
+          return {
+            aminoMsgs: [
+              {
+                type: "cosmos-sdk/MsgSubmitProposal",
+                value: {
+                  content: {
+                    type: "permissions/MsgRemoveStandingMemberProposal",
+                    value: {
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      validatorAddress: msgValue.removeValidatorAddress,
+                    },
+                  },
+                  initial_deposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                },
+              },
+            ],
+            protoMsgs: [
+              {
+                typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
+                value: MsgSubmitProposal.encode({
+                  content: {
+                    typeUrl:
+                      "/reapchain.permissions.v1.MsgRemoveStandingMemberProposal",
+                    value: RemoveStandingMemberProposal_pb.encode({
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      validatorAddress: msgValue.removeValidatorAddress,
+                    }).finish(),
+                  },
+                  initialDeposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                }).finish(),
+              },
+            ],
+          };
+        } else if (msgValue.type === "ReplaceStanding") {
+          return {
+            aminoMsgs: [
+              {
+                type: "cosmos-sdk/MsgSubmitProposal",
+                value: {
+                  content: {
+                    type: "permissions/MsgReplaceStandingMemberProposal",
+                    value: {
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      existingValidatorAddress: msgValue.existValidatorAddress,
+                      replacementValidatorAddress:
+                        msgValue.replaceValidatorAddress,
+                      replacementAccountAddress: msgValue.replaceAddress,
+                      replacementMoniker: msgValue.replaceMoniker,
+                    },
+                  },
+                  initial_deposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                },
+              },
+            ],
+            protoMsgs: [
+              {
+                typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
+                value: MsgSubmitProposal.encode({
+                  content: {
+                    typeUrl:
+                      "/reapchain.permissions.v1.MsgReplaceStandingMemberProposal",
+                    value: ReplaceStandingMemberProposal_pb.encode({
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      existingValidatorAddress: msgValue.existValidatorAddress,
+                      replacementValidatorAddress:
+                        msgValue.replaceValidatorAddress,
+                      replacementAccountAddress: msgValue.replaceAddress,
+                      replacementMoniker: msgValue.replaceMoniker,
                     }).finish(),
                   },
                   initialDeposit: msgValue.initialDeposit,

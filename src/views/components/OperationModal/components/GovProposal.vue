@@ -236,6 +236,178 @@
         </b-col>
       </b-row>
     </template>
+    <template v-if="proposalType === 'RegisterStanding'">
+      <b-row>
+        <b-col>
+          <b-form-group label="Validator Address" label-for="ValidatorAddress">
+            <validation-provider
+              #default="{ errors }"
+              rules="required"
+              name="ValidatorAddress"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="ValidatorAddress"
+                  v-model="registerValidatorAddress"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <b-form-group label="Address" label-for="Address">
+            <validation-provider
+              #default="{ errors }"
+              rules="required"
+              name="Address"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="Address"
+                  v-model="registerAddress"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <b-form-group label="Moniker" label-for="Moniker">
+            <validation-provider
+              #default="{ errors }"
+              rules="required"
+              name="Moniker"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="Moniker"
+                  v-model="registerMoniker"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
+        </b-col>
+      </b-row>
+    </template>
+    <template v-if="proposalType === 'RemoveStanding'">
+      <b-row>
+        <b-col>
+          <b-form-group label="Validator Address" label-for="ValidatorAddress">
+            <validation-provider
+              #default="{ errors }"
+              rules="required"
+              name="ValidatorAddress"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="ValidatorAddress"
+                  v-model="removeValidatorAddress"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
+        </b-col>
+      </b-row>
+    </template>
+    <template v-if="proposalType === 'ReplaceStanding'">
+      <b-row>
+        <b-col>
+          <b-form-group
+            label="Exist Validator Address"
+            label-for="ExistValidatorAddress"
+          >
+            <validation-provider
+              #default="{ errors }"
+              rules="required"
+              name="ExistValidatorAddress"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="ExistValidatorAddress"
+                  v-model="existValidatorAddress"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <b-form-group
+            label="New Validator Address"
+            label-for="NewValidatorAddress"
+          >
+            <validation-provider
+              #default="{ errors }"
+              rules="required"
+              name="NewValidatorAddress"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="NewValidatorAddress"
+                  v-model="replaceValidatorAddress"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <b-form-group label="New Address" label-for="NewAddress">
+            <validation-provider
+              #default="{ errors }"
+              rules="required"
+              name="NewAddress"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="NewAddress"
+                  v-model="replaceAddress"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <b-form-group label="New Moniker" label-for="NewMoniker">
+            <validation-provider
+              #default="{ errors }"
+              rules="required"
+              name="NewMoniker"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="NewMoniker"
+                  v-model="replaceMoniker"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
+        </b-col>
+      </b-row>
+    </template>
   </div>
 </template>
 
@@ -281,6 +453,9 @@ const proposalTypeOptions = [
   { label: "Text Proposal", value: "Text" },
   { label: "Parameter Change", value: "Parameter" },
   { label: "Community Pool Spend", value: "Community" },
+  { label: "Register Standing Member", value: "RegisterStanding" },
+  { label: "Remove Standing Member", value: "RemoveStanding" },
+  { label: "Replace Standing Member", value: "ReplaceStanding" },
   // { label: "Software Upgrade Proposal", value: "Upgrade" },
   // {label: "Cancel Software Upgrade Proposal", value: "CancelUpgrade" },
   // {label: "Execute contract", value: "" },
@@ -340,6 +515,16 @@ export default {
       communityPoolRecipient: "",
       communityPoolAmount: null,
 
+      // permission
+      registerValidatorAddress: "",
+      registerAddress: "",
+      registerMoniker: "",
+      removeValidatorAddress: "",
+      existValidatorAddress: "",
+      replaceValidatorAddress: "",
+      replaceAddress: "",
+      replaceMoniker: "",
+
       minInitDepositAmount: null,
 
       required,
@@ -389,6 +574,38 @@ export default {
                       denom: this.token,
                     },
                   ]
+                : undefined,
+            registerValidatorAddress:
+              this.proposalType === "RegisterStanding"
+                ? this.registerValidatorAddress
+                : undefined,
+            registerAddress:
+              this.proposalType === "RegisterStanding"
+                ? this.registerAddress
+                : undefined,
+            registerMoniker:
+              this.proposalType === "RegisterStanding"
+                ? this.registerMoniker
+                : undefined,
+            removeValidatorAddress:
+              this.proposalType === "RemoveStanding"
+                ? this.removeValidatorAddress
+                : undefined,
+            existValidatorAddress:
+              this.proposalType === "ReplaceStanding"
+                ? this.existValidatorAddress
+                : undefined,
+            replaceValidatorAddress:
+              this.proposalType === "ReplaceStanding"
+                ? this.replaceValidatorAddress
+                : undefined,
+            replaceAddress:
+              this.proposalType === "ReplaceStanding"
+                ? this.replaceAddress
+                : undefined,
+            replaceMoniker:
+              this.proposalType === "ReplaceStanding"
+                ? this.replaceMoniker
                 : undefined,
           },
         },
