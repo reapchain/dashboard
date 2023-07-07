@@ -59,12 +59,18 @@
               <b-td> {{ $t("governanceProposal.proposal_submit_time") }} </b-td
               ><b-td>{{ formatDate(proposal.submit_time) }}</b-td>
             </b-tr>
-            <b-tr>
-              <b-td> {{ $t("governanceProposal.voting_time") }} </b-td
-              ><b-td
-                >{{ formatDate(proposal.voting_start_time) }} -
-                {{ formatDate(proposal.voting_end_time) }}</b-td
-              >
+            <b-tr v-if="proposal.status == 1">
+              <b-td> {{ $t("governanceProposal.deposit_end_time") }} </b-td
+              ><b-td>
+                {{ formatDate(proposal.deposit_end_time) }}
+              </b-td>
+            </b-tr>
+            <b-tr v-else>
+              <b-td> {{ $t("governanceProposal.voting_time") }} </b-td>
+              <b-td>
+                {{ formatDate(proposal.submit_time) }} -
+                {{ formatDate(proposal.voting_end_time) }}
+              </b-td>
             </b-tr>
             <b-tr v-if="proposal.metadata">
               <b-td> Metadata </b-td><b-td>{{ proposal.metadata }}</b-td>
