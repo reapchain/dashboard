@@ -48,6 +48,7 @@ import {
   MsgReplaceStandingMemberProposal as ReplaceStandingMemberProposal_pb,
 } from "@/libs/proto/permissions/tx";
 import * as Long from "long";
+import { convertValidatorAddress } from "@/libs/utils";
 
 export const keplrSendTx = async (type, txData) => {
   try {
@@ -77,6 +78,13 @@ export const keplrSendTx = async (type, txData) => {
       accountNumber: baseAccountEntry.account_number,
     };
     const txMessageSet = createKeplrTxMessageSet(type, txData, sender);
+    if (txMessageSet.error) {
+      return {
+        result: false,
+        txhash: "",
+        msg: txMessageSet.msg,
+      };
+    }
 
     const fee = {
       amount: [
@@ -148,12 +156,12 @@ export const keplrSendTx = async (type, txData) => {
       result: true,
       txhash: Buffer.from(sendTxRes).toString("hex") || "",
     };
-  } catch (error) {
-    console.error(error);
+  } catch (e) {
+    console.log(e);
     return {
       result: false,
       txhash: "",
-      msg: error,
+      msg: e,
     };
   }
 };
@@ -406,7 +414,6 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
                       changes: msgValue.changes,
                     },
                   },
-                  // content: proposalSubObj.toAmino(),
                   initial_deposit: msgValue.initialDeposit,
                   proposer: msgValue.proposer,
                 },
@@ -424,7 +431,6 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
                       changes: msgValue.changes,
                     }).finish(),
                   },
-                  // content: proposalSubObj.toProto()proposalSubObj.toData(),
                   initialDeposit: msgValue.initialDeposit,
                   proposer: msgValue.proposer,
                 }).finish(),
@@ -475,28 +481,28 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
           const testObj = new SoftwareUpgradeProposal2(
             msgValue.title,
             msgValue.description,
-            new Plan2("name", undefined, "1000000", "info", {})
+            new Plan2("name", new Date(), "1000000", "info")
           );
-
           return {
             aminoMsgs: [
               {
                 type: "cosmos-sdk/MsgSubmitProposal",
                 value: {
-                  content: testObj.toAmino(),
-                  // content: {
-                  //   type: "cosmos-sdk/SoftwareUpgradeProposal",
-                  //   value: {
-                  //     title: msgValue.title,
-                  //     description: msgValue.description,
-                  //     plan: {
-                  //       name: "test_upgrade",
-                  //       // height: "10000000",
-                  //       height: new Long(100000000),
-                  //       info: "info",
-                  //     },
-                  //   },
-                  // },
+                  // content: testObj.toAmino(),
+                  content: {
+                    type: "cosmos-sdk/SoftwareUpgradeProposal",
+                    value: {
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      plan: {
+                        name: "test_upgrade",
+                        // time: new Date(),
+                        height: new Long(1000000),
+                        info: "info",
+                        // upgradedClientState: {},
+                      },
+                    },
+                  },
                   initial_deposit: msgValue.initialDeposit,
                   proposer: msgValue.proposer,
                 },
@@ -512,9 +518,10 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
                       title: msgValue.title,
                       description: msgValue.description,
                       plan: {
-                        name: "test_upgrade",
+                        name: "name",
+                        time: new Date(),
+                        height: "1000000",
                         info: "info",
-                        height: new Long(100000000),
                       },
                     }).finish(),
                   },
@@ -525,6 +532,9 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
             ],
           };
         } else if (msgValue.type === "RegisterStanding") {
+          const validatorAddress = convertValidatorAddress(
+            msgValue.registerAddress
+          );
           return {
             aminoMsgs: [
               {
@@ -535,7 +545,7 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
                     value: {
                       title: msgValue.title,
                       description: msgValue.description,
-                      validatorAddress: msgValue.registerValidatorAddress,
+                      validatorAddress: validatorAddress,
                       accountAddress: msgValue.registerAddress,
                       moniker: msgValue.registerMoniker,
                     },
@@ -555,7 +565,7 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
                     value: RegisterStandingMemberProposal_pb.encode({
                       title: msgValue.title,
                       description: msgValue.description,
-                      validatorAddress: msgValue.registerValidatorAddress,
+                      validatorAddress: validatorAddress,
                       accountAddress: msgValue.registerAddress,
                       moniker: msgValue.registerMoniker,
                     }).finish(),
@@ -567,6 +577,9 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
             ],
           };
         } else if (msgValue.type === "RemoveStanding") {
+          const removeValidatorAddress = convertValidatorAddress(
+            msgValue.removeAddress
+          );
           return {
             aminoMsgs: [
               {
@@ -577,7 +590,7 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
                     value: {
                       title: msgValue.title,
                       description: msgValue.description,
-                      validatorAddress: msgValue.removeValidatorAddress,
+                      validatorAddress: removeValidatorAddress,
                     },
                   },
                   initial_deposit: msgValue.initialDeposit,
@@ -595,7 +608,7 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
                     value: RemoveStandingMemberProposal_pb.encode({
                       title: msgValue.title,
                       description: msgValue.description,
-                      validatorAddress: msgValue.removeValidatorAddress,
+                      validatorAddress: removeValidatorAddress,
                     }).finish(),
                   },
                   initialDeposit: msgValue.initialDeposit,
@@ -605,6 +618,13 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
             ],
           };
         } else if (msgValue.type === "ReplaceStanding") {
+          const existValidatorAddress = convertValidatorAddress(
+            msgValue.existAddress
+          );
+          const replaceValidatorAddress = convertValidatorAddress(
+            msgValue.replaceAddress
+          );
+
           return {
             aminoMsgs: [
               {
@@ -615,9 +635,8 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
                     value: {
                       title: msgValue.title,
                       description: msgValue.description,
-                      existingValidatorAddress: msgValue.existValidatorAddress,
-                      replacementValidatorAddress:
-                        msgValue.replaceValidatorAddress,
+                      existingValidatorAddress: existValidatorAddress,
+                      replacementValidatorAddress: replaceValidatorAddress,
                       replacementAccountAddress: msgValue.replaceAddress,
                       replacementMoniker: msgValue.replaceMoniker,
                     },
@@ -637,9 +656,8 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
                     value: ReplaceStandingMemberProposal_pb.encode({
                       title: msgValue.title,
                       description: msgValue.description,
-                      existingValidatorAddress: msgValue.existValidatorAddress,
-                      replacementValidatorAddress:
-                        msgValue.replaceValidatorAddress,
+                      existingValidatorAddress: existValidatorAddress,
+                      replacementValidatorAddress: replaceValidatorAddress,
                       replacementAccountAddress: msgValue.replaceAddress,
                       replacementMoniker: msgValue.replaceMoniker,
                     }).finish(),
@@ -658,6 +676,10 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
         return {};
     }
   } catch (e) {
-    console.log(e);
+    console.error(e);
+    return {
+      error: true,
+      msg: e,
+    };
   }
 };

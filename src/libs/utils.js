@@ -5,13 +5,13 @@ import {
   fromHex,
   toHex,
 } from "@cosmjs/encoding";
+import { decode, encode, fromWords, toWords } from "bech32";
 import { sha256, stringToPath } from "@cosmjs/crypto";
 // ledger
 import TransportWebBLE from "@ledgerhq/hw-transport-web-ble";
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 import CosmosApp from "ledger-cosmos-js";
 import { LedgerSigner } from "@cosmjs/ledger-amino";
-
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -748,4 +748,26 @@ export const isTypeofEvmos = (chain) => {
   } else {
     return false;
   }
+};
+
+export const convertValidatorAddress = (accountAddress) => {
+  if (accountAddress.substring(0, 4) !== "reap") {
+    throw new Error("Invalid address format.");
+    return "";
+  }
+  const decoded = decode(accountAddress);
+  const encoded = encode("reapvaloper", decoded.words);
+
+  return encoded;
+};
+
+export const convertAccountAddress = (validatorAddress) => {
+  if (accountAddress.substring(0, 11) !== "reapvaloper") {
+    throw new Error("Invalid address format.");
+    return "";
+  }
+  const decoded = decode(accountAddress);
+  const encoded = encode("reap", decoded.words);
+
+  return encoded;
 };

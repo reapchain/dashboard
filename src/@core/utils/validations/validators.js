@@ -23,6 +23,16 @@ export const validatorMinValue = (value, minValue) => {
   return `Initial deposit must be at least ${stringFloat} REAP.`;
 };
 
+export const validatorAccountPrefix = (address, params) => {
+  const isPrefixOk =
+    address.substring(0, params.prefix.length) === params.prefix;
+  const isLengthOK = address.length === 39 + params.prefix.length;
+  if (isPrefixOk && isLengthOK) {
+    return true;
+  }
+  return `Invalid address format.`;
+};
+
 export const validatorPassword = (password) => {
   /* eslint-disable no-useless-escape */
   const regExp = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%&*()]).{8,}/;

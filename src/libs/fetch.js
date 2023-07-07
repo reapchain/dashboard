@@ -318,16 +318,20 @@ export default class ChainFetch {
 
   async getInactiveValidatorList() {
     try {
+      const validatorsBonded = await this.get(
+        "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED"
+      );
       const validatorsUnbonding = await this.get(
         "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_UNBONDING"
       );
       const validatorsUnbonded = await this.get(
         "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_UNBONDED"
       );
+      console.log(validatorsBonded, validatorsUnbonding, validatorsUnbonded);
 
-      const validatorInactive = validatorsUnbonding.validators.concat(
-        validatorsUnbonded.validators
-      );
+      const validatorInactive = validatorsBonded.validators
+        .concat(validatorsUnbonding.validators)
+        .concat(validatorsUnbonded.validators);
 
       const result = commonProcess(validatorInactive);
       const vals = result.validators ? result.validators : result;

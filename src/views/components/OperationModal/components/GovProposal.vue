@@ -237,7 +237,7 @@
       </b-row>
     </template>
     <template v-if="proposalType === 'RegisterStanding'">
-      <b-row>
+      <b-row v-if="false">
         <b-col>
           <b-form-group label="Validator Address" label-for="ValidatorAddress">
             <validation-provider
@@ -262,13 +262,14 @@
           <b-form-group label="Address" label-for="Address">
             <validation-provider
               #default="{ errors }"
-              rules="required"
+              :rules="`required|account-prefix:reap`"
               name="Address"
             >
               <b-input-group class="mb-25">
                 <b-form-input
                   id="Address"
                   v-model="registerAddress"
+                  placeholder="Input an account address"
                   :state="errors.length > 0 ? false : null"
                 />
               </b-input-group>
@@ -301,7 +302,28 @@
     <template v-if="proposalType === 'RemoveStanding'">
       <b-row>
         <b-col>
-          <b-form-group label="Validator Address" label-for="ValidatorAddress">
+          <b-form-group label="Address" label-for="Address">
+            <validation-provider
+              #default="{ errors }"
+              :rules="`required|account-prefix:reap`"
+              name="Address"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="Address"
+                  v-model="removeAddress"
+                  placeholder="Input an account address"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
+          <b-form-group
+            v-if="false"
+            label="Validator Address"
+            label-for="ValidatorAddress"
+          >
             <validation-provider
               #default="{ errors }"
               rules="required"
@@ -323,7 +345,25 @@
     <template v-if="proposalType === 'ReplaceStanding'">
       <b-row>
         <b-col>
+          <b-form-group label="Exist Address" label-for="ExistAddress">
+            <validation-provider
+              #default="{ errors }"
+              :rules="`required|account-prefix:reap`"
+              name="ExistAddress"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="ExistAddress"
+                  v-model="existAddress"
+                  placeholder="Input an account address"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
           <b-form-group
+            v-if="false"
             label="Exist Validator Address"
             label-for="ExistValidatorAddress"
           >
@@ -344,7 +384,7 @@
           </b-form-group>
         </b-col>
       </b-row>
-      <b-row>
+      <b-row v-if="false">
         <b-col>
           <b-form-group
             label="New Validator Address"
@@ -372,13 +412,14 @@
           <b-form-group label="New Address" label-for="NewAddress">
             <validation-provider
               #default="{ errors }"
-              rules="required"
+              :rules="`required|account-prefix:reap`"
               name="NewAddress"
             >
               <b-input-group class="mb-25">
                 <b-form-input
                   id="NewAddress"
                   v-model="replaceAddress"
+                  placeholder="Input an account address"
                   :state="errors.length > 0 ? false : null"
                 />
               </b-input-group>
@@ -390,11 +431,7 @@
       <b-row>
         <b-col>
           <b-form-group label="New Moniker" label-for="NewMoniker">
-            <validation-provider
-              #default="{ errors }"
-              rules="required"
-              name="NewMoniker"
-            >
+            <validation-provider #default="{ errors }" name="NewMoniker">
               <b-input-group class="mb-25">
                 <b-form-input
                   id="NewMoniker"
@@ -448,6 +485,7 @@ import {
   getUserCurrencySign,
 } from "@/libs/utils";
 import Ripple from "vue-ripple-directive";
+import { decode, encode, fromWords, toWords } from "bech32";
 
 const proposalTypeOptions = [
   { label: "Text Proposal", value: "Text" },
@@ -519,7 +557,9 @@ export default {
       registerValidatorAddress: "",
       registerAddress: "",
       registerMoniker: "",
+      removeAddress: "",
       removeValidatorAddress: "",
+      existAddress: "",
       existValidatorAddress: "",
       replaceValidatorAddress: "",
       replaceAddress: "",
@@ -587,9 +627,17 @@ export default {
               this.proposalType === "RegisterStanding"
                 ? this.registerMoniker
                 : undefined,
+            removeAddress:
+              this.proposalType === "RemoveStanding"
+                ? this.removeAddress
+                : undefined,
             removeValidatorAddress:
               this.proposalType === "RemoveStanding"
                 ? this.removeValidatorAddress
+                : undefined,
+            existAddress:
+              this.proposalType === "ReplaceStanding"
+                ? this.existAddress
                 : undefined,
             existValidatorAddress:
               this.proposalType === "ReplaceStanding"
