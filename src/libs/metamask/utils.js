@@ -22,8 +22,8 @@ import { utils } from "ethers";
 import { chainInfo } from "@/chains/config/reapchain.config";
 
 const chainAddParams = {
-  chainId: "0x7e6",
-  chainName: "reapchain",
+  chainId: chainInfo.chainIdHex,
+  chainName: chainInfo.chainName,
   nativeCurrency: {
     name: "Reapchain",
     symbol: "REAP",

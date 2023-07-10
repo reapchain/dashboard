@@ -30,22 +30,42 @@
           <span v-else>{{ p.status }}</span>
         </h6>
       </div>
-      <div class="gov">
-        <p class="card-text mb-25">
-          {{ $t("governanceProposal.proposal_status_start_date") }}
-        </p>
-        <h6 class="mb-0">
-          {{ formatDate(p.voting_start_time) }}
-        </h6>
-      </div>
-      <div class="gov">
-        <p class="card-text mb-25">
-          {{ $t("governanceProposal.proposal_status_end_date") }}
-        </p>
-        <h6 class="mb-0">
-          {{ formatDate(p.voting_end_time) }}
-        </h6>
-      </div>
+      <template v-if="p.status == 1">
+        <div class="gov">
+          <p class="card-text mb-25">
+            {{ $t("governanceProposal.proposal_status_start_date") }}
+          </p>
+          <h6 class="mb-0">
+            {{ formatDate(p.submit_time) }}
+          </h6>
+        </div>
+        <div class="gov">
+          <p class="card-text mb-25">
+            {{ $t("governanceProposal.proposal_status_end_date") }}
+          </p>
+          <h6 class="mb-0">
+            {{ formatDate(p.deposit_end_time) }}
+          </h6>
+        </div>
+      </template>
+      <template v-else>
+        <div class="gov">
+          <p class="card-text mb-25">
+            {{ $t("governanceProposal.proposal_status_start_date") }}
+          </p>
+          <h6 class="mb-0">
+            {{ formatDate(p.voting_start_time) }}
+          </h6>
+        </div>
+        <div class="gov">
+          <p class="card-text mb-25">
+            {{ $t("governanceProposal.proposal_status_end_date") }}
+          </p>
+          <h6 class="mb-0">
+            {{ formatDate(p.voting_end_time) }}
+          </h6>
+        </div>
+      </template>
       <div class="gov">
         <p class="card-text mb-25">
           {{ $t("governanceProposal.proposal_status_deposit") }}

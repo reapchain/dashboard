@@ -236,6 +236,215 @@
         </b-col>
       </b-row>
     </template>
+    <template v-if="proposalType === 'RegisterStanding'">
+      <b-row v-if="false">
+        <b-col>
+          <b-form-group label="Validator Address" label-for="ValidatorAddress">
+            <validation-provider
+              #default="{ errors }"
+              rules="required"
+              name="ValidatorAddress"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="ValidatorAddress"
+                  v-model="registerValidatorAddress"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <b-form-group label="Address" label-for="Address">
+            <validation-provider
+              #default="{ errors }"
+              :rules="`required|account-prefix:reap`"
+              name="Address"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="Address"
+                  v-model="registerAddress"
+                  placeholder="Input an account address"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <b-form-group label="Moniker" label-for="Moniker">
+            <validation-provider
+              #default="{ errors }"
+              rules="required"
+              name="Moniker"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="Moniker"
+                  v-model="registerMoniker"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
+        </b-col>
+      </b-row>
+    </template>
+    <template v-if="proposalType === 'RemoveStanding'">
+      <b-row>
+        <b-col>
+          <b-form-group label="Address" label-for="Address">
+            <validation-provider
+              #default="{ errors }"
+              :rules="`required|account-prefix:reap`"
+              name="Address"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="Address"
+                  v-model="removeAddress"
+                  placeholder="Input an account address"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
+          <b-form-group
+            v-if="false"
+            label="Validator Address"
+            label-for="ValidatorAddress"
+          >
+            <validation-provider
+              #default="{ errors }"
+              rules="required"
+              name="ValidatorAddress"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="ValidatorAddress"
+                  v-model="removeValidatorAddress"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
+        </b-col>
+      </b-row>
+    </template>
+    <template v-if="proposalType === 'ReplaceStanding'">
+      <b-row>
+        <b-col>
+          <b-form-group label="Exist Address" label-for="ExistAddress">
+            <validation-provider
+              #default="{ errors }"
+              :rules="`required|account-prefix:reap`"
+              name="ExistAddress"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="ExistAddress"
+                  v-model="existAddress"
+                  placeholder="Input an account address"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
+          <b-form-group
+            v-if="false"
+            label="Exist Validator Address"
+            label-for="ExistValidatorAddress"
+          >
+            <validation-provider
+              #default="{ errors }"
+              rules="required"
+              name="ExistValidatorAddress"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="ExistValidatorAddress"
+                  v-model="existValidatorAddress"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
+        </b-col>
+      </b-row>
+      <b-row v-if="false">
+        <b-col>
+          <b-form-group
+            label="New Validator Address"
+            label-for="NewValidatorAddress"
+          >
+            <validation-provider
+              #default="{ errors }"
+              rules="required"
+              name="NewValidatorAddress"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="NewValidatorAddress"
+                  v-model="replaceValidatorAddress"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <b-form-group label="New Address" label-for="NewAddress">
+            <validation-provider
+              #default="{ errors }"
+              :rules="`required|account-prefix:reap`"
+              name="NewAddress"
+            >
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="NewAddress"
+                  v-model="replaceAddress"
+                  placeholder="Input an account address"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <b-form-group label="New Moniker" label-for="NewMoniker">
+            <validation-provider #default="{ errors }" name="NewMoniker">
+              <b-input-group class="mb-25">
+                <b-form-input
+                  id="NewMoniker"
+                  v-model="replaceMoniker"
+                  :state="errors.length > 0 ? false : null"
+                />
+              </b-input-group>
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-form-group>
+        </b-col>
+      </b-row>
+    </template>
   </div>
 </template>
 
@@ -276,11 +485,15 @@ import {
   getUserCurrencySign,
 } from "@/libs/utils";
 import Ripple from "vue-ripple-directive";
+import { decode, encode, fromWords, toWords } from "bech32";
 
 const proposalTypeOptions = [
   { label: "Text Proposal", value: "Text" },
   { label: "Parameter Change", value: "Parameter" },
   { label: "Community Pool Spend", value: "Community" },
+  { label: "Register Standing Member", value: "RegisterStanding" },
+  { label: "Remove Standing Member", value: "RemoveStanding" },
+  { label: "Replace Standing Member", value: "ReplaceStanding" },
   // { label: "Software Upgrade Proposal", value: "Upgrade" },
   // {label: "Cancel Software Upgrade Proposal", value: "CancelUpgrade" },
   // {label: "Execute contract", value: "" },
@@ -340,7 +553,18 @@ export default {
       communityPoolRecipient: "",
       communityPoolAmount: null,
 
-      initialDepositFactor: 0.5,
+      // permission
+      registerValidatorAddress: "",
+      registerAddress: "",
+      registerMoniker: "",
+      removeAddress: "",
+      removeValidatorAddress: "",
+      existAddress: "",
+      existValidatorAddress: "",
+      replaceValidatorAddress: "",
+      replaceAddress: "",
+      replaceMoniker: "",
+
       minInitDepositAmount: null,
 
       required,
@@ -391,6 +615,46 @@ export default {
                     },
                   ]
                 : undefined,
+            registerValidatorAddress:
+              this.proposalType === "RegisterStanding"
+                ? this.registerValidatorAddress
+                : undefined,
+            registerAddress:
+              this.proposalType === "RegisterStanding"
+                ? this.registerAddress
+                : undefined,
+            registerMoniker:
+              this.proposalType === "RegisterStanding"
+                ? this.registerMoniker
+                : undefined,
+            removeAddress:
+              this.proposalType === "RemoveStanding"
+                ? this.removeAddress
+                : undefined,
+            removeValidatorAddress:
+              this.proposalType === "RemoveStanding"
+                ? this.removeValidatorAddress
+                : undefined,
+            existAddress:
+              this.proposalType === "ReplaceStanding"
+                ? this.existAddress
+                : undefined,
+            existValidatorAddress:
+              this.proposalType === "ReplaceStanding"
+                ? this.existValidatorAddress
+                : undefined,
+            replaceValidatorAddress:
+              this.proposalType === "ReplaceStanding"
+                ? this.replaceValidatorAddress
+                : undefined,
+            replaceAddress:
+              this.proposalType === "ReplaceStanding"
+                ? this.replaceAddress
+                : undefined,
+            replaceMoniker:
+              this.proposalType === "ReplaceStanding"
+                ? this.replaceMoniker
+                : undefined,
           },
         },
       ];
@@ -419,14 +683,28 @@ export default {
     });
 
     const depositParams = await this.$http.getGovernanceParameterDeposit();
-    this.minInitDepositAmount =
-      (parseInt(depositParams.min_deposit[0].amount.toString()) / 10 ** 18) *
-      this.initialDepositFactor;
+    const permissionParams = await this.$http.getPermissionParameters();
+
+    const initialDepositFactor =
+      permissionParams.Initial_min_deposit_percentage;
+    const tempInitialDepositFactor =
+      (parseFloat(depositParams.min_deposit[0].amount.toString()) / 10 ** 18) *
+      parseFloat(initialDepositFactor);
+
+    this.minInitDepositAmount = tempInitialDepositFactor;
   },
 
   methods: {
     toNormalFloat(value) {
-      return value.toLocaleString("fullwide", { maximumFractionDigits: 18 });
+      let returnValue;
+      if (value > 0) {
+        returnValue = parseInt(value.toFixed(0), 10).toLocaleString();
+      } else {
+        returnValue = value.toLocaleString("fullwide", {
+          maximumFractionDigits: 18,
+        });
+      }
+      return returnValue;
     },
     clickChangeButton(index) {
       if (this.changes.length === index + 1) {

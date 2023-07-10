@@ -141,8 +141,8 @@ const chainConfig_local = {
   ],
   gasPriceStep: {
     low: 0,
-    average: 25000000000,
-    high: 40000000000,
+    average: 200000000,
+    high: 300000000,
   },
   features: ["ibc-transfer", "ibc-go", "eth-address-gen", "eth-key-sign"],
   beta: true,

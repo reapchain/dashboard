@@ -198,6 +198,7 @@ export default {
         this.$http.getGovernanceParameterDeposit(),
         this.$http.getGovernanceParameterTallying(),
         this.$http.getGovernanceParameterVoting(),
+        this.$http.getPermissionParameters(),
       ]).then((data) => {
         let items = [];
         data.forEach((item) => {

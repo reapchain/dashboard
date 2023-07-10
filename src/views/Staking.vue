@@ -630,7 +630,7 @@ export default {
     },
     getValidatorListByStatus() {
       if (this.isInactiveLoaded) return;
-      this.$http.getValidatorListByStatus().then((res) => {
+      this.$http.getInactiveValidatorList().then((res) => {
         const identities = [];
         const temp = res;
         for (let i = 0; i < temp.length; i += 1) {

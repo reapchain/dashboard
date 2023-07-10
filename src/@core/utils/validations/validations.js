@@ -23,6 +23,7 @@ import {
   validatorPassword,
   validatorCreditCard,
   validatorMinValue,
+  validatorAccountPrefix,
 } from "./validators";
 
 // ////////////////////////////////////////////////////////
@@ -56,6 +57,11 @@ export const length = extend("length", rule_length);
 export const minValue = extend("min-value", {
   params: ["minDeposit"],
   validate: validatorMinValue,
+});
+
+export const accountPrefix = extend("account-prefix", {
+  params: ["prefix"],
+  validate: validatorAccountPrefix,
 });
 
 export const positive = extend("positive", {

@@ -316,7 +316,7 @@ export default class ChainFetch {
     });
   }
 
-  async getValidatorListByStatus() {
+  async getInactiveValidatorList() {
     try {
       const validatorsBonded = await this.get(
         "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED"
@@ -327,16 +327,11 @@ export default class ChainFetch {
       const validatorsUnbonded = await this.get(
         "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_UNBONDED"
       );
-      const validatorsAll = validatorsBonded.validators
+      console.log(validatorsBonded, validatorsUnbonding, validatorsUnbonded);
+
+      const validatorInactive = validatorsBonded.validators
         .concat(validatorsUnbonding.validators)
         .concat(validatorsUnbonded.validators);
-      // const validatorsAll = validatorsDummy.validators
-      //   .concat(validatorsUnbondedDummy.validators)
-      //   .concat(validatorsUnbondingDummy.validators);
-      const validatorInactive = validatorFilter(validatorsAll, {
-        type: "",
-        active: "inactive",
-      });
 
       const result = commonProcess(validatorInactive);
       const vals = result.validators ? result.validators : result;
@@ -403,6 +398,20 @@ export default class ChainFetch {
         delete data.result["community_tax"];
       }
       return commonProcess(data);
+    });
+  }
+
+  async getPermissionParameters() {
+    return this.get("/reapchain/permissions/v1/params").then((data) => {
+      const result = commonProcess(data);
+      if (result) {
+        return {
+          Initial_min_deposit_percentage:
+            result.params.permissions_minimum_initial_deposit_percentage,
+        };
+      } else {
+        return result;
+      }
     });
   }
 

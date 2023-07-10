@@ -42,7 +42,13 @@ import {
   SoftwareUpgradeProposal,
   CancelSoftwareUpgradeProposal,
 } from "@keplr-wallet/proto-types/cosmos/upgrade/v1beta1/upgrade";
+import {
+  MsgRegisterStandingMemberProposal as RegisterStandingMemberProposal_pb,
+  MsgRemoveStandingMemberProposal as RemoveStandingMemberProposal_pb,
+  MsgReplaceStandingMemberProposal as ReplaceStandingMemberProposal_pb,
+} from "@/libs/proto/permissions/tx";
 import * as Long from "long";
+import { convertValidatorAddress } from "@/libs/utils";
 
 export const keplrSendTx = async (type, txData) => {
   try {
@@ -72,6 +78,13 @@ export const keplrSendTx = async (type, txData) => {
       accountNumber: baseAccountEntry.account_number,
     };
     const txMessageSet = createKeplrTxMessageSet(type, txData, sender);
+    if (txMessageSet.error) {
+      return {
+        result: false,
+        txhash: "",
+        msg: txMessageSet.msg,
+      };
+    }
 
     const fee = {
       amount: [
@@ -143,12 +156,12 @@ export const keplrSendTx = async (type, txData) => {
       result: true,
       txhash: Buffer.from(sendTxRes).toString("hex") || "",
     };
-  } catch (error) {
-    console.log(error);
+  } catch (e) {
+    console.log(e);
     return {
       result: false,
       txhash: "",
-      msg: error,
+      msg: e,
     };
   }
 };
@@ -401,7 +414,6 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
                       changes: msgValue.changes,
                     },
                   },
-                  // content: proposalSubObj.toAmino(),
                   initial_deposit: msgValue.initialDeposit,
                   proposer: msgValue.proposer,
                 },
@@ -419,7 +431,6 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
                       changes: msgValue.changes,
                     }).finish(),
                   },
-                  // content: proposalSubObj.toProto()proposalSubObj.toData(),
                   initialDeposit: msgValue.initialDeposit,
                   proposer: msgValue.proposer,
                 }).finish(),
@@ -470,28 +481,28 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
           const testObj = new SoftwareUpgradeProposal2(
             msgValue.title,
             msgValue.description,
-            new Plan2("name", undefined, "1000000", "info", {})
+            new Plan2("name", new Date(), "1000000", "info")
           );
-
           return {
             aminoMsgs: [
               {
                 type: "cosmos-sdk/MsgSubmitProposal",
                 value: {
-                  content: testObj.toAmino(),
-                  // content: {
-                  //   type: "cosmos-sdk/SoftwareUpgradeProposal",
-                  //   value: {
-                  //     title: msgValue.title,
-                  //     description: msgValue.description,
-                  //     plan: {
-                  //       name: "test_upgrade",
-                  //       // height: "10000000",
-                  //       height: new Long(100000000),
-                  //       info: "info",
-                  //     },
-                  //   },
-                  // },
+                  // content: testObj.toAmino(),
+                  content: {
+                    type: "cosmos-sdk/SoftwareUpgradeProposal",
+                    value: {
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      plan: {
+                        name: "test_upgrade",
+                        // time: new Date(),
+                        height: new Long(1000000),
+                        info: "info",
+                        // upgradedClientState: {},
+                      },
+                    },
+                  },
                   initial_deposit: msgValue.initialDeposit,
                   proposer: msgValue.proposer,
                 },
@@ -507,10 +518,148 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
                       title: msgValue.title,
                       description: msgValue.description,
                       plan: {
-                        name: "test_upgrade",
+                        name: "name",
+                        time: new Date(),
+                        height: "1000000",
                         info: "info",
-                        height: new Long(100000000),
                       },
+                    }).finish(),
+                  },
+                  initialDeposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                }).finish(),
+              },
+            ],
+          };
+        } else if (msgValue.type === "RegisterStanding") {
+          const validatorAddress = convertValidatorAddress(
+            msgValue.registerAddress
+          );
+          return {
+            aminoMsgs: [
+              {
+                type: "cosmos-sdk/MsgSubmitProposal",
+                value: {
+                  content: {
+                    type: "permissions/MsgRegisterStandingMemberProposal",
+                    value: {
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      validatorAddress: validatorAddress,
+                      accountAddress: msgValue.registerAddress,
+                      moniker: msgValue.registerMoniker,
+                    },
+                  },
+                  initial_deposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                },
+              },
+            ],
+            protoMsgs: [
+              {
+                typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
+                value: MsgSubmitProposal.encode({
+                  content: {
+                    typeUrl:
+                      "/reapchain.permissions.v1.MsgRegisterStandingMemberProposal",
+                    value: RegisterStandingMemberProposal_pb.encode({
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      validatorAddress: validatorAddress,
+                      accountAddress: msgValue.registerAddress,
+                      moniker: msgValue.registerMoniker,
+                    }).finish(),
+                  },
+                  initialDeposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                }).finish(),
+              },
+            ],
+          };
+        } else if (msgValue.type === "RemoveStanding") {
+          const removeValidatorAddress = convertValidatorAddress(
+            msgValue.removeAddress
+          );
+          return {
+            aminoMsgs: [
+              {
+                type: "cosmos-sdk/MsgSubmitProposal",
+                value: {
+                  content: {
+                    type: "permissions/MsgRemoveStandingMemberProposal",
+                    value: {
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      validatorAddress: removeValidatorAddress,
+                    },
+                  },
+                  initial_deposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                },
+              },
+            ],
+            protoMsgs: [
+              {
+                typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
+                value: MsgSubmitProposal.encode({
+                  content: {
+                    typeUrl:
+                      "/reapchain.permissions.v1.MsgRemoveStandingMemberProposal",
+                    value: RemoveStandingMemberProposal_pb.encode({
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      validatorAddress: removeValidatorAddress,
+                    }).finish(),
+                  },
+                  initialDeposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                }).finish(),
+              },
+            ],
+          };
+        } else if (msgValue.type === "ReplaceStanding") {
+          const existValidatorAddress = convertValidatorAddress(
+            msgValue.existAddress
+          );
+          const replaceValidatorAddress = convertValidatorAddress(
+            msgValue.replaceAddress
+          );
+
+          return {
+            aminoMsgs: [
+              {
+                type: "cosmos-sdk/MsgSubmitProposal",
+                value: {
+                  content: {
+                    type: "permissions/MsgReplaceStandingMemberProposal",
+                    value: {
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      existingValidatorAddress: existValidatorAddress,
+                      replacementValidatorAddress: replaceValidatorAddress,
+                      replacementAccountAddress: msgValue.replaceAddress,
+                      replacementMoniker: msgValue.replaceMoniker,
+                    },
+                  },
+                  initial_deposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                },
+              },
+            ],
+            protoMsgs: [
+              {
+                typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
+                value: MsgSubmitProposal.encode({
+                  content: {
+                    typeUrl:
+                      "/reapchain.permissions.v1.MsgReplaceStandingMemberProposal",
+                    value: ReplaceStandingMemberProposal_pb.encode({
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      existingValidatorAddress: existValidatorAddress,
+                      replacementValidatorAddress: replaceValidatorAddress,
+                      replacementAccountAddress: msgValue.replaceAddress,
+                      replacementMoniker: msgValue.replaceMoniker,
                     }).finish(),
                   },
                   initialDeposit: msgValue.initialDeposit,
@@ -527,6 +676,10 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
         return {};
     }
   } catch (e) {
-    console.log(e);
+    console.error(e);
+    return {
+      error: true,
+      msg: e,
+    };
   }
 };

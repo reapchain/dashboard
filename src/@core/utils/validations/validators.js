@@ -9,13 +9,28 @@ export const validatorMinValue = (value, minValue) => {
   if (Number(value) >= Number(minValue.minDeposit)) {
     return true;
   }
-  const stringFloat = parseFloat(minValue.minDeposit).toLocaleString(
-    "fullwide",
-    {
+  let stringFloat;
+  if (minValue.minDeposit > 0) {
+    stringFloat = parseInt(
+      Number(minValue.minDeposit).toFixed(0),
+      10
+    ).toLocaleString();
+  } else {
+    stringFloat = minValue.minDeposit.toLocaleString("fullwide", {
       maximumFractionDigits: 18,
-    }
-  );
+    });
+  }
   return `Initial deposit must be at least ${stringFloat} REAP.`;
+};
+
+export const validatorAccountPrefix = (address, params) => {
+  const isPrefixOk =
+    address.substring(0, params.prefix.length) === params.prefix;
+  const isLengthOK = address.length === 39 + params.prefix.length;
+  if (isPrefixOk && isLengthOK) {
+    return true;
+  }
+  return `Invalid address format.`;
 };
 
 export const validatorPassword = (password) => {
