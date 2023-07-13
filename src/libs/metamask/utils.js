@@ -124,47 +124,23 @@ export const createMetamaskTxMessage = (type, txData, sender) => {
   try {
     switch (type) {
       case "Transfer":
-        return createMessageSend(
-          chain,
-          sender,
-          {
-            amount: "1000000",
-            denom: "areap",
-            gas: "200000",
-          },
-          txData.memo,
-          {
-            destinationAddress: txData.msg[0].value.toAddress,
-            amount: txData.msg[0].value.amount[0].amount,
-            denom: txData.msg[0].value.amount[0].denom,
-          }
-        );
+        return createMessageSend(chain, sender, txData.fee, txData.memo, {
+          destinationAddress: txData.msg[0].value.toAddress,
+          amount: txData.msg[0].value.amount[0].amount,
+          denom: txData.msg[0].value.amount[0].denom,
+        });
       case "Delegate":
-        return createTxMsgDelegate(
-          chain,
-          sender,
-          {
-            amount: "1000000",
-            denom: "areap",
-            gas: "200000",
-          },
-          txData.memo,
-          {
-            validatorAddress: txData.msg[0].value.validatorAddress,
-            amount: txData.msg[0].value.amount.amount.toString(),
-            denom: txData.msg[0].value.amount.denom,
-          }
-        );
+        return createTxMsgDelegate(chain, sender, txData.fee, txData.memo, {
+          validatorAddress: txData.msg[0].value.validatorAddress,
+          amount: txData.msg[0].value.amount.amount.toString(),
+          denom: txData.msg[0].value.amount.denom,
+        });
       case "Withdraw":
         if (txData.msg.length > 1) {
           return createTxMsgMultipleWithdrawDelegatorReward(
             chain,
             sender,
-            {
-              amount: "1000000",
-              denom: "areap",
-              gas: "250000",
-            },
+            txData.fee,
             txData.memo,
             {
               validatorAddresses: txData.msg.map(
@@ -176,11 +152,7 @@ export const createMetamaskTxMessage = (type, txData, sender) => {
         return createTxMsgWithdrawDelegatorReward(
           chain,
           sender,
-          {
-            amount: "1000000",
-            denom: "areap",
-            gas: "200000",
-          },
+          txData.fee,
           txData.memo,
           {
             validatorAddress: txData.msg[0].value.validatorAddress,
@@ -190,11 +162,7 @@ export const createMetamaskTxMessage = (type, txData, sender) => {
         return createTxMsgBeginRedelegate(
           chain,
           sender,
-          {
-            amount: "1000000",
-            denom: "areap",
-            gas: "330000",
-          },
+          txData.fee,
           txData.memo,
           {
             validatorSrcAddress: txData.msg[0].value.validatorSrcAddress,
@@ -204,21 +172,11 @@ export const createMetamaskTxMessage = (type, txData, sender) => {
           }
         );
       case "Unbond":
-        return createTxMsgUndelegate(
-          chain,
-          sender,
-          {
-            amount: "1000000",
-            denom: "areap",
-            gas: "330000",
-          },
-          txData.memo,
-          {
-            validatorAddress: txData.msg[0].value.validatorAddress,
-            amount: txData.msg[0].value.amount.amount.toString(),
-            denom: txData.msg[0].value.amount.denom,
-          }
-        );
+        return createTxMsgUndelegate(chain, sender, txData.fee, txData.memo, {
+          validatorAddress: txData.msg[0].value.validatorAddress,
+          amount: txData.msg[0].value.amount.amount.toString(),
+          denom: txData.msg[0].value.amount.denom,
+        });
       default:
         return null;
     }
