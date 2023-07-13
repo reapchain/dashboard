@@ -1,6 +1,6 @@
 export const chainInfo = {
   env: "test",
-  chainName: "reapchain",
+  chainName: "reapchain_test",
   chainId: "2023",
   chainIdHex: "0x7e6",
   cosmosChainId: "mercury_2023-1",
