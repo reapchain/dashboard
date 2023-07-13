@@ -95,6 +95,7 @@ export const keplrSendTx = async (type, txData) => {
       ],
       gas: txData.fee.gas,
     };
+
     const signDoc = makeSignDoc(
       txMessageSet.aminoMsgs,
       fee,

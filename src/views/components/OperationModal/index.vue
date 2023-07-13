@@ -36,7 +36,7 @@
             :proposal-title="proposalTitle"
             @update="componentUpdate"
           />
-          <b-row v-if="advance">
+          <b-row v-if="advance && false">
             <b-col cols="12">
               <b-form-group label="Fee" label-for="Fee">
                 <validation-provider
@@ -99,7 +99,7 @@
       <div class="d-flex justify-content-between w-100">
         <div id="left-footer">
           <b-form-checkbox
-            v-if="isOwner"
+            v-if="isOwner && false"
             v-model="advance"
             name="advance"
             value="true"
@@ -270,10 +270,10 @@ export default {
       sequence: 1,
       accountNumber: 0,
       advance: false,
-      fee: "1000",
+      fee: "125000000",
       feeDenom: "",
       wallet: "ledgerUSB",
-      gas: "500000",
+      gas: "250000",
       memo: "",
       blockingMsg: this.address
         ? "You are not the owner"
