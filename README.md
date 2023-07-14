@@ -28,13 +28,19 @@ It supports the following features:
 
 # Installation:
 
-1. Running with npm
+1. Install packages
+
+```
+npm install
+```
+
+2. Running with npm
 
 ```
 npm run start
 ```
 
-2. Building for web servers, like nginx
+3. Building for web servers, like nginx
 
 ```
 npm run build
