@@ -36,7 +36,7 @@
             :proposal-title="proposalTitle"
             @update="componentUpdate"
           />
-          <b-row v-if="advance && false">
+          <b-row v-if="advance">
             <b-col cols="12">
               <b-form-group label="Fee" label-for="Fee">
                 <validation-provider
@@ -399,6 +399,7 @@ export default {
         if (ok) {
           const walletType = getDefaultAccountDevice();
           let res;
+
           if (walletType === "metamask") {
             res = await metamaskSendTx(this.type, {
               msg: this.$refs.component.msg,
@@ -406,7 +407,7 @@ export default {
               fee: {
                 amount: this.fee,
                 denom: this.feeDenom,
-                gas: this.gas,
+                gas: this.gasSetting(),
               },
             });
           } else if (walletType === "keplr") {
@@ -416,7 +417,7 @@ export default {
               fee: {
                 amount: this.fee,
                 denom: this.feeDenom,
-                gas: this.gas,
+                gas: this.gasSetting(),
               },
             });
           } else {
@@ -522,6 +523,15 @@ export default {
         this.wallet = "keplr";
       } else {
         this.wallet = v;
+      }
+    },
+    gasSetting() {
+      if (this.type === "GovProposal") {
+        // this.gas = "300000";
+        return "300000";
+      } else {
+        // this.gas = "250000";
+        return "250000";
       }
     },
   },
