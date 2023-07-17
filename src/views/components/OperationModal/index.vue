@@ -528,7 +528,7 @@ export default {
     gasSetting() {
       if (this.type === "GovProposal") {
         // this.gas = "300000";
-        return "300000";
+        return "350000";
       } else {
         // this.gas = "250000";
         return "250000";
