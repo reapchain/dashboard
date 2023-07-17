@@ -327,7 +327,7 @@ export default class ChainFetch {
       const validatorsUnbonded = await this.get(
         "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_UNBONDED"
       );
-      console.log(validatorsBonded, validatorsUnbonding, validatorsUnbonded);
+      // console.log(validatorsBonded, validatorsUnbonding, validatorsUnbonded);
 
       const validatorInactive = validatorsBonded.validators
         .concat(validatorsUnbonding.validators)
@@ -873,6 +873,7 @@ export default class ChainFetch {
     const txRaw = {
       tx_bytes: txString,
     };
+
     return this.post("/cosmos/tx/v1beta1/simulate", txRaw, config);
   }
 
