@@ -164,6 +164,7 @@
                   "
                 >
                   {{ data.item.description.moniker }}
+                  <!-- {{ data.item.jailed ? " [Jailed]" : "" }}                   -->
                   <!-- {{ data.item.type ? `(${data.item.type})` : "" }} -->
                 </router-link>
               </span>
@@ -194,17 +195,27 @@
             <small v-else class="text-danger">{{ data.item.changes }}</small>
           </template>
           <template #cell(operation)="data">
-            <b-button
-              v-if="data.item.type == 'standing'"
-              v-b-modal.operation-modal
-              :name="data.item.operator_address"
-              variant="primary"
-              size="sm"
-              :disabled="!selectedAccount"
-              @click="selectValidator(data.item.operator_address)"
-            >
-              Delegate
-            </b-button>
+            <template v-if="data.item.jailed">
+              <b-badge
+                variant="primary"
+                style="padding: 0.6rem 1rem; border-radius: 1rem; background-color: #8f85f3;"
+              >
+                Jailed
+              </b-badge>
+            </template>
+            <template v-else>
+              <b-button
+                v-if="data.item.type == 'standing'"
+                v-b-modal.operation-modal
+                :name="data.item.operator_address"
+                variant="primary"
+                size="sm"
+                :disabled="!selectedAccount"
+                @click="selectValidator(data.item.operator_address)"
+              >
+                Delegate
+              </b-button>
+            </template>
           </template>
         </b-table>
 
@@ -262,7 +273,7 @@
                   "
                 >
                   {{ data.item.description.moniker }}
-                  {{ data.item.jailed ? " [Jailed]" : "" }}
+                  <!-- {{ data.item.jailed ? " [Jailed]" : "" }} -->
                   <!-- {{ data.item.type ? `(${data.item.type})` : "" }} -->
                 </router-link>
               </span>
@@ -293,21 +304,31 @@
             <small v-else class="text-danger">{{ data.item.changes }}</small>
           </template>
           <template #cell(operation)="data">
-            <b-button
-              v-b-modal.operation-modal
-              :name="data.item.operator_address"
-              variant="primary"
-              size="sm"
-              :disabled="
-                !selectedAccount ||
-                  (data.item.type == 'steering' &&
-                    selectedAccount.substring(5, 37) !==
-                      data.item.operator_address.substring(12, 44))
-              "
-              @click="selectValidator(data.item.operator_address)"
-            >
-              Delegate
-            </b-button>
+            <template v-if="data.item.jailed">
+              <b-badge
+                variant="primary"
+                style="padding: 0.6rem 1rem; border-radius: 1rem; background-color: #8f85f3;"
+              >
+                Jailed
+              </b-badge>
+            </template>
+            <template v-else>
+              <b-button
+                v-b-modal.operation-modal
+                :name="data.item.operator_address"
+                variant="primary"
+                size="sm"
+                :disabled="
+                  !selectedAccount ||
+                    (data.item.type == 'steering' &&
+                      selectedAccount.substring(5, 37) !==
+                        data.item.operator_address.substring(12, 44))
+                "
+                @click="selectValidator(data.item.operator_address)"
+              >
+                Delegate
+              </b-button>
+            </template>
           </template>
         </b-table>
       </b-card-body>
@@ -457,7 +478,6 @@ export default {
           const previous = this.previousPower[x.consensus_pubkey.value] || 0;
           xh.changes = latest - previous;
         }
-
         return xh;
       });
     },
@@ -666,21 +686,21 @@ export default {
     },
     rankBadge(data) {
       return "primary";
-      if (this.selectedStatus === "inactive") return "primary";
-      const { index, item } = data;
-      if (index === 0) {
-        window.sum = item.tokens;
-      } else {
-        window.sum += item.tokens;
-      }
-      const rank = window.sum / this.stakingPool;
-      if (rank < 0.333) {
-        return "danger";
-      }
-      if (rank < 0.67) {
-        return "warning";
-      }
-      return "primary";
+      // if (this.selectedStatus === "inactive") return "primary";
+      // const { index, item } = data;
+      // if (index === 0) {
+      //   window.sum = item.tokens;
+      // } else {
+      //   window.sum += item.tokens;
+      // }
+      // const rank = window.sum / this.stakingPool;
+      // if (rank < 0.333) {
+      //   return "danger";
+      // }
+      // if (rank < 0.67) {
+      //   return "warning";
+      // }
+      // return "primary";
     },
     avatar(identity, resolve) {
       if (this.islive) {
