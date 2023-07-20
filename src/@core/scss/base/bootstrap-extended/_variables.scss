@@ -22,13 +22,15 @@ $gray-800: #1e1e1e !default; // $gray-dark
 $gray-900: #2a2e30 !default;
 $black: #22292f !default; // 231f48 22292f
 
-$purple: #7367f0 !default; //$primary
+$purple: #7367f0 !default; //$primaryPrev
+$deep-blue: #00264c !default; //$primary
 $green: #28c76f !default; //$success
 $blue: #00cfe8 !default; //$info
 $orange: #ff9f43 !default; //$warning
 $red: #ea5455 !default; //$danger
 
-$primary: $purple !default;
+// $primary: $purple !default;
+$primary: $deep-blue !default;
 $secondary: #82868b !default;
 $info: $blue !default;
 $warning: $orange !default;
@@ -47,7 +49,7 @@ $container-max-widths: (
   md: 720px,
   lg: 960px,
   xl: 1140px,
-  xxl: 1440px // Custom xxl size
+  xxl: 1440px // Custom xxl size,
 ) !default;
 // scss-docs-end container-max-widths
 
@@ -59,29 +61,29 @@ $spacers: map-merge(
   (
     0: 0,
     25: (
-      $spacer * 0.25
+      $spacer * 0.25,
     ),
     50: (
-      $spacer * 0.5
+      $spacer * 0.5,
     ),
     75: (
-      $spacer * 0.75
+      $spacer * 0.75,
     ),
     1: (
-      $spacer
+      $spacer,
     ),
     2: (
-      $spacer * 1.5
+      $spacer * 1.5,
     ),
     3: (
-      $spacer * 3
+      $spacer * 3,
     ),
     4: (
-      $spacer * 3.5
+      $spacer * 3.5,
     ),
     5: (
-      $spacer * 4
-    )
+      $spacer * 4,
+    ),
   ),
   $spacers
 );
@@ -127,8 +129,8 @@ $box-shadow: 0 4px 24px 0 rgba($black, 0.1) !default;
 // Font, line-height, and color for body text, headings, and more.
 
 // stylelint-disable value-keyword-case
-$font-family-sans-serif: 'Montserrat', Helvetica, Arial, serif !default;
-$font-family-monospace: 'Montserrat', Helvetica, Arial, serif !default;
+$font-family-sans-serif: "Montserrat", Helvetica, Arial, serif !default;
+$font-family-monospace: "Montserrat", Helvetica, Arial, serif !default;
 
 // stylelint-enable value-keyword-case
 $font-size-base: 1rem !default;
@@ -200,7 +202,9 @@ $btn-border-radius: 0.358rem !default;
 $btn-border-radius-lg: 0.358rem !default;
 $btn-border-radius-sm: 0.358rem !default;
 
-$btn-transition:              color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out, background 0s, border 0s !default;
+$btn-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+  border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, background 0s,
+  border 0s !default;
 
 // Forms
 $custom-control-border-color: #d8d6de;
@@ -240,7 +244,9 @@ $input-height-sm: 2.142rem !default;
 $input-height-lg: 3.2857rem !default;
 
 $input-group-addon-bg: white !default;
-$custom-forms-transition:               background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out, background 0s, border-color 0s !default;
+$custom-forms-transition: background-color 0.15s ease-in-out,
+  border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, background 0s,
+  border-color 0s !default;
 
 $custom-control-indicator-border-color: $custom-control-border-color;
 

@@ -12,6 +12,7 @@ export const $themeConfig = {
     appName: "Reapchain", // Will update name in navigation menu (Branding)
     // eslint-disable-next-line global-require
     appLogoImage: "/reapchain_logo.png",
+    appBggLogoImage: "/reapchain_bg_logo.png",
     // appLogoImage: "/logo.svg", // Will update logo in navigation menu (Branding)
   },
   layout: {

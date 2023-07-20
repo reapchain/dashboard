@@ -25,7 +25,7 @@
           <li class="nav-item mr-auto">
             <b-link class="navbar-brand" to="/">
               <span class="brand-logo">
-                <b-img :src="appLogoImage" alt="logo" />
+                <b-img :src="appBggLogoImage" alt="logo" />
               </span>
               <h2 class="brand-text">
                 {{ appName }}
@@ -136,7 +136,7 @@ export default {
     );
 
     // App Name
-    const { appName, appLogoImage } = $themeConfig.app;
+    const { appName, appLogoImage, appBggLogoImage } = $themeConfig.app;
 
     return {
       navMenuItems,
@@ -157,6 +157,7 @@ export default {
       // App Name
       appName,
       appLogoImage,
+      appBggLogoImage,
     };
   },
   computed: {

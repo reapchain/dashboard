@@ -30,7 +30,7 @@
               badge
               rounded
               size="42"
-              :src="selected_chain.logo"
+              :src="'/reapchain_bg_logo.png'"
               class="badge-minimal"
               :badge-variant="variant"
           /></b-link>
