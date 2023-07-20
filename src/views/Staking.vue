@@ -196,10 +196,7 @@
           </template>
           <template #cell(operation)="data">
             <template v-if="data.item.jailed">
-              <b-badge
-                variant="primary"
-                style="padding: 0.6rem 1rem; border-radius: 1rem; background-color: #8f85f3;"
-              >
+              <b-badge style="padding: 0.6rem 1rem; border-radius: 1rem; ">
                 Jailed
               </b-badge>
             </template>
@@ -305,10 +302,7 @@
           </template>
           <template #cell(operation)="data">
             <template v-if="data.item.jailed">
-              <b-badge
-                variant="primary"
-                style="padding: 0.6rem 1rem; border-radius: 1rem; background-color: #8f85f3;"
-              >
+              <b-badge style="padding: 0.6rem 1rem; border-radius: 1rem;">
                 Jailed
               </b-badge>
             </template>
