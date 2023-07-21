@@ -37,7 +37,10 @@
             <b-td> {{ "fee" }} </b-td><b-td>{{ formattoken(tx.tx.fee) }}</b-td>
           </b-tr>
           <b-tr>
-            <b-td> {{ "memo" }} </b-td><b-td>{{ tx.tx.memo }}</b-td>
+            <b-td> {{ "memo" }} </b-td
+            ><b-td style="max-width: 100px; white-space: normal;">{{
+              tx.tx.memo
+            }}</b-td>
           </b-tr>
           <b-tr>
             <b-td> {{ "timeout_height" }} </b-td
