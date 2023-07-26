@@ -219,6 +219,35 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
           ],
         };
       case "Withdraw":
+        if (txData.msg.length > 1) {
+          const aminoMsgs = [];
+          const protoMsgs = [];
+          for (const tempMsg of txData.msg) {
+            const aminoMsg = {
+              type: "cosmos-sdk/MsgWithdrawDelegationReward",
+              value: {
+                delegator_address: tempMsg.value.delegatorAddress,
+                validator_address: tempMsg.value.validatorAddress,
+              },
+            };
+            const protoMsg = {
+              typeUrl:
+                "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+              value: MsgWithdrawDelegatorReward.encode({
+                delegatorAddress: tempMsg.value.delegatorAddress,
+                validatorAddress: tempMsg.value.validatorAddress,
+              }).finish(),
+            };
+
+            aminoMsgs.push(aminoMsg);
+            protoMsgs.push(protoMsg);
+          }
+          return {
+            aminoMsgs: aminoMsgs,
+            protoMsgs: protoMsgs,
+          };
+        }
+
         return {
           aminoMsgs: [
             {
