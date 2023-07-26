@@ -407,7 +407,7 @@ export default class ChainFetch {
       if (result) {
         return {
           Initial_min_deposit_percentage:
-            result.params.permissions_minimum_initial_deposit_percentage,
+            result.params.gov_min_initial_deposit_percentage,
         };
       } else {
         return result;
