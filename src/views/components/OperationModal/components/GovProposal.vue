@@ -54,18 +54,18 @@
     <b-row>
       <b-col>
         <b-form-group
-          label="Proposal Discription"
-          label-for="ProposalDiscription"
+          label="Proposal Description"
+          label-for="ProposalDescription"
         >
           <validation-provider
             #default="{ errors }"
             rules="required"
-            name="ProposalDiscription"
+            name="ProposalDescription"
           >
             <b-input-group class="mb-25">
               <b-form-textarea
-                id="ProposalDiscription"
-                v-model="proposalDiscription"
+                id="ProposalDescription"
+                v-model="proposalDescription"
                 :state="errors.length > 0 ? false : null"
                 rows="5"
               />
@@ -548,7 +548,7 @@ export default {
           value: "",
         },
       ],
-      proposalDiscription: "",
+      proposalDescription: "",
       proposalDeposit: null,
       communityPoolRecipient: "",
       communityPoolAmount: null,
@@ -596,7 +596,7 @@ export default {
             type: this.proposalType,
             proposer: this.address,
             title: this.proposalTitle,
-            description: this.proposalDiscription,
+            description: this.proposalDescription,
             changes:
               this.proposalType === "Parameter" ? this.changes : undefined,
             recipient:
