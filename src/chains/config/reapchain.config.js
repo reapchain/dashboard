@@ -3,7 +3,7 @@ export const chainInfo = {
   chainName: "Reapchain Testnet",
   chainId: "221231",
   chainIdHex: "0x3602F",
-  cosmosChainId: "mercury_221231-1",
+  cosmosChainId: "reapchain_221231-1",
   restEndpoint: "https://test-lcd.reapchain.org",
   rpcEndpoint: "https://test-rpc.reapchain.org",
   evmEndpoint: "https://test-eth.reapchain.org",
