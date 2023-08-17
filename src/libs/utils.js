@@ -744,7 +744,8 @@ export class Data {}
 
 export const isTypeofEvmos = (chain) => {
   if (!chain) return false;
-  if (chain === "evmos" || chain.indexOf("reap") > -1) {
+  const chainName = chain.toLowerCase();
+  if (chainName === "evmos" || chainName.indexOf("reap") > -1) {
     return true;
   } else {
     return false;
