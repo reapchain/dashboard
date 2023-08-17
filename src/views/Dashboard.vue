@@ -483,7 +483,16 @@ export default {
     });
 
     this.$http.getCommunityPool().then((res) => {
-      this.communityPool = this.formatToken(res.pool);
+      if (res.pool.length >= 1) {
+        this.communityPool = this.formatToken(res.pool);
+      } else {
+        this.communityPool = this.formatToken([
+          {
+            denom: "areap",
+            amount: "0.0",
+          },
+        ]);
+      }
     });
 
     const conf = this.$http.getSelectedConfig();
