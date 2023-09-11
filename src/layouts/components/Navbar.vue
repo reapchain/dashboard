@@ -76,14 +76,7 @@
       <dark-Toggler class="d-none d-lg-block" />
       <search-bar />
       <!-- <locale /> -->
-      <b-dropdown
-        class="ml-1"
-        variant="link"
-        no-caret
-        toggle-class="p-0"
-        right
-        v-if="chainInfo.env !== 'main'"
-      >
+      <b-dropdown class="ml-1" variant="link" no-caret toggle-class="p-0" right>
         <template #button-content>
           <b-button
             v-ripple.400="'rgba(255, 255, 255, 0.15)'"
@@ -353,14 +346,10 @@ export default {
     },
   },
   mounted() {
-    if (chainInfo.env === "main") {
-      return;
-    }
-
     const walletTypeCheck = localStorage.getItem("walletType");
-    if (walletTypeCheck == "keplr") {
+    if (walletTypeCheck === "keplr") {
       this.connectWithKeplr();
-    } else if (walletTypeCheck == "metamask") {
+    } else if (walletTypeCheck === "metamask") {
       this.connectWithMetamask();
     }
   },

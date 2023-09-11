@@ -57,7 +57,7 @@ const modules = [
 const modules_main = [
   {
     scope: "normal",
-    title: "dashboard",
+    title: "Dashboard",
     route: "dashboard",
   },
   {
@@ -92,7 +92,7 @@ function processMenu() {
     const { excludes } = store.state.chains.config[chain];
     const children = [];
 
-    const tempModules = chainInfo.env === "main" ? modules_main : modules;
+    const tempModules = modules;
     tempModules.forEach((m) => {
       if (excludes === undefined || excludes.indexOf(m.route) === -1) {
         if (m.scope.match("normal") || m.scope.match(chain)) {

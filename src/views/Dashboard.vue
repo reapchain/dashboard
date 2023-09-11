@@ -109,7 +109,6 @@
       border-variant="primary"
       bg-variant="transparent"
       class="shadow-none"
-      v-if="chainInfo.env !== 'main'"
     >
       <b-card-title class="d-flex justify-content-between">
         <span>{{ walletName }} Assets </span>
@@ -212,14 +211,9 @@
                 <b-col cols="12">
                   <span class="font-weight-bolder"
                     >From:
-                    <router-link
-                      :to="
-                        `./${
-                          chainInfo.env === 'main' ? 'validators' : 'staking'
-                        }/${item.validator_address}`
-                      "
-                      >{{ item.validator_address }}</router-link
-                    ></span
+                    <router-link :to="`/staking/${item.validator_address}`">{{
+                      item.validator_address
+                    }}</router-link></span
                   >
                 </b-col>
                 <b-col cols="12">

@@ -11,16 +11,14 @@
     @hidden="resetModal"
     @show="initialize"
   >
-    <b-overlay :show="!isOwner || chainInfo.env === 'main'" rounded="sm">
+    <b-overlay :show="!isOwner" rounded="sm">
       <template #overlay>
         <div class="text-center">
           <b-avatar font-scale="3" variant="danger" animation="cylon">
             <feather-icon icon="XCircleIcon" size="16" />
           </b-avatar>
           <p class="mt-1 font-weight-bolder">
-            {{
-              chainInfo.env === "main" ? "It will be added soon.." : blockingMsg
-            }}
+            {{ blockingMsg }}
           </p>
         </div>
       </template>
@@ -311,10 +309,6 @@ export default {
       return "";
     },
     isOwner() {
-      if (chainInfo.env === "main") {
-        return false;
-      }
-
       const accounts = this.accounts;
 
       if (accounts) {

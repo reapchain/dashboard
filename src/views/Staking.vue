@@ -40,13 +40,7 @@
               </b-avatar>
             </template>
             <span class="font-weight-bolder d-block text-nowrap">
-              <router-link
-                :to="
-                  `./${chainInfo.env === 'main' ? 'validators' : 'staking'}/${
-                    data.item.operator_address
-                  }`
-                "
-              >
+              <router-link :to="`/staking/${data.item.operator_address}`">
                 {{ data.item.description.moniker }}
               </router-link>
             </span>
@@ -156,13 +150,7 @@
                 </b-avatar>
               </template>
               <span class="font-weight-bolder d-block text-nowrap">
-                <router-link
-                  :to="
-                    `/${chainInfo.env === 'main' ? 'validators' : 'staking'}/${
-                      data.item.operator_address
-                    }`
-                  "
-                >
+                <router-link :to="`/staking/${data.item.operator_address}`">
                   {{ data.item.description.moniker }}
                   <!-- {{ data.item.jailed ? " [Jailed]" : "" }}                   -->
                   <!-- {{ data.item.type ? `(${data.item.type})` : "" }} -->
@@ -262,13 +250,7 @@
                 </b-avatar>
               </template>
               <span class="font-weight-bolder d-block text-nowrap">
-                <router-link
-                  :to="
-                    `./${chainInfo.env === 'main' ? 'validators' : 'staking'}/${
-                      data.item.operator_address
-                    }`
-                  "
-                >
+                <router-link :to="`/staking/${data.item.operator_address}`">
                   {{ data.item.description.moniker }}
                   <!-- {{ data.item.jailed ? " [Jailed]" : "" }} -->
                   <!-- {{ data.item.type ? `(${data.item.type})` : "" }} -->
