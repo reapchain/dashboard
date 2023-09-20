@@ -48,13 +48,20 @@
     <b-row>
       <b-col>
         <b-form-group label="To Validator" label-for="validator">
-          <v-select
-            v-model="toValidator"
-            :options="valOptions"
-            :reduce="(val) => val.value"
-            placeholder="Select a validator"
-            :selectable="(v) => v.value"
-          />
+          <validation-provider
+            #default="{ errors }"
+            rules="required"
+            name="To Validator"
+          >
+            <v-select
+              v-model="toValidator"
+              :options="valOptions"
+              :reduce="(val) => val.value"
+              placeholder="Select a validator"
+              :selectable="(v) => v.value"
+            />
+            <small class="text-danger">{{ errors[0] }}</small>
+          </validation-provider>
         </b-form-group>
       </b-col>
     </b-row>
@@ -64,7 +71,7 @@
           <validation-provider
             v-slot="{ errors }"
             rules="required|regex:^([0-9\.]+)$"
-            name="amount"
+            name="Amount"
           >
             <b-input-group>
               <b-form-input

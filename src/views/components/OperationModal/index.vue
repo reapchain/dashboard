@@ -11,16 +11,14 @@
     @hidden="resetModal"
     @show="initialize"
   >
-    <b-overlay :show="!isOwner || chainInfo.env === 'main'" rounded="sm">
+    <b-overlay :show="!isOwner" rounded="sm">
       <template #overlay>
         <div class="text-center">
           <b-avatar font-scale="3" variant="danger" animation="cylon">
             <feather-icon icon="XCircleIcon" size="16" />
           </b-avatar>
           <p class="mt-1 font-weight-bolder">
-            {{
-              chainInfo.env === "main" ? "It will be added soon.." : blockingMsg
-            }}
+            {{ blockingMsg }}
           </p>
         </div>
       </template>
@@ -311,10 +309,6 @@ export default {
       return "";
     },
     isOwner() {
-      if (chainInfo.env === "main") {
-        return false;
-      }
-
       const accounts = this.accounts;
 
       if (accounts) {
@@ -526,11 +520,22 @@ export default {
       }
     },
     gasSetting() {
+      console.log("tx type : ", this.type);
+      console.log("tx msg : ", this.$refs.component.msg);
+
       if (this.type === "GovProposal") {
         // this.gas = "300000";
         return "350000";
+      } else if (this.type === "Delegate") {
+        return "250000";
+      } else if (this.type === "Redelegate") {
+        return "350000";
+      } else if (this.type === "Unbond") {
+        return "300000";
+      } else if (this.type === "Withdraw") {
+        const gasTemp = this.$refs.component.msg.length * 80000 + 100000;
+        return gasTemp.toString();
       } else {
-        // this.gas = "250000";
         return "250000";
       }
     },
