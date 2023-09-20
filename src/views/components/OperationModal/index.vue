@@ -521,10 +521,14 @@ export default {
     },
     gasSetting() {
       if (this.type === "GovProposal") {
-        // this.gas = "300000";
         return "350000";
+      } else if (this.type === "Delegate") {
+        return "250000";
+      } else if (this.type === "Redelegate") {
+        return "350000";
+      } else if (this.type === "Unbond") {
+        return "300000";
       } else {
-        // this.gas = "250000";
         return "250000";
       }
     },
