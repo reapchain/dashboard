@@ -1,3 +1,4 @@
+/* eslint-disable */
 import axios from "../common/axios";
 import { getAccounts } from "@/libs/keplr/keplr";
 import { generateEndpointAccount } from "@tharsis/provider";
@@ -27,6 +28,28 @@ import { TextProposal } from "@keplr-wallet/proto-types/cosmos/gov/v1beta1/gov";
 import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
 import { SignMode } from "@keplr-wallet/proto-types/cosmos/tx/signing/v1beta1/signing";
 import { chainInfo } from "@/chains/config/reapchain.config";
+import {
+  ParameterChangeProposal,
+  CommunityPoolSpendProposal,
+  SoftwareUpgradeProposal as SoftwareUpgradeProposal2,
+  Plan as Plan2,
+} from "@terra-money/feather.js";
+import { ParameterChangeProposal as ParameterChangeProposal_pb } from "@terra-money/terra.proto/cosmos/params/v1beta1/params";
+import { CommunityPoolSpendProposal as CommunityPoolSpendProposal_pb } from "@terra-money/terra.proto/cosmos/distribution/v1beta1/distribution";
+import { SoftwareUpgradeProposal as SoftwareUpgradeProposal_pb } from "@terra-money/terra.proto/cosmos/upgrade/v1beta1/upgrade";
+import {
+  Plan,
+  SoftwareUpgradeProposal,
+  CancelSoftwareUpgradeProposal,
+} from "@keplr-wallet/proto-types/cosmos/upgrade/v1beta1/upgrade";
+import {
+  MsgRegisterStandingMemberProposal as RegisterStandingMemberProposal_pb,
+  MsgRemoveStandingMemberProposal as RemoveStandingMemberProposal_pb,
+  MsgReplaceStandingMemberProposal as ReplaceStandingMemberProposal_pb,
+} from "@/libs/proto/permissions/tx";
+import * as Long from "long";
+import { convertValidatorAddress, simulate } from "@/libs/utils";
+import ChainFetch from "@/libs/utils";
 
 export const keplrSendTx = async (type, txData) => {
   try {
@@ -56,6 +79,13 @@ export const keplrSendTx = async (type, txData) => {
       accountNumber: baseAccountEntry.account_number,
     };
     const txMessageSet = createKeplrTxMessageSet(type, txData, sender);
+    if (txMessageSet.error) {
+      return {
+        result: false,
+        txhash: "",
+        msg: txMessageSet.msg,
+      };
+    }
 
     const fee = {
       amount: [
@@ -66,6 +96,7 @@ export const keplrSendTx = async (type, txData) => {
       ],
       gas: txData.fee.gas,
     };
+
     const signDoc = makeSignDoc(
       txMessageSet.aminoMsgs,
       fee,
@@ -120,18 +151,19 @@ export const keplrSendTx = async (type, txData) => {
     const sendTxRes = await window.keplr?.sendTx(
       chainInfo.cosmosChainId,
       signedTx,
-      "async"
+      "sync"
     );
 
     return {
       result: true,
       txhash: Buffer.from(sendTxRes).toString("hex") || "",
     };
-  } catch (error) {
+  } catch (e) {
+    console.log(e);
     return {
       result: false,
       txhash: "",
-      msg: error,
+      msg: e,
     };
   }
 };
@@ -187,6 +219,35 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
           ],
         };
       case "Withdraw":
+        if (txData.msg.length > 1) {
+          const aminoMsgs = [];
+          const protoMsgs = [];
+          for (const tempMsg of txData.msg) {
+            const aminoMsg = {
+              type: "cosmos-sdk/MsgWithdrawDelegationReward",
+              value: {
+                delegator_address: tempMsg.value.delegatorAddress,
+                validator_address: tempMsg.value.validatorAddress,
+              },
+            };
+            const protoMsg = {
+              typeUrl:
+                "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+              value: MsgWithdrawDelegatorReward.encode({
+                delegatorAddress: tempMsg.value.delegatorAddress,
+                validatorAddress: tempMsg.value.validatorAddress,
+              }).finish(),
+            };
+
+            aminoMsgs.push(aminoMsg);
+            protoMsgs.push(protoMsg);
+          }
+          return {
+            aminoMsgs: aminoMsgs,
+            protoMsgs: protoMsgs,
+          };
+        }
+
         return {
           aminoMsgs: [
             {
@@ -358,12 +419,298 @@ export const createKeplrTxMessageSet = (type, txData, sender) => {
               },
             ],
           };
+        } else if (msgValue.type === "Parameter") {
+          const proposalSubObj = new ParameterChangeProposal(
+            msgValue.title,
+            msgValue.description,
+            msgValue.changes
+          );
+
+          // {
+          //   subspace: "inflation",
+          //   key: "ParamStoreKeyEnableInflation",
+          //   value: "false",
+          // },
+
+          return {
+            aminoMsgs: [
+              {
+                type: "cosmos-sdk/MsgSubmitProposal",
+                value: {
+                  content: {
+                    type: "cosmos-sdk/ParameterChangeProposal",
+                    value: {
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      changes: msgValue.changes,
+                    },
+                  },
+                  initial_deposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                },
+              },
+            ],
+            protoMsgs: [
+              {
+                typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
+                value: MsgSubmitProposal.encode({
+                  content: {
+                    typeUrl: "/cosmos.params.v1beta1.ParameterChangeProposal",
+                    value: ParameterChangeProposal_pb.encode({
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      changes: msgValue.changes,
+                    }).finish(),
+                  },
+                  initialDeposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                }).finish(),
+              },
+            ],
+          };
+        } else if (msgValue.type === "Community") {
+          return {
+            aminoMsgs: [
+              {
+                type: "cosmos-sdk/MsgSubmitProposal",
+                value: {
+                  content: {
+                    type: "cosmos-sdk/CommunityPoolSpendProposal",
+                    value: {
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      recipient: msgValue.recipient,
+                      amount: msgValue.amount,
+                    },
+                  },
+                  initial_deposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                },
+              },
+            ],
+            protoMsgs: [
+              {
+                typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
+                value: MsgSubmitProposal.encode({
+                  content: {
+                    typeUrl:
+                      "/cosmos.distribution.v1beta1.CommunityPoolSpendProposal",
+                    value: CommunityPoolSpendProposal_pb.encode({
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      recipient: msgValue.recipient,
+                      amount: msgValue.amount,
+                    }).finish(),
+                  },
+                  initialDeposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                }).finish(),
+              },
+            ],
+          };
+        } else if (msgValue.type === "Upgrade") {
+          const testObj = new SoftwareUpgradeProposal2(
+            msgValue.title,
+            msgValue.description,
+            new Plan2("name", new Date(), "1000000", "info")
+          );
+          return {
+            aminoMsgs: [
+              {
+                type: "cosmos-sdk/MsgSubmitProposal",
+                value: {
+                  // content: testObj.toAmino(),
+                  content: {
+                    type: "cosmos-sdk/SoftwareUpgradeProposal",
+                    value: {
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      plan: {
+                        name: "test_upgrade",
+                        // time: new Date(),
+                        height: new Long(1000000),
+                        info: "info",
+                        // upgradedClientState: {},
+                      },
+                    },
+                  },
+                  initial_deposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                },
+              },
+            ],
+            protoMsgs: [
+              {
+                typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
+                value: MsgSubmitProposal.encode({
+                  content: {
+                    typeUrl: "/cosmos.upgrade.v1beta1.SoftwareUpgradeProposal",
+                    value: SoftwareUpgradeProposal_pb.encode({
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      plan: {
+                        name: "name",
+                        time: new Date(),
+                        height: "1000000",
+                        info: "info",
+                      },
+                    }).finish(),
+                  },
+                  initialDeposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                }).finish(),
+              },
+            ],
+          };
+        } else if (msgValue.type === "RegisterStanding") {
+          const validatorAddress = convertValidatorAddress(
+            msgValue.registerAddress
+          );
+          return {
+            aminoMsgs: [
+              {
+                type: "cosmos-sdk/MsgSubmitProposal",
+                value: {
+                  content: {
+                    type: "permissions/MsgRegisterStandingMemberProposal",
+                    value: {
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      validatorAddress: validatorAddress,
+                      accountAddress: msgValue.registerAddress,
+                      moniker: msgValue.registerMoniker,
+                    },
+                  },
+                  initial_deposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                },
+              },
+            ],
+            protoMsgs: [
+              {
+                typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
+                value: MsgSubmitProposal.encode({
+                  content: {
+                    typeUrl:
+                      "/reapchain.permissions.v1.MsgRegisterStandingMemberProposal",
+                    value: RegisterStandingMemberProposal_pb.encode({
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      validatorAddress: validatorAddress,
+                      accountAddress: msgValue.registerAddress,
+                      moniker: msgValue.registerMoniker,
+                    }).finish(),
+                  },
+                  initialDeposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                }).finish(),
+              },
+            ],
+          };
+        } else if (msgValue.type === "RemoveStanding") {
+          const removeValidatorAddress = convertValidatorAddress(
+            msgValue.removeAddress
+          );
+          return {
+            aminoMsgs: [
+              {
+                type: "cosmos-sdk/MsgSubmitProposal",
+                value: {
+                  content: {
+                    type: "permissions/MsgRemoveStandingMemberProposal",
+                    value: {
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      validatorAddress: removeValidatorAddress,
+                    },
+                  },
+                  initial_deposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                },
+              },
+            ],
+            protoMsgs: [
+              {
+                typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
+                value: MsgSubmitProposal.encode({
+                  content: {
+                    typeUrl:
+                      "/reapchain.permissions.v1.MsgRemoveStandingMemberProposal",
+                    value: RemoveStandingMemberProposal_pb.encode({
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      validatorAddress: removeValidatorAddress,
+                    }).finish(),
+                  },
+                  initialDeposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                }).finish(),
+              },
+            ],
+          };
+        } else if (msgValue.type === "ReplaceStanding") {
+          const existValidatorAddress = convertValidatorAddress(
+            msgValue.existAddress
+          );
+          const replaceValidatorAddress = convertValidatorAddress(
+            msgValue.replaceAddress
+          );
+
+          return {
+            aminoMsgs: [
+              {
+                type: "cosmos-sdk/MsgSubmitProposal",
+                value: {
+                  content: {
+                    type: "permissions/MsgReplaceStandingMemberProposal",
+                    value: {
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      existingValidatorAddress: existValidatorAddress,
+                      replacementValidatorAddress: replaceValidatorAddress,
+                      replacementAccountAddress: msgValue.replaceAddress,
+                      replacementMoniker: msgValue.replaceMoniker,
+                    },
+                  },
+                  initial_deposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                },
+              },
+            ],
+            protoMsgs: [
+              {
+                typeUrl: "/cosmos.gov.v1beta1.MsgSubmitProposal",
+                value: MsgSubmitProposal.encode({
+                  content: {
+                    typeUrl:
+                      "/reapchain.permissions.v1.MsgReplaceStandingMemberProposal",
+                    value: ReplaceStandingMemberProposal_pb.encode({
+                      title: msgValue.title,
+                      description: msgValue.description,
+                      existingValidatorAddress: existValidatorAddress,
+                      replacementValidatorAddress: replaceValidatorAddress,
+                      replacementAccountAddress: msgValue.replaceAddress,
+                      replacementMoniker: msgValue.replaceMoniker,
+                    }).finish(),
+                  },
+                  initialDeposit: msgValue.initialDeposit,
+                  proposer: msgValue.proposer,
+                }).finish(),
+              },
+            ],
+          };
+        } else {
+          return {};
         }
 
       default:
         return {};
     }
   } catch (e) {
-    console.log(e);
+    console.error(e);
+    return {
+      error: true,
+      msg: e,
+    };
   }
 };

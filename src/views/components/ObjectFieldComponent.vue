@@ -54,7 +54,7 @@
             </b-tab>
           </b-tabs>
         </b-td>
-        <b-td v-else>
+        <b-td v-else style="max-width: 100px;">
           <VueMarkdown v-if="name === 'description'">
             {{ addNewLine(value) }}
           </VueMarkdown>

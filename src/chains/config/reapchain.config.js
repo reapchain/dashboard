@@ -1,9 +1,9 @@
 export const chainInfo = {
   env: "main",
   chainName: "reapchain",
-  chainId: "2022",
-  chainIdHex: "0x7e6",
-  cosmosChainId: "reapchain_2022-1",
+  chainId: "221230",
+  chainIdHex: "0x3602E",
+  cosmosChainId: "reapchain_221230-1",
   restEndpoint: "https://lcd.reapchain.org",
   rpcEndpoint: "https://rpc.reapchain.org",
   evmEndpoint: "https://eth.reapchain.org",
@@ -25,7 +25,7 @@ export const networkInfo = {
   snapshot_provider: "",
   sdk_version: "0.45.1",
   coin_type: "60",
-  min_tx_fee: "15000000",
+  min_tx_fee: "31250000000000",
   addr_prefix: "reap",
   logo: "/logos/reapchain_logo.png",
   assets: [

@@ -38,6 +38,11 @@
         <parameters-module-component :data="slashing" />
       </b-col>
     </b-row>
+    <b-row v-if="true">
+      <b-col>
+        <parameters-module-component :data="inflation" />
+      </b-col>
+    </b-row>
     <b-card title="Application Version">
       <object-field-component :tablefield="appVersion" />
     </b-card>
@@ -115,6 +120,10 @@ export default {
         title: "Mint Parameters",
         items: null,
       },
+      inflation: {
+        title: "Inflation Parameters",
+        items: null,
+      },
       gov: {
         title: "Governance Parameters",
         items: [],
@@ -182,9 +191,34 @@ export default {
           (x) => x.subtitle === "inflation"
         );
         this.$set(this.chain.items[chainIndex], "title", `${percent(res)}%`);
+        this.inflation = this.normalize(
+          { inflationRate: `${percent(res)}%` },
+          "Inflation Parameters"
+        );
       });
       this.$http.getMintParameters().then((res) => {
-        this.mint = this.normalize(res, "Minting Parameters");
+        this.mint = this.normalize(res, "Mint Parameters");
+
+        // let inflationParams = {
+        //   ...res,
+        //   // ...res.exponential_calculation,
+        //   exp_cal_initial_value: res.exponential_calculation.a,
+        //   exp_cal_decay_factor: res.exponential_calculation.r,
+        //   exp_cal_long_term_supply: res.exponential_calculation.c,
+        //   // ...res.inflation_distribution,
+        //   staking_rewards: res.inflation_distribution.staking_rewards,
+        //   usage_incentives: res.inflation_distribution.usage_incentives,
+        //   community_pool: res.inflation_distribution.community_pool,
+        // };
+        // delete inflationParams.exponential_calculation;
+        // delete inflationParams.inflation_distribution;
+        // inflationParams = this.normalize(
+        //   inflationParams,
+        //   "Inflation Parameters"
+        // );
+
+        const inflationParams = this.normalize(res, "Inflation Parameters");
+        this.inflation = inflationParams;
       });
     }
 
@@ -198,6 +232,7 @@ export default {
         this.$http.getGovernanceParameterDeposit(),
         this.$http.getGovernanceParameterTallying(),
         this.$http.getGovernanceParameterVoting(),
+        this.$http.getPermissionParameters(),
       ]).then((data) => {
         let items = [];
         data.forEach((item) => {

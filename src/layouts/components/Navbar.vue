@@ -30,7 +30,7 @@
               badge
               rounded
               size="42"
-              :src="selected_chain.logo"
+              :src="'/reapchain_bg_logo.png'"
               class="badge-minimal"
               :badge-variant="variant"
           /></b-link>
@@ -44,6 +44,7 @@
           <small id="data-provider">
             {{ currentApi }} ({{ selected_chain.sdk_version || "-" }})
             <b-dropdown
+              v-if="apiOptions.length > 1"
               class="ml-0"
               variant="flat-primary"
               no-caret
@@ -76,14 +77,7 @@
       <dark-Toggler class="d-none d-lg-block" />
       <search-bar />
       <!-- <locale /> -->
-      <b-dropdown
-        class="ml-1"
-        variant="link"
-        no-caret
-        toggle-class="p-0"
-        right
-        v-if="chainInfo.env !== 'main'"
-      >
+      <b-dropdown class="ml-1" variant="link" no-caret toggle-class="p-0" right>
         <template #button-content>
           <b-button
             v-ripple.400="'rgba(255, 255, 255, 0.15)'"
@@ -353,14 +347,10 @@ export default {
     },
   },
   mounted() {
-    if (chainInfo.env === "main") {
-      return;
-    }
-
     const walletTypeCheck = localStorage.getItem("walletType");
-    if (walletTypeCheck == "keplr") {
+    if (walletTypeCheck === "keplr") {
       this.connectWithKeplr();
-    } else if (walletTypeCheck == "metamask") {
+    } else if (walletTypeCheck === "metamask") {
       this.connectWithMetamask();
     }
   },

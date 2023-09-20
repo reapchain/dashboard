@@ -7,7 +7,7 @@ import routerMain from "./router.main";
 
 Vue.use(VueRouter);
 
-const router = chainInfo.env === "main" ? routerMain : routerDev;
+const router = routerDev;
 
 router.beforeEach((to, from, next) => {
   const c = to.params.chain;

@@ -119,14 +119,9 @@
             <b-col cols="12">
               <span class="font-weight-bolder"
                 >From:
-                <router-link
-                  :to="
-                    `/${chainInfo.env === 'main' ? 'validators' : 'staking'}/${
-                      item.validator_address
-                    }`
-                  "
-                  >{{ item.validator_address }}</router-link
-                ></span
+                <router-link :to="`/staking/${item.validator_address}`">{{
+                  item.validator_address
+                }}</router-link></span
               >
             </b-col>
             <b-col cols="12">
@@ -354,11 +349,16 @@
             <b-tr>
               <b-td> Vesting/Lockup Time </b-td
               ><b-td>
-                {{ formatTime(new Date(account.value.start_time)) }} -
                 {{
-                  formatToTime(account.value.base_vesting_account.end_time)
-                }}</b-td
-              >
+                  isShowSchedule()
+                    ? `${formatTime(
+                        new Date(account.value.start_time)
+                      )} - ${formatToTime(
+                        account.value.base_vesting_account.end_time
+                      )}`
+                    : `${formatTime(new Date(account.value.start_time))} -`
+                }}
+              </b-td>
             </b-tr>
             <b-tr>
               <b-td> Funder Address </b-td>
@@ -374,11 +374,10 @@
                   <th>Length</th>
                   <th>End Date</th>
                   <th>Amount</th>
+                  <th>Status</th>
+                  <th>Ownership</th>
                   <template
-                    v-if="
-                      account.value.vesting_periods[0].length ||
-                        !account.value.lockup_periods[0].length
-                    "
+                    v-if="isShowSchedule() && !isEmptySchedule('Vesting')"
                   >
                     <b-tr
                       v-for="(p, index) in account.value.vesting_periods"
@@ -400,13 +399,40 @@
                         }}
                       </td>
                       <td>{{ formatToken(p.amount) }}</td>
+                      <td>
+                        {{
+                          displayScheduleStatus(
+                            isExpiredSchedule(
+                              reduceTimestamp(
+                                account.value.vesting_periods.slice(
+                                  0,
+                                  index + 1
+                                )
+                              )
+                            ),
+                            "Vesting"
+                          )
+                        }}
+                      </td>
+                      <td>
+                        {{
+                          displayScheduleOwnership(
+                            isExpiredSchedule(
+                              reduceTimestamp(
+                                account.value.vesting_periods.slice(
+                                  0,
+                                  index + 1
+                                )
+                              )
+                            ),
+                            "Vesting"
+                          )
+                        }}
+                      </td>
                     </b-tr>
                   </template>
                   <template
-                    v-if="
-                      account.value.lockup_periods[0].length ||
-                        !account.value.vesting_periods[0].length
-                    "
+                    v-if="isShowSchedule() && !isEmptySchedule('Lockup')"
                   >
                     <b-tr
                       v-for="(p, index) in account.value.lockup_periods"
@@ -428,6 +454,30 @@
                         }}
                       </td>
                       <td>{{ formatToken(p.amount) }}</td>
+                      <td>
+                        {{
+                          displayScheduleStatus(
+                            isExpiredSchedule(
+                              reduceTimestamp(
+                                account.value.lockup_periods.slice(0, index + 1)
+                              )
+                            ),
+                            "Lockup"
+                          )
+                        }}
+                      </td>
+                      <td>
+                        {{
+                          displayScheduleOwnership(
+                            isExpiredSchedule(
+                              reduceTimestamp(
+                                account.value.lockup_periods.slice(0, index + 1)
+                              )
+                            ),
+                            "Lockup"
+                          )
+                        }}
+                      </td>
                     </b-tr>
                   </template>
                 </b-table-simple>
@@ -778,19 +828,7 @@ export default {
       const tempAddress = ethToReap(this.address);
       this.$router.push(`/account/${tempAddress}`);
     }
-    this.$http
-      .getAuthAccount(this.address)
-      .then((acc) => {
-        this.account = acc;
-        this.initial();
-        this.getTxsInfo();
-        this.$http.getStakingParameters().then((res) => {
-          this.stakingParameters = res;
-        });
-      })
-      .catch((err) => {
-        this.error = err;
-      });
+    this.accountDataProcess();
   },
   mounted() {
     const elem = document.getElementById("txevent");
@@ -800,18 +838,7 @@ export default {
   },
   watch: {
     address(newAddress) {
-      this.$http
-        .getAuthAccount(this.address)
-        .then((acc) => {
-          this.account = acc;
-          this.initial();
-          this.$http.getStakingParameters().then((res) => {
-            this.stakingParameters = res;
-          });
-        })
-        .catch((err) => {
-          this.error = err;
-        });
+      this.accountDataProcess();
     },
   },
   methods: {
@@ -837,6 +864,20 @@ export default {
         this.unbonding = res.unbonding_responses || res;
       });
       this.getTxsInfo();
+    },
+    accountDataProcess() {
+      this.$http
+        .getAuthAccount(this.address)
+        .then((acc) => {
+          this.account = acc;
+          this.initial();
+          this.$http.getStakingParameters().then((res) => {
+            this.stakingParameters = res;
+          });
+        })
+        .catch((err) => {
+          this.error = err;
+        });
     },
     formatNumber(v) {
       return numberWithCommas(v);
@@ -875,7 +916,60 @@ export default {
       return 0;
     },
     reduceTimestamp(arr) {
+      if (arr.length < 1) {
+        return 0;
+      }
       return arr.reduce((acc, curr) => acc + Number(curr.length), 0);
+    },
+    isShowSchedule() {
+      return (
+        this.account.value.vesting_periods &&
+        this.account.value.lockup_periods &&
+        (this.account.value.vesting_periods[0].length ||
+          this.account.value.lockup_periods[0].length)
+      );
+    },
+    isEmptySchedule(type) {
+      if (type === "Vesting") {
+        return this.account.value.vesting_periods[0].length ? false : true;
+      } else if (type === "Lockup") {
+        return this.account.value.lockup_periods[0].length ? false : true;
+      } else {
+        return false;
+      }
+    },
+    isExpiredSchedule(time) {
+      if (!time) {
+        return true;
+      }
+      const startTime = new Date(this.account.value.start_time).getTime();
+      const endTimeStamp = startTime + time * 1000;
+      const now = new Date().getTime();
+      let result = false;
+      if (endTimeStamp < now) {
+        result = true;
+      } else {
+        result = false;
+      }
+      return result;
+    },
+    displayScheduleStatus(isExpired, type) {
+      if (type === "Lockup") {
+        return isExpired ? "Unlocked" : "Locked";
+      } else if (type === "Vesting") {
+        return isExpired ? "Vested" : "Unvested";
+      } else {
+        return "-";
+      }
+    },
+    displayScheduleOwnership(isExpired, type) {
+      if (type === "Lockup") {
+        return "This Account";
+      } else if (type === "Vesting") {
+        return isExpired ? "This Account" : "Funder";
+      } else {
+        return "-";
+      }
     },
     formatDate: (v) => dayjs(v).format("YYYY-MM-DD HH:mm:ss"),
     formatTime: (v) => {
@@ -956,6 +1050,7 @@ export default {
 
       this.transactions = res;
     },
+    // 피보나치 수열 코드
   },
 };
 </script>

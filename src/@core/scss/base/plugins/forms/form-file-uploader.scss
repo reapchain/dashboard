@@ -1,5 +1,5 @@
-@import '../../bootstrap-extended/include'; // Bootstrap includes
-@import '../../components/include'; // Components includes
+@import "../../bootstrap-extended/include"; // Bootstrap includes
+@import "../../components/include"; // Components includes
 
 .dropzone {
   min-height: 350px;
@@ -14,7 +14,8 @@
     left: 0;
     width: 100%;
     height: 100%;
-    color: #7367f0;
+    // color: #7367f0;
+    color: #00264c;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -23,8 +24,12 @@
 
   // dropzone message icon
   .dz-message:before {
-    content: '';
-    background-image: url(str-replace(str-replace($download, 'currentColor', $primary), '#', '%23'));
+    content: "";
+    background-image: url(str-replace(
+      str-replace($download, "currentColor", $primary),
+      "#",
+      "%23"
+    ));
     font-size: 80px;
     position: absolute;
     top: 14rem;
@@ -67,8 +72,12 @@
     line-height: 2rem;
 
     &:before {
-      content: '';
-      background-image: url(str-replace(str-replace($remove, 'currentColor', $danger), '#', '%23'));
+      content: "";
+      background-image: url(str-replace(
+        str-replace($remove, "currentColor", $danger),
+        "#",
+        "%23"
+      ));
       display: inline-block;
       line-height: 1;
       z-index: 2;

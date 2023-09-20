@@ -7,8 +7,8 @@
 // 	Author URL: http://www.themeforest.net/user/pixinvent
 // ================================================================================================
 
-@import '../bootstrap-extended/include'; // Bootstrap includes
-@import '../components/include'; // Components includes
+@import "../bootstrap-extended/include"; // Bootstrap includes
+@import "../components/include"; // Components includes
 
 $email_read: $body-bg;
 $email_selected_border: #e4e1e8;
@@ -58,7 +58,8 @@ $email_details_header_height: 5rem;
           color: $primary;
         }
         &.active {
-          border-color: #7367f0;
+          border-color: #00264c;
+          // border-color: #7367f0;
         }
       }
     }
@@ -295,7 +296,11 @@ $email_details_header_height: 5rem;
         .dropdown-toggle::after {
           left: -2px;
           margin: 0;
-          background-image: url(str-replace(str-replace($chevron-down, 'currentColor', $text-muted), '#', '%23'));
+          background-image: url(str-replace(
+            str-replace($chevron-down, "currentColor", $text-muted),
+            "#",
+            "%23"
+          ));
           background-size: 0.857rem;
         }
         .dropdown-menu {
@@ -471,7 +476,7 @@ $email_details_header_height: 5rem;
 }
 
 // RTL Style
-html[data-textdirection='rtl'] {
+html[data-textdirection="rtl"] {
   .email-application {
     .email-app-details {
       .email-prev,

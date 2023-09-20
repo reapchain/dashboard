@@ -28,13 +28,7 @@
         class="border-bottom"
       >
         <b-col md="4" sm="12" class="d-flex align-items-center">
-          <router-link
-            :to="
-              `/${chainInfo.env === 'main' ? 'validators' : 'staking'}/${
-                row.validator.validator
-              }`
-            "
-          >
+          <router-link :to="`/staking/${row.validator.validator}`">
             <div cols="6">
               <b-avatar
                 :src="row.validator.logo"

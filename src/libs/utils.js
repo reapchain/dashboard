@@ -5,13 +5,13 @@ import {
   fromHex,
   toHex,
 } from "@cosmjs/encoding";
+import { decode, encode, fromWords, toWords } from "bech32";
 import { sha256, stringToPath } from "@cosmjs/crypto";
 // ledger
 import TransportWebBLE from "@ledgerhq/hw-transport-web-ble";
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 import CosmosApp from "ledger-cosmos-js";
 import { LedgerSigner } from "@cosmjs/ledger-amino";
-
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -19,9 +19,10 @@ import utc from "dayjs/plugin/utc";
 import RIPEMD160 from "ripemd160";
 import localeData from "dayjs/plugin/localeData";
 import { $themeColors } from "@themeConfig";
-// import { SigningStargateClient } from '@cosmjs/stargate'
+import { SigningStargateClient } from "@cosmjs/stargate";
 import PingWalletClient from "./data/signing";
 import Decimal from "decimal.js";
+import store from "@/store";
 
 dayjs.extend(localeData);
 dayjs.extend(duration);
@@ -98,6 +99,10 @@ export function getUserCurrency() {
 }
 
 export function setUserCurrency(currency) {
+  localStorage.setItem("currency", currency);
+}
+
+export function getInitialMinDepositPercentage(currency) {
   localStorage.setItem("currency", currency);
 }
 
@@ -739,9 +744,77 @@ export class Data {}
 
 export const isTypeofEvmos = (chain) => {
   if (!chain) return false;
-  if (chain === "evmos" || chain.indexOf("reap") > -1) {
+  const chainName = chain.toLowerCase();
+  if (chainName === "evmos" || chainName.indexOf("reap") > -1) {
     return true;
   } else {
     return false;
   }
+};
+
+export const convertValidatorAddress = (accountAddress) => {
+  if (accountAddress.substring(0, 4) !== "reap") {
+    throw new Error("Invalid address format.");
+    return "";
+  }
+  const decoded = decode(accountAddress);
+  const encoded = encode("reapvaloper", decoded.words);
+
+  return encoded;
+};
+
+export const convertAccountAddress = (validatorAddress) => {
+  if (accountAddress.substring(0, 11) !== "reapvaloper") {
+    throw new Error("Invalid address format.");
+    return "";
+  }
+  const decoded = decode(accountAddress);
+  const encoded = encode("reap", decoded.words);
+
+  return encoded;
+};
+
+export const simulate = (bodyBytes) => {
+  const txString = Buffer.from(bodyBytes).toString("base64");
+  const txRaw = {
+    tx_bytes: txString,
+  };
+  return post("/cosmos/tx/v1beta1/simulate", txRaw);
+};
+
+const post = async (url = "", data = {}, config = null) => {
+  const conf = getSelectedConfig();
+
+  // Default options are marked with *
+  const response = await fetch(
+    (Array.isArray(conf.api) ? conf.api[index] : conf.api) + url,
+    {
+      method: "POST", // *GET, POST, PUT, DELETE, etc.
+      // mode: 'cors', // no-cors, *cors, same-origin
+      // credentials: 'same-origin', // redirect: 'follow', // manual, *follow, error
+      // referrerPolicy: 'origin', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+      headers: {
+        "Content-Type": "application/plain",
+        Accept: "*/*",
+        "Accept-Encoding": "gzip, deflate, br",
+      },
+      body: JSON.stringify(data), // body data type must match "Content-Type" header
+    }
+  );
+  // const response = axios.post((config ? config.api : this.config.api) + url, data)
+  return response.json(); // parses JSON response into native JavaScript objects
+};
+
+const getSelectedConfig = () => {
+  let chain = store.state.chains.selected;
+  const lschains = localStorage.getItem("chains");
+
+  if (lschains) {
+    chain = JSON.parse(lschains)[chain.chain_name];
+  }
+  if (!chain.sdk_version) {
+    chain.sdk_version = "0.33";
+  }
+
+  return chain;
 };

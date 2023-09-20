@@ -1,23 +1,16 @@
 <template>
   <li class="nav-item nav-search">
-
     <!-- Icon -->
     <a
       href="javascript:void(0)"
       class="nav-link nav-link-search"
       @click="showSearchBar = true"
     >
-      <feather-icon
-        icon="SearchIcon"
-        size="21"
-      />
+      <feather-icon icon="SearchIcon" size="21" />
     </a>
 
     <!-- Input -->
-    <div
-      class="search-input"
-      :class="{'open': showSearchBar}"
-    >
+    <div class="search-input" :class="{ open: showSearchBar }">
       <div class="search-input-icon">
         <feather-icon icon="SearchIcon" />
       </div>
@@ -36,10 +29,7 @@
       <b-form-text class="text-danger pl-3">
         {{ error }}
       </b-form-text>
-      <div
-        class="search-input-close"
-        @click="reset()"
-      >
+      <div class="search-input-close" @click="reset()">
         <feather-icon icon="XIcon" />
       </div>
     </div>
@@ -47,10 +37,10 @@
 </template>
 
 <script>
-import { BFormInput, BFormText } from 'bootstrap-vue'
-import { ref } from '@vue/composition-api'
-import { title } from '@core/utils/filter'
-import store from '@/store'
+import { BFormInput, BFormText } from "bootstrap-vue";
+import { ref } from "@vue/composition-api";
+import { title } from "@core/utils/filter";
+import store from "@/store";
 
 export default {
   components: {
@@ -58,60 +48,74 @@ export default {
     BFormText,
   },
   setup() {
-    const showSearchBar = ref(false)
+    const showSearchBar = ref(false);
 
     const perfectScrollbarSettings = {
       maxScrollbarLength: 60,
-    }
+    };
 
     return {
       showSearchBar,
       perfectScrollbarSettings,
       title,
-    }
+    };
   },
   data() {
     return {
       searchQuery: null,
       error: null,
-    }
+    };
   },
   methods: {
     reset() {
-      this.showSearchBar = false
-      this.searchQuery = null
-      this.error = null
+      this.showSearchBar = false;
+      this.searchQuery = null;
+      this.error = null;
     },
     doQuery() {
-      const height = /^\d+$/
-      const txhash = /^[A-Z\d]{64}$/
-      const addr = /^[a-z]+1[a-z\d]{38}$/
-      const key = this.searchQuery
+      const height = /^\d+$/;
+      const txhash = /^[A-Z\d]{64}$/;
+      const addr = /^[a-z]+1[a-z\d]{38}$/;
+      const hexAddr = /^(0x)?[0-9a-fA-F]{40}$/;
+      const key = this.searchQuery;
 
-      const c = store.state.chains.selected
+      const c = store.state.chains.selected;
       if (!Object.values(this.$route.params).includes(key)) {
         if (height.test(key)) {
-          this.$router.push({ name: 'block', params: { chain: c.chain_name, height: key } })
+          this.$router.push({
+            name: "block",
+            params: { chain: c.chain_name, height: key },
+          });
         } else if (txhash.test(key)) {
-          this.$router.push({ name: 'transaction', params: { chain: c.chain_name, hash: key } })
+          this.$router.push({
+            name: "transaction",
+            params: { chain: c.chain_name, hash: key },
+          });
         } else if (addr.test(key)) {
-          this.$router.push({ name: 'chain-account', params: { chain: c.chain_name, address: key } })
+          this.$router.push({
+            name: "chain-account",
+            params: { chain: c.chain_name, address: key },
+          });
+        } else if (hexAddr.test(key)) {
+          this.$router.push({
+            name: "chain-account",
+            params: { chain: c.chain_name, address: key },
+          });
         } else {
-          this.error = 'The input not recognized'
+          this.error = "The input not recognized";
         }
       }
       // this.$router.push('/')
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>
-@import '~@core/scss/base/bootstrap-extended/include';
-@import '~@core/scss/base/components/variables-dark';
+@import "~@core/scss/base/bootstrap-extended/include";
+@import "~@core/scss/base/components/variables-dark";
 
-ul
-{
+ul {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -135,11 +139,11 @@ p {
 
 .suggestion-group-title {
   font-weight: 500;
-  padding: .75rem 1rem .25rem;
+  padding: 0.75rem 1rem 0.25rem;
 }
 
 .suggestion-group-suggestion {
-  padding: .75rem 1rem
+  padding: 0.75rem 1rem;
 }
 
 .suggestion-current-selected {

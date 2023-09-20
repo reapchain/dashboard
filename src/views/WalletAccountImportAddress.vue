@@ -549,11 +549,9 @@ export default {
           case "metamask":
             try {
               await this.connectMetamask().then((accounts) => {
-                console.log("accounts : ", accounts);
                 if (accounts) {
                   // eslint-disable-next-line prefer-destructuring
                   this.accounts = [accounts];
-                  // console.log("this.accounts : ", this.accounts);
                   ok = true;
                 } else {
                   ok = false;

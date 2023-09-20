@@ -11,16 +11,14 @@
     @hidden="resetModal"
     @show="initialize"
   >
-    <b-overlay :show="!isOwner || chainInfo.env === 'main'" rounded="sm">
+    <b-overlay :show="!isOwner" rounded="sm">
       <template #overlay>
         <div class="text-center">
           <b-avatar font-scale="3" variant="danger" animation="cylon">
             <feather-icon icon="XCircleIcon" size="16" />
           </b-avatar>
           <p class="mt-1 font-weight-bolder">
-            {{
-              chainInfo.env === "main" ? "It will be added soon.." : blockingMsg
-            }}
+            {{ blockingMsg }}
           </p>
         </div>
       </template>
@@ -99,7 +97,7 @@
       <div class="d-flex justify-content-between w-100">
         <div id="left-footer">
           <b-form-checkbox
-            v-if="isOwner"
+            v-if="isOwner && false"
             v-model="advance"
             name="advance"
             value="true"
@@ -270,10 +268,10 @@ export default {
       sequence: 1,
       accountNumber: 0,
       advance: false,
-      fee: "1000",
+      fee: "125000000",
       feeDenom: "",
       wallet: "ledgerUSB",
-      gas: "300000",
+      gas: "250000",
       memo: "",
       blockingMsg: this.address
         ? "You are not the owner"
@@ -311,10 +309,6 @@ export default {
       return "";
     },
     isOwner() {
-      if (chainInfo.env === "main") {
-        return false;
-      }
-
       const accounts = this.accounts;
 
       if (accounts) {
@@ -399,6 +393,7 @@ export default {
         if (ok) {
           const walletType = getDefaultAccountDevice();
           let res;
+
           if (walletType === "metamask") {
             res = await metamaskSendTx(this.type, {
               msg: this.$refs.component.msg,
@@ -406,7 +401,7 @@ export default {
               fee: {
                 amount: this.fee,
                 denom: this.feeDenom,
-                gas: this.gas,
+                gas: this.gasSetting(),
               },
             });
           } else if (walletType === "keplr") {
@@ -416,7 +411,7 @@ export default {
               fee: {
                 amount: this.fee,
                 denom: this.feeDenom,
-                gas: this.gas,
+                gas: this.gasSetting(),
               },
             });
           } else {
@@ -522,6 +517,26 @@ export default {
         this.wallet = "keplr";
       } else {
         this.wallet = v;
+      }
+    },
+    gasSetting() {
+      console.log("tx type : ", this.type);
+      console.log("tx msg : ", this.$refs.component.msg);
+
+      if (this.type === "GovProposal") {
+        // this.gas = "300000";
+        return "350000";
+      } else if (this.type === "Delegate") {
+        return "250000";
+      } else if (this.type === "Redelegate") {
+        return "350000";
+      } else if (this.type === "Unbond") {
+        return "300000";
+      } else if (this.type === "Withdraw") {
+        const gasTemp = this.$refs.component.msg.length * 80000 + 100000;
+        return gasTemp.toString();
+      } else {
+        return "250000";
       }
     },
   },
