@@ -44,6 +44,7 @@
           <small id="data-provider">
             {{ currentApi }} ({{ selected_chain.sdk_version || "-" }})
             <b-dropdown
+              v-if="apiOptions.length > 1"
               class="ml-0"
               variant="flat-primary"
               no-caret
