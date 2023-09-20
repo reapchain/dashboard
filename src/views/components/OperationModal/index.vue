@@ -520,7 +520,11 @@ export default {
       }
     },
     gasSetting() {
+      console.log("tx type : ", this.type);
+      console.log("tx msg : ", this.$refs.component.msg);
+
       if (this.type === "GovProposal") {
+        // this.gas = "300000";
         return "350000";
       } else if (this.type === "Delegate") {
         return "250000";
@@ -528,6 +532,9 @@ export default {
         return "350000";
       } else if (this.type === "Unbond") {
         return "300000";
+      } else if (this.type === "Withdraw") {
+        const gasTemp = this.$refs.component.msg.length * 80000 + 100000;
+        return gasTemp.toString();
       } else {
         return "250000";
       }
