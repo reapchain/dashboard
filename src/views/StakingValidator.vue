@@ -148,7 +148,7 @@
                 <span class="font-weight-bold">Min Self Delegation</span>
               </th>
               <td class="pb-50">
-                {{ parseFloat(validator.min_self_delegation) }}
+                {{ tokenFormatter(validator.min_self_delegation, "areap") }}
               </td>
             </tr>
             <tr>
@@ -263,13 +263,13 @@ import {
   toDay,
   abbrMessage,
   abbrAddress,
+  getLocalAccounts,
 } from "@/libs/utils";
 import { keybase } from "@/libs/fetch";
 import OperationModal from "@/views/components/OperationModal/index.vue";
 import StakingAddressComponent from "./StakingAddressComponent.vue";
 import StakingCommissionComponent from "./StakingCommissionComponent.vue";
 import StakingRewardComponent from "./StakingRewardComponent.vue";
-import { getLocalAccounts } from "@/libs/utils";
 
 export default {
   components: {
@@ -420,15 +420,8 @@ export default {
           this.selfDelegation = d;
         });
     },
-    tokenFormatter(token) {
-      return formatToken(
-        {
-          amount: token,
-          denom: this.stakingParameter.bond_denom,
-        },
-        {},
-        0
-      );
+    tokenFormatter(amount, denom) {
+      return formatToken({ amount, denom }, {}, 0);
     },
     apr(rate) {
       return `${percent((1 - rate) * this.mintInflation)} %`;
