@@ -13,7 +13,7 @@ export const chainInfo = {
   ],
   stateSyncP2P: "state-sync-p2p.reapchain.org:27100",
   stateSyncNodeId: "e680439ea3ce99f020cc3250084b2cac61ac0042",
-  dashboardUrl: `https://dashboard.reapchain.org/validators`,
+  dashboardUrl: `https://dashboard.reapchain.org/staking`,
   ethAccountExplorerUrl: `https://dashboard.reapchain.org/account`,
 };
 
