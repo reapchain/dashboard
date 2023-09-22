@@ -520,11 +520,7 @@ export default {
       }
     },
     gasSetting() {
-      console.log("tx type : ", this.type);
-      console.log("tx msg : ", this.$refs.component.msg);
-
       if (this.type === "GovProposal") {
-        // this.gas = "300000";
         return "350000";
       } else if (this.type === "Delegate") {
         return "250000";

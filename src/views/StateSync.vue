@@ -115,22 +115,20 @@ export default {
       snapshot: `[state-sync]
 # snapshot-interval specifies the block interval at which local state sync snapshots are
 # taken (0 to disable). Must be a multiple of pruning-keep-every.
-snapshot-interval = 2400
+snapshot-interval = 1200
 
 # snapshot-keep-recent specifies the number of recent snapshots to keep and serve (0 to keep all). Each snapshot is about 500MiB
-snapshot-keep-recent = 5
+snapshot-keep-recent = 10
 `,
     };
   },
   created() {
-    const interval = 2400;
+    const interval = 1200;
     this.$http.getLatestBlock().then((l) => {
       const { height } = l.block.header;
-      if (height > 2400) {
+      if (height > 1200) {
         this.$http
-          .getBlockByHeight(
-            Math.trunc((height - interval) / interval) * interval
-          )
+          .getBlockByHeight(this.calcHeight(height, interval))
           .then((x) => {
             this.hash = x.block_id.hash; // pre -> this.hash = toHex(fromBase64(x.block_id.hash));
             this.height = x.block.header.height;
@@ -157,6 +155,9 @@ max_packet_msg_payload_size = 10240
     });
   },
   methods: {
+    calcHeight(height, interval) {
+      return Math.trunc(((height - interval) / interval) * interval);
+    },
     check() {
       this.valid = true;
       this.error = [];
@@ -172,15 +173,18 @@ max_packet_msg_payload_size = 10240
         }
         if (v[0] === "rpc_servers") {
           if (v[1]) {
-            v[1].replace(/"/g, "").forEach((host) => {
-              const re = /^(.)+:\d+$/g;
-              if (!re.test(host)) {
-                this.valid = false;
-                this.error.push(
-                  `"${host}" is not a valid host. Make sure that the port is added.`
-                );
-              }
-            });
+            v[1]
+              .replace(/"/g, "")
+              .split(",")
+              .forEach((host) => {
+                const re = /^(.)+:\d+$/g;
+                if (!re.test(host)) {
+                  this.valid = false;
+                  this.error.push(
+                    `"${host}" is not a valid host. Make sure that the port is added.`
+                  );
+                }
+              });
             // valid = true
           } else {
             this.valid = false;

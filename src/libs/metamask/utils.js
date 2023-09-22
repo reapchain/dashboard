@@ -31,7 +31,7 @@ const chainAddParams = {
   },
   rpcUrls: [chainInfo.evmEndpoint],
   blockExplorerUrls: [chainInfo.ethAccountExplorerUrl],
-  iconUrls: ["https://dashboard.reapchain.com/reapchain_logo.png"],
+  iconUrls: ["https://dashboard.reapchain.org/reapchain_bg_logo.png"],
 };
 
 const chain = {
