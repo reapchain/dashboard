@@ -28,7 +28,7 @@
         <parameters-module-component :data="gov" />
       </b-col>
     </b-row>
-    <b-row>
+    <b-row v-if="false">
       <b-col>
         <parameters-module-component :data="distribution" />
       </b-col>
