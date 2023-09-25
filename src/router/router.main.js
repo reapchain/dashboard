@@ -131,20 +131,6 @@ const routerMain = new VueRouter({
       },
     },
     {
-      path: "/statesync",
-      name: "statesync",
-      component: () => import("@/views/StateSync.vue"),
-      meta: {
-        pageTitle: "State Sync",
-        breadcrumb: [
-          {
-            text: "State Synchronization",
-            active: true,
-          },
-        ],
-      },
-    },
-    {
       path: "/uptime",
       name: "uptime",
       component: () => import("@/views/Uptime.vue"),
@@ -231,32 +217,68 @@ const routerMain = new VueRouter({
       },
     },
     {
-      path: "/validators",
-      name: "validators",
+      path: "/staking",
+      name: "staking",
       component: () => import("@/views/Staking.vue"),
       meta: {
-        pageTitle: "Validators",
+        pageTitle: "Staking",
         breadcrumb: [
           {
-            text: "Validators",
+            text: "Staking",
             active: true,
           },
         ],
       },
     },
     {
-      path: "/validators/:address",
-      name: "validators-valiator",
+      path: "/staking/:address",
+      name: "staking-valiator",
       component: () => import("@/views/StakingValidator.vue"),
       meta: {
         pageTitle: "Validator Details",
         breadcrumb: [
           {
-            text: "Validator",
+            text: "Staking",
             active: true,
           },
           {
             text: "Validator Details",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: "/gov",
+      name: "governance",
+      component: () => import("@/views/Governance.vue"),
+      meta: {
+        pageTitle: "Governance",
+        breadcrumb: [
+          {
+            text: "Governance",
+            active: true,
+          },
+          {
+            text: "Proposals",
+            active: true,
+          },
+        ],
+      },
+    },
+    {
+      path: "/gov/:proposalid",
+      name: "proposal",
+      component: () => import("@/views/GovernanceProposalView.vue"),
+      meta: {
+        pageTitle: "Governance",
+        breadcrumb: [
+          {
+            text: "Governance",
+            active: true,
+          },
+          {
+            text: "Proposal Detail",
             active: true,
           },
         ],

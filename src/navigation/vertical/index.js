@@ -2,11 +2,6 @@ import store from "@/store";
 import { chainInfo } from "@/chains/config/reapchain.config";
 
 const modules = [
-  // {
-  //   scope: "normal",
-  //   title: "summary",
-  //   route: "info",
-  // },
   {
     scope: "normal",
     title: "Dashboard",
@@ -42,16 +37,6 @@ const modules = [
     title: "statesync",
     route: "statesync",
   },
-  // {
-  //   scope: "cos-mos",
-  //   title: "gravity",
-  //   route: "gravity",
-  // },
-  // {
-  //   scope: "osmosis",
-  //   title: "trade",
-  //   route: "osmosis-trade",
-  // },
 ];
 
 const modules_main = [
@@ -67,18 +52,23 @@ const modules_main = [
   },
   {
     scope: "normal",
-    title: "validators",
-    route: "validators",
+    title: "staking",
+    route: "staking",
+  },
+  {
+    scope: "normal",
+    title: "Parameters",
+    route: "parameters",
+  },
+  {
+    scope: "normal",
+    title: "governance",
+    route: "governance",
   },
   {
     scope: "normal",
     title: "uptime",
     route: "uptime",
-  },
-  {
-    scope: "normal",
-    title: "statesync",
-    route: "statesync",
   },
 ];
 
@@ -92,7 +82,8 @@ function processMenu() {
     const { excludes } = store.state.chains.config[chain];
     const children = [];
 
-    const tempModules = modules;
+    let tempModules = chainInfo.env === "main" ? modules_main : modules;
+
     tempModules.forEach((m) => {
       if (excludes === undefined || excludes.indexOf(m.route) === -1) {
         if (m.scope.match("normal") || m.scope.match(chain)) {
