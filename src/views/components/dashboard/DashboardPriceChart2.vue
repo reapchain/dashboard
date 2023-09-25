@@ -185,7 +185,7 @@
           v-if="coinInfo.links && coinInfo.links.blockchain_site"
           id="dropdown-2"
           size="sm"
-          text="Block Explorers"
+          text="Classic REAP Explorers"
           variant="outline-secondary"
         >
           <b-dropdown-item
