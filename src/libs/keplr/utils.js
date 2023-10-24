@@ -48,8 +48,9 @@ import {
   MsgReplaceStandingMemberProposal as ReplaceStandingMemberProposal_pb,
 } from "@/libs/proto/permissions/tx";
 import * as Long from "long";
-import { convertValidatorAddress, simulate } from "@/libs/utils";
-import ChainFetch from "@/libs/utils";
+import { convertValidatorAddress, sendTx, simulate } from "@/libs/utils";
+import { Bech32, toHex } from "@cosmjs/encoding";
+const { sha256, sha512 } = require("@cosmjs/crypto");
 
 export const keplrSendTx = async (type, txData) => {
   try {
@@ -148,21 +149,29 @@ export const keplrSendTx = async (type, txData) => {
       signatures: [Buffer.from(signResponse.signature.signature, "base64")],
     }).finish();
 
-    const sendTxRes = await window.keplr?.sendTx(
-      chainInfo.cosmosChainId,
-      signedTx,
-      "sync"
-    );
+    // const sendTxRes = await window.keplr?.sendTx(
+    //   chainInfo.cosmosChainId,
+    //   signedTx,
+    //   "sync"
+    // );
+
+    const txBytes = Buffer.from(signedTx).toString("base64");
+
+    const txResponse = await sendTx({
+      tx_bytes: txBytes,
+      mode: "BROADCAST_MODE_SYNC",
+    });
+    const txHash = txResponse.tx_response.txhash || "no txhash...";
 
     return {
       result: true,
-      txhash: Buffer.from(sendTxRes).toString("hex") || "",
+      txhash: txHash,
     };
   } catch (e) {
     console.log(e);
     return {
       result: false,
-      txhash: "",
+      txhash: "no txhash...",
       msg: e,
     };
   }

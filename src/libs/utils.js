@@ -1,3 +1,4 @@
+import axios from "@/libs/common/axios";
 import {
   Bech32,
   fromBase64,
@@ -293,6 +294,35 @@ export function getUserCurrencySign() {
 }
 
 export function consensusPubkeyToHexAddress(consensusPubkey) {
+  let raw = null;
+  if (typeof consensusPubkey === "object") {
+    if (consensusPubkey.type === "tendermint/PubKeySecp256k1") {
+      raw = new RIPEMD160()
+        .update(Buffer.from(sha256(fromBase64(consensusPubkey.value))))
+        .digest("hex")
+        .toUpperCase();
+      return raw;
+    } else if (consensusPubkey["@type"] === "/cosmos.crypto.ed25519.PubKey") {
+      raw = sha256(fromBase64(consensusPubkey.key));
+    } else {
+      raw = sha256(fromBase64(consensusPubkey.value));
+    }
+  } else {
+    raw = sha256(
+      fromHex(
+        toHex(fromBech32(consensusPubkey).data)
+          .toUpperCase()
+          .replace("1624DE6420", "")
+      )
+    );
+  }
+  const address = toHex(raw)
+    .slice(0, 40)
+    .toUpperCase();
+  return address;
+}
+
+export function consensusPubkeyToHexAddress2(consensusPubkey) {
   let raw = null;
   if (typeof consensusPubkey === "object") {
     if (consensusPubkey.type === "tendermint/PubKeySecp256k1") {
@@ -782,6 +812,10 @@ export const simulate = (bodyBytes) => {
   return post("/cosmos/tx/v1beta1/simulate", txRaw);
 };
 
+export const sendTx = (data) => {
+  return post2("/cosmos/tx/v1beta1/txs", data);
+};
+
 const post = async (url = "", data = {}, config = null) => {
   const conf = getSelectedConfig();
 
@@ -803,6 +837,23 @@ const post = async (url = "", data = {}, config = null) => {
   );
   // const response = axios.post((config ? config.api : this.config.api) + url, data)
   return response.json(); // parses JSON response into native JavaScript objects
+};
+
+const post2 = async (url = "", data = {}, config = null) => {
+  const conf = getSelectedConfig();
+
+  const response = await fetch(
+    (Array.isArray(conf.api) ? conf.api[index] : conf.api) + url,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "*/*",
+      },
+      body: JSON.stringify(data),
+    }
+  );
+  return response.json();
 };
 
 const getSelectedConfig = () => {

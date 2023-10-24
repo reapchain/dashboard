@@ -19,15 +19,34 @@
 //   ethAccountExplorerUrl: `https://dashboard.reapchain.org/account`,
 // };
 
+// export const chainInfo = {
+//   env: "test",
+//   chainName: "Reapchain Testnet",
+//   chainId: "221231",
+//   chainIdHex: "0x3602F",
+//   cosmosChainId: "reapchain_221231-1",
+//   restEndpoint: "https://test-lcd.reapchain.org",
+//   rpcEndpoint: "https://test-rpc.reapchain.org",
+//   evmEndpoint: "https://test-eth.reapchain.org",
+//   stateSyncEndpoint: [
+//     "https://test-state-sync-rpc.reapchain.org:443",
+//     "https://test-rpc-network.reapchain.org:443",
+//   ],
+//   stateSyncP2P: "13.125.20.241:27102",
+//   stateSyncNodeId: "05ec7232feb9f0e8af8c2b5e98411043176995b0",
+//   dashboardUrl: `https://test-dashboard.reapchain.org/staking`,
+//   ethAccountExplorerUrl: `https://test-dashboard.reapchain.org/account`,
+// };
+
 export const chainInfo = {
-  env: "test",
+  env: "bridge-test",
   chainName: "Reapchain Testnet",
   chainId: "221231",
   chainIdHex: "0x3602F",
   cosmosChainId: "reapchain_221231-1",
-  restEndpoint: "https://test-lcd.reapchain.org",
-  rpcEndpoint: "https://test-rpc.reapchain.org",
-  evmEndpoint: "https://test-eth.reapchain.org",
+  restEndpoint: "http://43.201.57.7:1317",
+  rpcEndpoint: "http://43.201.57.7:27000",
+  evmEndpoint: "http://43.201.57.7:27400",
   stateSyncEndpoint: [
     "https://test-state-sync-rpc.reapchain.org:443",
     "https://test-rpc-network.reapchain.org:443",
