@@ -111,14 +111,6 @@
         <b-button v-if="isOwner" variant="primary" @click="handleOk">
           {{ actionName }}
         </b-button>
-        <b-button
-          v-else
-          v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-          variant="outline-primary"
-          to="/wallet/import"
-        >
-          Connect Wallet
-        </b-button>
       </div>
     </template>
   </b-modal>
