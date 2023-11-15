@@ -1,3 +1,4 @@
+// for testnet
 export const chainInfo = {
   env: "test",
   chainName: "Reapchain Testnet",
