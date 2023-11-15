@@ -25,6 +25,7 @@
         :state="false"
         autocomplete="off"
         @keyup.enter="doQuery"
+        class="searchbar"
       />
       <b-form-text class="text-danger pl-3">
         {{ error }}
@@ -152,5 +153,18 @@ p {
   .dark-layout & {
     background-color: $theme-dark-body-bg;
   }
+}
+.searchbar {
+  margin-top: 4px;
+}
+
+.search-input-icon {
+  margin-top: 1px;
+}
+
+.search-input-close {
+  margin-right: -8px;
+  margin-top: -4px;
+  padding: 8px;
 }
 </style>

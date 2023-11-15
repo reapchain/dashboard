@@ -51,6 +51,7 @@ import * as Long from "long";
 import { convertValidatorAddress, sendTx, simulate } from "@/libs/utils";
 import { Bech32, toHex } from "@cosmjs/encoding";
 const { sha256, sha512 } = require("@cosmjs/crypto");
+import { MsgSendToEth as MsgSendtoEthTest } from "@chain-clients/gravitybridge/main/codegen/gravity/v1/msgs";
 
 export const keplrSendTx = async (type, txData) => {
   try {
@@ -79,7 +80,9 @@ export const keplrSendTx = async (type, txData) => {
       sequence: baseAccountEntry.sequence,
       accountNumber: baseAccountEntry.account_number,
     };
-    const txMessageSet = createKeplrTxMessageSet(type, txData, sender);
+
+    const txMessageSet = createKeplrTxMessageSet(type, txData);
+
     if (txMessageSet.error) {
       return {
         result: false,
@@ -149,12 +152,15 @@ export const keplrSendTx = async (type, txData) => {
       signatures: [Buffer.from(signResponse.signature.signature, "base64")],
     }).finish();
 
+    // for keplr
     // const sendTxRes = await window.keplr?.sendTx(
     //   chainInfo.cosmosChainId,
     //   signedTx,
     //   "sync"
     // );
+    // const txHash = sendTxRes.tx_response.txhash || "no txhash..."; // <-error
 
+    // for MQ
     const txBytes = Buffer.from(signedTx).toString("base64");
 
     const txResponse = await sendTx({
@@ -177,7 +183,7 @@ export const keplrSendTx = async (type, txData) => {
   }
 };
 
-export const createKeplrTxMessageSet = (type, txData, sender) => {
+export const createKeplrTxMessageSet = (type, txData) => {
   try {
     let msgValue = txData.msg[0].value;
     switch (type) {

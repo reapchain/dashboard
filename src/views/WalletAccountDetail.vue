@@ -103,7 +103,7 @@
             <b-col xm="12" md="12">
               <div class="text-right pt-1">
                 <h2>
-                  No Accounts...
+                  No Account Information or Assets
                 </h2>
               </div>
             </b-col>

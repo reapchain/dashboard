@@ -111,9 +111,9 @@
       class="shadow-none"
     >
       <b-card-title class="d-flex justify-content-between">
-        <span>{{ walletName }} Assets </span>
+        <span>{{ walletName }}</span>
         <small>
-          <b-link v-if="address" :to="`./${chain}/account/${address}`">
+          <b-link v-if="address" :to="`/account/${address}`">
             More
           </b-link>
           <b-link v-else :to="`/wallet/accounts`" v-show="false">
@@ -164,6 +164,13 @@
             responsive="sm"
             stacked="sm"
           >
+            <template #cell(validator)="data">
+              <span class="font-weight-bolder d-block text-nowrap">
+                <router-link :to="`/staking/${data.item.valAddress}`">
+                  {{ data.item.validator }}
+                </router-link>
+              </span>
+            </template>
             <template #cell(action)="data">
               <!-- size -->
               <b-button-group size="sm">
