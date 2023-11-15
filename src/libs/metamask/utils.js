@@ -78,7 +78,11 @@ export const metamaskSendTx = async (type, txData) => {
       accountNumber: myAccount.account.base_account.account_number,
       pubkey: myAccount.account.base_account.pub_key.key || "",
     };
+
+    console.log("txData : ", txData);
+
     const msg = createMetamaskTxMessage(type, txData, sender);
+    console.log(msg);
 
     let signature = await window.ethereum.request({
       method: "eth_signTypedData_v4",
@@ -202,9 +206,9 @@ const getLocalPubkey = (ethAddress) => {
 const setLocalPubkey = async (ethAddress) => {
   let data = JSON.parse(localStorage.getItem(`ethPubkey`)) || {};
 
-  if (data.ethAddress) {
-    return;
-  }
+  // if (data.ethAddress) {
+  //   return;
+  // }
 
   const signMsg = "generate_pubkey";
   const signMsgHex = "0x" + Buffer.from(signMsg).toString("hex");

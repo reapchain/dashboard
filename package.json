@@ -16,6 +16,7 @@
   "dependencies": {
     "@casl/ability": "4.1.6",
     "@casl/vue": "1.1.1",
+    "@chain-clients/gravitybridge": "^1.10.1-6",
     "@cosmjs/amino": "^0.28.4",
     "@cosmjs/crypto": "^0.28.9",
     "@cosmjs/encoding": "^0.28.4",

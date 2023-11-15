@@ -142,7 +142,7 @@ export default {
       selectedAddress: this.address,
       availableAddress: [],
       validators: [],
-      unbundValidators: [],
+      unbondValidators: [],
       selectedValidator: this.validatorAddress,
       token: "",
       amount: null,
@@ -197,18 +197,18 @@ export default {
         options = options.concat(activeStandingList);
       }
 
-      const unbunded = this.unbundValidators.map((x) => ({
+      const unbonded = this.unbondValidators.map((x) => ({
         value: x.operator_address,
         label: `* ${x.description.moniker} (${Number(x.commission.rate) *
           100}%)`,
         type: x.type,
       }));
 
-      const inactiveStandingList = unbunded.filter(
+      const inactiveStandingList = unbonded.filter(
         (validator) => validator.type === "standing"
       );
 
-      if (unbunded.length > 0) {
+      if (unbonded.length > 0) {
         options.push({
           value: null,
           label: "=== INACTIVE STANDING VALIDATORS ===",
@@ -254,7 +254,7 @@ export default {
         this.validators = v;
       });
       this.$http.getValidatorUnbondedList().then((v) => {
-        this.unbundValidators = v;
+        this.unbondValidators = v;
       });
     },
     setupBalance() {

@@ -144,7 +144,7 @@ export default {
   data() {
     return {
       selectedAddress: this.address,
-      unbundValidators: [],
+      unbondValidators: [],
       validators: [],
       toValidator: null,
       token: "",
@@ -202,10 +202,11 @@ export default {
         const activeStandingList = vals.filter(
           (validator) => validator.type === "standing"
         );
+
         options = options.concat(activeStandingList);
       }
 
-      const unbunded = this.unbundValidators.map((x) => ({
+      const unbunded = this.unbondValidators.map((x) => ({
         value: x.operator_address,
         label: `* ${x.description.moniker} (${Number(x.commission.rate) *
           100}%)`,
@@ -223,6 +224,20 @@ export default {
           disabled: true,
         });
         options = options.concat(inactiveStandingList);
+      }
+
+      const fromValidatorIndex = options.findIndex(
+        (validator) => validator.value === this.validatorAddress
+      );
+
+      if (fromValidatorIndex && fromValidatorIndex > 0) {
+        const fromValidator = options[fromValidatorIndex];
+
+        options[fromValidatorIndex] = {
+          value: null,
+          label: fromValidator.label + " [From]",
+          disabled: true,
+        };
       }
 
       return options;
@@ -266,7 +281,7 @@ export default {
         this.validators = v;
       });
       this.$http.getValidatorUnbondedList().then((v) => {
-        this.unbundValidators = v;
+        this.unbondValidators = v;
       });
       this.$http.getStakingDelegations(this.address).then((res) => {
         this.delegations = res.delegation_responses;

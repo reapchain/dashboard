@@ -11,14 +11,14 @@
     @hidden="resetModal"
     @show="initialize"
   >
-    <b-overlay :show="!isOwner" rounded="sm">
+    <b-overlay :show="!isOwner || isUnavailableUsingMetaMask" rounded="sm">
       <template #overlay>
         <div class="text-center">
           <b-avatar font-scale="3" variant="danger" animation="cylon">
             <feather-icon icon="XCircleIcon" size="16" />
           </b-avatar>
           <p class="mt-1 font-weight-bolder">
-            {{ blockingMsg }}
+            {{ isUnavailableUsingMetaMask ? blockingMsgMetaMask : blockingMsg }}
           </p>
         </div>
       </template>
@@ -110,14 +110,6 @@
         </b-button> -->
         <b-button v-if="isOwner" variant="primary" @click="handleOk">
           {{ actionName }}
-        </b-button>
-        <b-button
-          v-else
-          v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-          variant="outline-primary"
-          to="/wallet/import"
-        >
-          Connect Wallet
         </b-button>
       </div>
     </template>
@@ -276,6 +268,7 @@ export default {
       blockingMsg: this.address
         ? "You are not the owner"
         : "No available account found.",
+      blockingMsgMetaMask: "This function cannot be used in MetaMask.",
       actionName: "Send",
       showResult: false,
       txHash: "",
@@ -318,6 +311,18 @@ export default {
             (x) => x.addr === this.selectedAddress
           ) > -1
         ) {
+          return true;
+        }
+      }
+      return false;
+    },
+    isUnavailableUsingMetaMask() {
+      const accounts = this.accounts;
+      const txType = this.type;
+      const unavailableList = ["GovProposal", "Vote", "GovDeposit"];
+
+      if (accounts && accounts.device === "metamask") {
+        if (unavailableList.find((type) => type === txType)) {
           return true;
         }
       }
@@ -525,7 +530,7 @@ export default {
       } else if (this.type === "Delegate") {
         return "250000";
       } else if (this.type === "Redelegate") {
-        return "350000";
+        return "400000";
       } else if (this.type === "Unbond") {
         return "300000";
       } else if (this.type === "Withdraw") {

@@ -73,6 +73,13 @@ module.exports = {
           "^/api": "",
         },
       },
+      "/cosmos/tx/v1beta1/txs": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        pathRewrite: {
+          "^/cosmos/tx/v1beta1/txs": "",
+        },
+      },
       "/api2": {
         target: "https://data.gateapi.io",
         changeOrigin: true,

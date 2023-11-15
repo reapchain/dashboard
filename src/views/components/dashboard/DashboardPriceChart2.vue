@@ -181,11 +181,20 @@
         >
           <feather-icon icon="SendIcon" /> Telegram
         </b-button>
+        <b-button
+          :href="github"
+          target="_blank"
+          class="mr-1"
+          variant="outline-secondary"
+          size="sm"
+        >
+          <feather-icon icon="LockIcon" /> Custody Holding
+        </b-button>
         <b-dropdown
           v-if="coinInfo.links && coinInfo.links.blockchain_site"
           id="dropdown-2"
           size="sm"
-          text="Block Explorers"
+          text="Classic REAP Explorers"
           variant="outline-secondary"
         >
           <b-dropdown-item
