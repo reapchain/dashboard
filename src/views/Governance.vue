@@ -127,7 +127,7 @@ export default {
     switchStatus(s) {
       if (!this.loading) {
         this.proposals = [];
-        this.$router.push({
+        this.$router.replace({
           query: {
             status: s,
           },

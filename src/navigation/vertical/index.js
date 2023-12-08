@@ -37,6 +37,11 @@ const modules = [
     title: "statesync",
     route: "statesync",
   },
+  {
+    scope: "normal",
+    title: "bridge",
+    route: "bridge",
+  },
 ];
 
 const modules_main = [
