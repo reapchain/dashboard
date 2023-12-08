@@ -146,6 +146,15 @@
       </div>
       <div class="mt-1">
         <b-button
+          :href="bridge"
+          class="mr-1"
+          target="_blank"
+          variant="primary"
+          size="sm"
+        >
+          <feather-icon icon="RefreshCcwIcon" /> Bridge
+        </b-button>
+        <b-button
           :href="homepage"
           class="mr-1"
           target="_blank"
@@ -233,6 +242,7 @@ import VueApexCharts from "vue-apexcharts";
 import { $themeColors } from "@themeConfig";
 import VuePerfectScrollbar from "vue-perfect-scrollbar";
 import FeatherIcon from "../../../@core/components/feather-icon/FeatherIcon.vue";
+import { chainInfo } from "../../../chains/config/reapchain.config";
 
 export default {
   components: {
@@ -389,6 +399,12 @@ export default {
     telegram() {
       if (this.coinInfo.links) {
         return "https://t.me/ReapchianOfficial";
+      }
+      return "#";
+    },
+    bridge() {
+      if (this.coinInfo.links) {
+        return chainInfo.bridgeUrl;
       }
       return "#";
     },
