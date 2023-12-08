@@ -144,6 +144,11 @@
       <div v-if="coinInfo.description && coinInfo.description.en">
         {{ coinInfo.description.en || "" }}
       </div>
+      <div class="bridge-info">
+        The “Bridge” button below will take you to the Reapchain Bridge Web
+        Portal which allows for the interchangeability of Classic Reap and Reap
+        Coin.
+      </div>
       <div class="mt-1">
         <b-button
           :href="bridge"
@@ -463,5 +468,10 @@ export default {
   margin: auto;
   /* width: 400px; //*/
   max-height: 300px;
+}
+
+.bridge-info {
+  margin-top: 12px;
+  font-weight: 600;
 }
 </style>
