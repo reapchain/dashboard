@@ -11,14 +11,14 @@
     @hidden="resetModal"
     @show="initialize"
   >
-    <b-overlay :show="!isOwner || isUnavailableUsingMetaMask" rounded="sm">
+    <b-overlay :show="showBlockMessage" rounded="sm">
       <template #overlay>
         <div class="text-center">
           <b-avatar font-scale="3" variant="danger" animation="cylon">
             <feather-icon icon="XCircleIcon" size="16" />
           </b-avatar>
           <p class="mt-1 font-weight-bolder">
-            {{ isUnavailableUsingMetaMask ? blockingMsgMetaMask : blockingMsg }}
+            {{ blockMessage }}
           </p>
         </div>
       </template>
@@ -108,7 +108,7 @@
         <!-- <b-button v-if="isOwner" variant="primary" @click="handleOk">
           {{ actionName }}
         </b-button> -->
-        <b-button v-if="isOwner" variant="primary" @click="handleOk">
+        <b-button v-if="!showBlockMessage" variant="primary" @click="handleOk">
           {{ actionName }}
         </b-button>
       </div>
@@ -269,6 +269,7 @@ export default {
         ? "You are not the owner"
         : "No available account found.",
       blockingMsgMetaMask: "This function cannot be used in MetaMask.",
+      blockingVoteNoDelegation: "To vote, you must delegate first.",
       actionName: "Send",
       showResult: false,
       txHash: "",
@@ -285,9 +286,35 @@ export default {
       length,
       alphaDash,
       chainInfo,
+      isDelegated: false,
     };
   },
+  created() {
+    // this.checkDelegation();
+  },
   computed: {
+    showBlockMessage() {
+      console.log("showBlockMessage");
+      if (
+        !this.isOwner ||
+        this.isUnavailableUsingMetaMask ||
+        this.isUnavailableVote
+      ) {
+        return true;
+      }
+      return false;
+    },
+    blockMessage() {
+      if (this.isUnavailableUsingMetaMask) {
+        return this.blockingMsgMetaMask;
+      } else if (!this.isOwner) {
+        return this.blockingMsg;
+      } else if (this.isUnavailableVote) {
+        return this.blockingVoteNoDelegation;
+      } else {
+        return "";
+      }
+    },
     feeDenoms() {
       if (!this.balance) return [];
       return this.balance.filter((item) => !item.denom.startsWith("ibc"));
@@ -328,6 +355,12 @@ export default {
       }
       return false;
     },
+    isUnavailableVote() {
+      if (this.type === "Vote" && !this.isDelegated) {
+        return true;
+      }
+      return false;
+    },
     selectedAddress() {
       const myAddress = this.address;
       if (myAddress) {
@@ -339,7 +372,9 @@ export default {
       if (!accounts) {
         return "";
       }
+
       const selectedAddress = accounts.address.find((x) => x.chain === chain);
+      this.checkDelegation(selectedAddress?.addr);
       return selectedAddress?.addr;
     },
     selectedChain() {
@@ -384,6 +419,14 @@ export default {
         this.fee = this.$store.state.chains.selected?.min_tx_fee || "1000";
         this.feeDenom =
           this.$store.state.chains.selected?.assets[0]?.base || "";
+      }
+    },
+    async checkDelegation(address) {
+      const delegations = await this.$http.getStakingDelegations(address);
+      if (delegations && delegations.delegation_responses.length > 0) {
+        this.isDelegated = true;
+      } else {
+        this.isDelegated = false;
       }
     },
     componentUpdate(obj) {
@@ -554,5 +597,9 @@ export default {
       margin: 0;
     }
   }
+}
+
+.font-weight-bolder {
+  width: 400px;
 }
 </style>
