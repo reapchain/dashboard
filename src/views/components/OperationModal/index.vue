@@ -569,9 +569,9 @@ export default {
     },
     gasSetting() {
       if (this.type === "GovProposal") {
-        return "350000";
+        return "400000";
       } else if (this.type === "Delegate") {
-        return "250000";
+        return "300000";
       } else if (this.type === "Redelegate") {
         return "400000";
       } else if (this.type === "Unbond") {

@@ -247,7 +247,7 @@ import VueApexCharts from "vue-apexcharts";
 import { $themeColors } from "@themeConfig";
 import VuePerfectScrollbar from "vue-perfect-scrollbar";
 import FeatherIcon from "../../../@core/components/feather-icon/FeatherIcon.vue";
-import { chainInfo } from "../../../chains/config/reapchain.config";
+import { chainInfo } from "/env/reapchain.config";
 
 export default {
   components: {
