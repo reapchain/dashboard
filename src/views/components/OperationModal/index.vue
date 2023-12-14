@@ -17,7 +17,7 @@
           <b-avatar font-scale="3" variant="danger" animation="cylon">
             <feather-icon icon="XCircleIcon" size="16" />
           </b-avatar>
-          <p class="mt-1 font-weight-bolder">
+          <p class="mt-1 font-weight-bolder invalidate-message">
             {{ blockMessage }}
           </p>
         </div>
@@ -599,7 +599,7 @@ export default {
   }
 }
 
-.font-weight-bolder {
+.font-weight-bolder .invalidate-message {
   width: 400px;
 }
 </style>
