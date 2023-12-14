@@ -174,7 +174,7 @@ import TransactionResult from "./TransactionResult.vue";
 import { metamaskSendTx } from "@/libs/metamask/utils";
 import { getDefaultAccountDevice } from "@/libs/account/utils";
 import { keplrSendTx } from "@/libs/keplr/utils";
-import { chainInfo } from "@/chains/config/reapchain.config";
+import { chainInfo } from "/env/reapchain.config";
 
 export default {
   name: "DelegateDialogue",

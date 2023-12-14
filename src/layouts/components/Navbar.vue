@@ -259,7 +259,7 @@ import { getLocalAccounts, timeIn, toDay } from "@/libs/utils";
 import { connectKeplrWallet, initKeplr } from "@/libs/keplr/keplr";
 import { connectMetamaskWallet } from "@/libs/metamask/utils";
 import { ethToReap } from "@/libs/metamask/addressConverter";
-import { chainInfo } from "@/chains/config/reapchain.config";
+import { chainInfo } from "/env/reapchain.config";
 
 export default {
   components: {

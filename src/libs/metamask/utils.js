@@ -19,7 +19,7 @@ import detectEthereumProvider from "@metamask/detect-provider";
 import { ethToReap } from "./addressConverter";
 import { Secp256k1 } from "@cosmjs/crypto";
 import { utils } from "ethers";
-import { chainInfo } from "@/chains/config/reapchain.config";
+import { chainInfo } from "/env/reapchain.config";
 
 const chainAddParams = {
   chainId: chainInfo.chainIdHex,
