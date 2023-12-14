@@ -27,7 +27,7 @@ import {
 import { TextProposal } from "@keplr-wallet/proto-types/cosmos/gov/v1beta1/gov";
 import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
 import { SignMode } from "@keplr-wallet/proto-types/cosmos/tx/signing/v1beta1/signing";
-import { chainInfo } from "@/chains/config/reapchain.config";
+import { chainInfo } from "/env/reapchain.config";
 import {
   ParameterChangeProposal,
   CommunityPoolSpendProposal,

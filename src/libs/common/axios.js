@@ -1,5 +1,5 @@
 import axios from "axios";
-import { chainInfo } from "@/chains/config/reapchain.config";
+import { chainInfo } from "/env/reapchain.config";
 
 const axiosInstance = axios.create({
   baseURL: chainInfo.restEndpoint,

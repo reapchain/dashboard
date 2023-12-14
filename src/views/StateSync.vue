@@ -67,7 +67,7 @@
 <script>
 import { BCard, BCardTitle, BFormTextarea } from "bootstrap-vue";
 import { fromBase64, toHex } from "@cosmjs/encoding";
-import { chainInfo } from "@/chains/config/reapchain.config";
+import { chainInfo } from "/env/reapchain.config";
 
 export default {
   components: {

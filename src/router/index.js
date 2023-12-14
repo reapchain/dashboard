@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import store from "../store";
-import { chainInfo } from "@/chains/config/reapchain.config";
+import { chainInfo } from "/env/reapchain.config";
 import routerDev from "./router.dev";
 import routerMain from "./router.main";
 

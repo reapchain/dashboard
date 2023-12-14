@@ -577,7 +577,7 @@ import ObjectFieldComponent from "./ObjectFieldComponent.vue";
 import ChartComponentDoughnut from "./ChartComponentDoughnut.vue";
 import { getLocalAccounts } from "@/libs/utils";
 import { ethToReap } from "@/libs/metamask/addressConverter";
-import { chainInfo } from "@/chains/config/reapchain.config";
+import { chainInfo } from "/env/reapchain.config";
 
 export default {
   components: {

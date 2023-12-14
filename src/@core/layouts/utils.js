@@ -1,7 +1,7 @@
 import router from "@/router";
 import { isObject } from "@core/utils/utils";
 import { computed } from "@vue/composition-api";
-import { chainInfo } from "../../chains/config/reapchain.config";
+import { chainInfo } from "/env/reapchain.config";
 
 /**
  * Return which component to render based on it's data/context

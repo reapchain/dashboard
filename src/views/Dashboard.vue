@@ -326,7 +326,7 @@ import DashboardCardHorizontal from "./components/dashboard/DashboardCardHorizon
 import DashboardCardVertical from "./components/dashboard/DashboardCardVertical.vue";
 import DashboardPriceChart2 from "./components/dashboard/DashboardPriceChart2.vue";
 import FeatherIcon from "../@core/components/feather-icon/FeatherIcon.vue";
-import { chainInfo } from "@/chains/config/reapchain.config";
+import { chainInfo } from "/env/reapchain.config";
 
 export default {
   components: {

@@ -1,5 +1,5 @@
 import store from "@/store";
-import { chainInfo } from "@/chains/config/reapchain.config";
+import { chainInfo } from "/env/reapchain.config";
 
 const modules = [
   {

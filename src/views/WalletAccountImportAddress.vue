@@ -283,7 +283,7 @@ import {
 import { toHex } from "@cosmjs/encoding";
 import { metamaskGetAccount } from "@/libs/metamask/utils";
 import { getAccounts } from "@/libs/keplr/keplr";
-import { chainInfo } from "@/chains/config/reapchain.config";
+import { chainInfo } from "/env/reapchain.config";
 
 export default {
   components: {

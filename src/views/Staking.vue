@@ -350,7 +350,7 @@ import {
 } from "@/libs/utils";
 import { keybase } from "@/libs/fetch";
 import OperationModal from "@/views/components/OperationModal/index.vue";
-import { chainInfo } from "@/chains/config/reapchain.config";
+import { chainInfo } from "/env/reapchain.config";
 // import { toHex } from '@cosmjs/encoding'
 // import fetch from 'node-fetch'
 
