@@ -17,6 +17,12 @@ jobs:
           node-version: "16.13.0"
           cache: "npm"
 
+      - name: Checkout
+        uses: actions/checkout@v1
+        with:
+          token: ${{ secrets.ACTION_TOKEN }}
+          submodules: true
+
       - name: Cache node modules
         uses: actions/cache@v1
         with:
@@ -27,12 +33,6 @@ jobs:
             ${{ runner.OS }}-
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
-
-      - name: Checkout
-        uses: actions/checkout@v1
-        with:
-          token: ${{ secrets.ACTION_TOKEN }}
-          submodules: true
 
       - name: Build
         run: npm run build
