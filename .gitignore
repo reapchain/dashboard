@@ -24,6 +24,7 @@ yarn-error.log*
 .env.*
 
 /env
+/env/*
 
 
 # script
