@@ -68,7 +68,7 @@
             <b-tr v-else>
               <b-td> {{ $t("governanceProposal.voting_time") }} </b-td>
               <b-td>
-                {{ formatDate(proposal.submit_time) }} -
+                {{ formatDate(proposal.voting_start_time) }} -
                 {{ formatDate(proposal.voting_end_time) }}
               </b-td>
             </b-tr>
