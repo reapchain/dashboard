@@ -137,13 +137,13 @@ const chainConfig_local = {
       coinDenom: "REAP",
       coinMinimalDenom: "areap",
       coinDecimals: 18,
+      gasPriceStep: {
+        low: 120000000,
+        average: 125000000,
+        high: 130000000,
+      },
     },
   ],
-  gasPriceStep: {
-    low: 120000000,
-    average: 125000000,
-    high: 130000000,
-  },
   features: ["ibc-transfer", "ibc-go", "eth-address-gen", "eth-key-sign"],
   beta: true,
 };
