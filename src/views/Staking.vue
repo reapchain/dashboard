@@ -290,7 +290,7 @@
               </b-badge>
             </template>
             <template v-else>
-              <b-button
+              <!-- <b-button
                 v-b-modal.operation-modal
                 :name="data.item.operator_address"
                 variant="primary"
@@ -304,7 +304,7 @@
                 @click="selectValidator(data.item.operator_address)"
               >
                 Delegate
-              </b-button>
+              </b-button> -->
             </template>
           </template>
         </b-table>
