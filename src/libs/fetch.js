@@ -252,8 +252,6 @@ export default class ChainFetch {
   async getValidatorList(config = null) {
     return this.get("/cosmos/staking/v1beta1/validators", config).then(
       (data) => {
-        console.log("data : ", data);
-
         const vals = commonProcess(data.validators).map((i) =>
           new Validator().init(i)
         );
