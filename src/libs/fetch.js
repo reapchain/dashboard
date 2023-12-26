@@ -250,14 +250,18 @@ export default class ChainFetch {
   }
 
   async getValidatorList(config = null) {
-    return this.get("/staking/validators", config).then((data) => {
-      const vals = commonProcess(data).map((i) => new Validator().init(i));
-      localStorage.setItem(
-        `validators-${this.config.chain_name}`,
-        JSON.stringify(vals)
-      );
-      return vals;
-    });
+    return this.get("/cosmos/staking/v1beta1/validators", config).then(
+      (data) => {
+        const vals = commonProcess(data.validators).map((i) =>
+          new Validator().init(i)
+        );
+        localStorage.setItem(
+          `validators-${this.config.chain_name}`,
+          JSON.stringify(vals)
+        );
+        return vals;
+      }
+    );
   }
 
   async getValidatorList_filter(config = null) {
@@ -354,9 +358,9 @@ export default class ChainFetch {
   }
 
   async getStakingValidator(address) {
-    return this.get(`/staking/validators/${address}`).then((data) =>
-      new Validator().init(commonProcess(data))
-    );
+    return this.get(
+      `/cosmos/staking/v1beta1/validators/${address}`
+    ).then(({ validator }) => new Validator().init(commonProcess(validator)));
   }
 
   async getSlashingParameters() {

@@ -213,6 +213,8 @@ import {
 } from "@/libs/utils";
 import { Bech32, toHex } from "@cosmjs/encoding";
 
+const { sha256 } = require("@cosmjs/crypto");
+
 export default {
   components: {
     BRow,
@@ -284,6 +286,15 @@ export default {
           address: consensusPubkeyToHexAddress(x.consensus_pubkey),
         })),
       };
+
+      console.log("vals : ", vals);
+
+      /*
+      const txRaw =
+        "CpoBCpcBChwvY29zbW9zLmJhbmsudjFiZXRhMS5Nc2dTZW5kEncKK3JlYXAxcnNhaDdxc3lzbjlyaDJ3d2QwbnVxNzN3cmwyeGM4MnplcDBwOTUSK3JlYXAxc2tlNGo3bTl6cXltNXIzdXhtZjR3bnh1ZWo4eTRzcDI5OHhodG4aGwoFYXJlYXASEjEwMDAwMDAwMDAwMDAwMDAwMBJ6ClkKTwooL2V0aGVybWludC5jcnlwdG8udjEuZXRoc2VjcDI1NmsxLlB1YktleRIjCiED2jgsow7ezAK8OxTMaY2wah";
+      const txHash = toHex(sha256(Buffer.from(txRaw, "base64")));
+      console.log("txHash : ", txHash.toUpperCase());
+      */
 
       if (this.missedFilter) {
         return {

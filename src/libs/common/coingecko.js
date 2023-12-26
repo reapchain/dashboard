@@ -1,5 +1,5 @@
 import axios from "axios";
-import { coingeckoApi } from "@/chains/config/reapchain.config";
+import { coingeckoApi } from "/env/reapchain.config";
 
 const axiosInstance = axios.create({
   baseURL: coingeckoApi,

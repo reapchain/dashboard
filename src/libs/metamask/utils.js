@@ -19,7 +19,7 @@ import detectEthereumProvider from "@metamask/detect-provider";
 import { ethToReap } from "./addressConverter";
 import { Secp256k1 } from "@cosmjs/crypto";
 import { utils } from "ethers";
-import { chainInfo } from "@/chains/config/reapchain.config";
+import { chainInfo } from "/env/reapchain.config";
 
 const chainAddParams = {
   chainId: chainInfo.chainIdHex,
@@ -78,6 +78,7 @@ export const metamaskSendTx = async (type, txData) => {
       accountNumber: myAccount.account.base_account.account_number,
       pubkey: myAccount.account.base_account.pub_key.key || "",
     };
+
     const msg = createMetamaskTxMessage(type, txData, sender);
 
     let signature = await window.ethereum.request({
@@ -202,9 +203,9 @@ const getLocalPubkey = (ethAddress) => {
 const setLocalPubkey = async (ethAddress) => {
   let data = JSON.parse(localStorage.getItem(`ethPubkey`)) || {};
 
-  if (data.ethAddress) {
-    return;
-  }
+  // if (data.ethAddress) {
+  //   return;
+  // }
 
   const signMsg = "generate_pubkey";
   const signMsgHex = "0x" + Buffer.from(signMsg).toString("hex");

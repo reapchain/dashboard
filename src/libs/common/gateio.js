@@ -1,5 +1,5 @@
 import axios from "axios";
-import { gateioApi } from "@/chains/config/reapchain.config";
+import { gateioApi } from "/env/reapchain.config";
 
 const axiosInstance = axios.create({
   baseURL: gateioApi,

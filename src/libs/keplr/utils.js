@@ -27,7 +27,7 @@ import {
 import { TextProposal } from "@keplr-wallet/proto-types/cosmos/gov/v1beta1/gov";
 import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
 import { SignMode } from "@keplr-wallet/proto-types/cosmos/tx/signing/v1beta1/signing";
-import { chainInfo } from "@/chains/config/reapchain.config";
+import { chainInfo } from "/env/reapchain.config";
 import {
   ParameterChangeProposal,
   CommunityPoolSpendProposal,
@@ -48,8 +48,10 @@ import {
   MsgReplaceStandingMemberProposal as ReplaceStandingMemberProposal_pb,
 } from "@/libs/proto/permissions/tx";
 import * as Long from "long";
-import { convertValidatorAddress, simulate } from "@/libs/utils";
-import ChainFetch from "@/libs/utils";
+import { convertValidatorAddress, sendTx, simulate } from "@/libs/utils";
+import { Bech32, toHex } from "@cosmjs/encoding";
+const { sha256, sha512 } = require("@cosmjs/crypto");
+import { MsgSendToEth as MsgSendtoEthTest } from "@chain-clients/gravitybridge/main/codegen/gravity/v1/msgs";
 
 export const keplrSendTx = async (type, txData) => {
   try {
@@ -78,7 +80,9 @@ export const keplrSendTx = async (type, txData) => {
       sequence: baseAccountEntry.sequence,
       accountNumber: baseAccountEntry.account_number,
     };
-    const txMessageSet = createKeplrTxMessageSet(type, txData, sender);
+
+    const txMessageSet = createKeplrTxMessageSet(type, txData);
+
     if (txMessageSet.error) {
       return {
         result: false,
@@ -148,27 +152,38 @@ export const keplrSendTx = async (type, txData) => {
       signatures: [Buffer.from(signResponse.signature.signature, "base64")],
     }).finish();
 
-    const sendTxRes = await window.keplr?.sendTx(
-      chainInfo.cosmosChainId,
-      signedTx,
-      "sync"
-    );
+    // for keplr
+    // const sendTxRes = await window.keplr?.sendTx(
+    //   chainInfo.cosmosChainId,
+    //   signedTx,
+    //   "sync"
+    // );
+    // const txHash = sendTxRes.tx_response.txhash || "no txhash..."; // <-error
+
+    // for MQ
+    const txBytes = Buffer.from(signedTx).toString("base64");
+
+    const txResponse = await sendTx({
+      tx_bytes: txBytes,
+      mode: "BROADCAST_MODE_SYNC",
+    });
+    const txHash = txResponse.tx_response.txhash || "no txhash...";
 
     return {
       result: true,
-      txhash: Buffer.from(sendTxRes).toString("hex") || "",
+      txhash: txHash,
     };
   } catch (e) {
     console.log(e);
     return {
       result: false,
-      txhash: "",
+      txhash: "no txhash...",
       msg: e,
     };
   }
 };
 
-export const createKeplrTxMessageSet = (type, txData, sender) => {
+export const createKeplrTxMessageSet = (type, txData) => {
   try {
     let msgValue = txData.msg[0].value;
     switch (type) {

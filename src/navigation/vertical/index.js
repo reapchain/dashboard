@@ -1,5 +1,5 @@
 import store from "@/store";
-import { chainInfo } from "@/chains/config/reapchain.config";
+import { chainInfo } from "/env/reapchain.config";
 
 const modules = [
   {
@@ -36,6 +36,11 @@ const modules = [
     scope: "normal",
     title: "statesync",
     route: "statesync",
+  },
+  {
+    scope: "normal",
+    title: "bridge",
+    route: "bridge",
   },
 ];
 
@@ -82,7 +87,8 @@ function processMenu() {
     const { excludes } = store.state.chains.config[chain];
     const children = [];
 
-    let tempModules = chainInfo.env === "main" ? modules_main : modules;
+    // let tempModules = chainInfo.env === "main" ? modules_main : modules;
+    let tempModules = modules;
 
     tempModules.forEach((m) => {
       if (excludes === undefined || excludes.indexOf(m.route) === -1) {

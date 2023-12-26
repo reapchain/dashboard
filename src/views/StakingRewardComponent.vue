@@ -92,7 +92,7 @@ import {
 } from "bootstrap-vue";
 import { formatToken, numberWithCommas } from "@/libs/utils";
 import OperationModal from "@/views/components/OperationModal/index.vue";
-import { chainInfo } from "@/chains/config/reapchain.config";
+import { chainInfo } from "/env/reapchain.config";
 
 export default {
   components: {

@@ -1,6 +1,7 @@
 import router from "@/router";
 import { isObject } from "@core/utils/utils";
 import { computed } from "@vue/composition-api";
+import { chainInfo } from "/env/reapchain.config";
 
 /**
  * Return which component to render based on it's data/context
@@ -94,11 +95,20 @@ export const isNavGroupActive = (children) => {
 // prettier-ignore
 export const navLinkProps = item => computed(() => {
   const props = {}
+  // console.log("item1 : ", item);
+
 
   // If route is string => it assumes => Create route object from route name
   // If route is not string => It assumes it's route object => returns route object
-  if (item.route) props.to = typeof item.route === 'string' ? { name: item.route } : item.route
-  else {
+  if (item.route) { 
+    props.to = typeof item.route === 'string' ? { name: item.route } : item.route 
+
+    if (item.title === "bridge") {
+      props.href = chainInfo.bridgeUrl
+      props.target = '_blank'
+      props.rel = 'nofollow'
+    }
+  } else {
     props.href = item.href
     props.target = '_blank'
     props.rel = 'nofollow'

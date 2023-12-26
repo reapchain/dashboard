@@ -144,7 +144,21 @@
       <div v-if="coinInfo.description && coinInfo.description.en">
         {{ coinInfo.description.en || "" }}
       </div>
+      <div class="bridge-info">
+        The “Bridge” button below will take you to the Reapchain Bridge Web
+        Portal which allows for the interchangeability of Classic Reap and Reap
+        Coin.
+      </div>
       <div class="mt-1">
+        <b-button
+          :href="bridge"
+          class="mr-1"
+          target="_blank"
+          variant="primary"
+          size="sm"
+        >
+          <feather-icon icon="RefreshCcwIcon" /> Bridge
+        </b-button>
         <b-button
           :href="homepage"
           class="mr-1"
@@ -180,6 +194,15 @@
           size="sm"
         >
           <feather-icon icon="SendIcon" /> Telegram
+        </b-button>
+        <b-button
+          :href="github"
+          target="_blank"
+          class="mr-1"
+          variant="outline-secondary"
+          size="sm"
+        >
+          <feather-icon icon="LockIcon" /> Custody Holding
         </b-button>
         <b-dropdown
           v-if="coinInfo.links && coinInfo.links.blockchain_site"
@@ -224,6 +247,7 @@ import VueApexCharts from "vue-apexcharts";
 import { $themeColors } from "@themeConfig";
 import VuePerfectScrollbar from "vue-perfect-scrollbar";
 import FeatherIcon from "../../../@core/components/feather-icon/FeatherIcon.vue";
+import { chainInfo } from "/env/reapchain.config";
 
 export default {
   components: {
@@ -383,6 +407,12 @@ export default {
       }
       return "#";
     },
+    bridge() {
+      if (this.coinInfo.links) {
+        return chainInfo.bridgeUrl;
+      }
+      return "#";
+    },
     github() {
       if (this.coinInfo.links) {
         // return this.coinInfo.links.repos_url.github[0] || "#";
@@ -438,5 +468,10 @@ export default {
   margin: auto;
   /* width: 400px; //*/
   max-height: 300px;
+}
+
+.bridge-info {
+  margin-top: 12px;
+  font-weight: 600;
 }
 </style>

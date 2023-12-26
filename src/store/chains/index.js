@@ -1,7 +1,7 @@
 import { sha256 } from "@cosmjs/crypto";
 import { toHex } from "@cosmjs/encoding";
 import { ethToReap } from "../../libs/metamask/addressConverter";
-import { networkInfo } from "@/chains/config/reapchain.config";
+import { networkInfo } from "/env/reapchain.config";
 
 let chains = {};
 chains[networkInfo.chain_name] = networkInfo;

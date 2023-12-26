@@ -103,7 +103,6 @@ export default {
       next: "",
       totalPower: 0,
       tallyParam: null,
-      type: "2",
       proposalStatusOption: [
         { status: "2", name: "Voting" },
         { status: "1", name: "Deposit" },
@@ -118,11 +117,21 @@ export default {
     });
     this.getList();
   },
+  computed: {
+    type() {
+      const myType = this.$route.query.status;
+      return myType || "2";
+    },
+  },
   methods: {
     switchStatus(s) {
       if (!this.loading) {
         this.proposals = [];
-        this.type = s;
+        this.$router.replace({
+          query: {
+            status: s,
+          },
+        });
         this.getList();
       }
     },

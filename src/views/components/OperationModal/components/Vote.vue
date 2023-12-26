@@ -7,19 +7,13 @@
     </b-row>
     <b-row>
       <b-col>
-        <b-form-group
-          label="Voter"
-          label-for="Account"
-        >
+        <b-form-group label="Voter" label-for="Account">
           <validation-provider
             #default="{ errors }"
             rules="required"
             name="Voter"
           >
-            <b-form-input
-              v-model="address"
-              readonly
-            />
+            <b-form-input v-model="address" readonly />
             <small class="text-danger">{{ errors[0] }}</small>
           </validation-provider>
         </b-form-group>
@@ -27,17 +21,13 @@
     </b-row>
     <b-row>
       <b-col>
-        <b-form-group
-          label="Option"
-          label-for="option"
-        >
+        <b-form-group label="Option" label-for="option">
           <validation-provider
             #default="{ errors }"
             rules="required"
             name="option"
           >
             <div class="demo-inline-spacing">
-
               <b-form-radio
                 v-model="option"
                 name="option"
@@ -80,20 +70,25 @@
 </template>
 
 <script>
-import { ValidationProvider } from 'vee-validate'
+import { ValidationProvider } from "vee-validate";
+import { BRow, BCol, BFormGroup, BFormInput, BFormRadio } from "bootstrap-vue";
 import {
-  BRow, BCol, BFormGroup, BFormInput,
-  BFormRadio,
-} from 'bootstrap-vue'
-import {
-  required, email, url, between, alpha, integer, password, min, digits, alphaDash, length,
-} from '@validations'
-import {
-  formatToken,
-} from '@/libs/utils'
+  required,
+  email,
+  url,
+  between,
+  alpha,
+  integer,
+  password,
+  min,
+  digits,
+  alphaDash,
+  length,
+} from "@validations";
+import { formatToken } from "@/libs/utils";
 
 export default {
-  name: 'VoteDialogue',
+  name: "VoteDialogue",
   components: {
     BRow,
     BCol,
@@ -131,36 +126,37 @@ export default {
       digits,
       length,
       alphaDash,
-    }
+      isDelegated: false,
+    };
   },
   computed: {
     msg() {
-      return [{
-        typeUrl: '/cosmos.gov.v1beta1.MsgVote',
-        value: {
-          voter: this.address,
-          proposalId: this.proposalId,
-          option: Number(this.option),
+      return [
+        {
+          typeUrl: "/cosmos.gov.v1beta1.MsgVote",
+          value: {
+            voter: this.address,
+            proposalId: this.proposalId,
+            option: Number(this.option),
+          },
         },
-      }]
+      ];
     },
   },
   mounted() {
-    this.$emit('update', {
-      modalTitle: 'Vote',
-      historyName: 'vote',
-    })
+    this.$emit("update", {
+      modalTitle: "Vote",
+      historyName: "vote",
+    });
   },
   methods: {
-
     format(v) {
-      return formatToken(v)
+      return formatToken(v);
     },
-
   },
-}
+};
 </script>
 
 <style lang="scss">
-@import '@core/scss/vue/libs/vue-select.scss';
+@import "@core/scss/vue/libs/vue-select.scss";
 </style>

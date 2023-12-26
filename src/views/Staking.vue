@@ -206,7 +206,8 @@
 
         <b-card-header class="mb-0">
           <h3>
-            Steering Validators {{ `[${steeringList.length || "-"}/15]` }}
+            Steering Validators & Candidates
+            <!-- Steering Validators {{ `[${steeringList.length || "-"}/15]` }} -->
           </h3>
         </b-card-header>
         <b-table
@@ -350,7 +351,7 @@ import {
 } from "@/libs/utils";
 import { keybase } from "@/libs/fetch";
 import OperationModal from "@/views/components/OperationModal/index.vue";
-import { chainInfo } from "@/chains/config/reapchain.config";
+import { chainInfo } from "/env/reapchain.config";
 // import { toHex } from '@cosmjs/encoding'
 // import fetch from 'node-fetch'
 

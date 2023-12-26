@@ -34,13 +34,64 @@ It supports the following features:
 npm install
 ```
 
-2. Running with npm
+2. Add Config file as follows
+
+```
+path: env/reapchain.config.js
+
+// sample
+export const chainInfo = {
+  env: "",
+  chainName: "",
+  chainId: "",
+  chainIdHex: "",
+  cosmosChainId: "",
+  restEndpoint: "",
+  rpcEndpoint: "",
+  evmEndpoint: "",
+  stateSyncEndpoint: ["", ""],
+  stateSyncP2P: "",
+  stateSyncNodeId: "",
+  dashboardUrl: ``,
+  ethAccountExplorerUrl: ``,
+};
+
+export const networkInfo = {
+  chain_name: chainInfo.chainName,
+  coingecko: "",
+  api: chainInfo.restEndpoint,
+  rpc: chainInfo.rpcEndpoint,
+  snapshot_provider: "",
+  sdk_version: "",
+  coin_type: "",
+  min_tx_fee: "",
+  addr_prefix: "",
+  logo: "",
+  assets: [
+    {
+      base: "",
+      symbol: "",
+      exponent: "",
+      coingecko_id: "",
+      logo: "",
+    },
+  ],
+};
+
+export const coinoneApi = "";
+export const coingeckoApi = "";
+export const gateioApi = "";
+
+
+```
+
+3. Running with npm
 
 ```
 npm run start
 ```
 
-3. Building for web servers, like nginx
+4. Building for web servers, like nginx
 
 ```
 npm run build
