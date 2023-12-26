@@ -206,7 +206,8 @@
 
         <b-card-header class="mb-0">
           <h3>
-            Steering Validators {{ `[${steeringList.length || "-"}/15]` }}
+            Steering Validators & Candidates
+            <!-- Steering Validators {{ `[${steeringList.length || "-"}/15]` }} -->
           </h3>
         </b-card-header>
         <b-table
