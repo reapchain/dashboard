@@ -294,7 +294,6 @@ export default {
   },
   computed: {
     showBlockMessage() {
-      console.log("showBlockMessage");
       if (
         !this.isOwner ||
         this.isUnavailableUsingMetaMask ||

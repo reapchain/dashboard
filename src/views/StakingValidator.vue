@@ -115,7 +115,13 @@
                 <span class="font-weight-bold">Status</span>
               </th>
               <td class="pb-50 text-capitalize">
-                <b-badge v-if="validator.status === 3" variant="light-success">
+                <b-badge
+                  v-if="
+                    validator.status === 3 ||
+                      validator.status === 'BOND_STATUS_BONDED'
+                  "
+                  variant="light-success"
+                >
                   Active
                 </b-badge>
                 <b-badge v-else variant="light-danger">
