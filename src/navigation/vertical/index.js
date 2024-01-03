@@ -87,7 +87,8 @@ function processMenu() {
     const { excludes } = store.state.chains.config[chain];
     const children = [];
 
-    let tempModules = chainInfo.env === "main" ? modules_main : modules;
+    // let tempModules = chainInfo.env === "main" ? modules_main : modules;
+    let tempModules = modules;
 
     tempModules.forEach((m) => {
       if (excludes === undefined || excludes.indexOf(m.route) === -1) {

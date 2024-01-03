@@ -276,6 +276,7 @@
       :proposal-id="Number(proposal.id)"
       :proposal-title="proposal.title"
     />
+    <div id="txevent" />
   </section>
 </template>
 
@@ -420,46 +421,55 @@ export default {
     },
   },
   created() {
-    this.$http.getGovernanceParameterTallying().then((res) => {
-      this.tallyParam = res;
-    });
-    const pid = this.$route.params.proposalid;
-    if (this.$route.query.from) {
-      this.from = this.$route.query.from;
-    }
-
-    this.$http.getLatestBlock().then((res) => {
-      this.latest = res;
-    });
-
-    this.$http.getGovernance(pid).then((p) => {
-      if (p.status === 2) {
-        this.$http.getStakingPool().then((pool) => {
-          this.totalPower = pool.bondedToken;
-          this.$http.getGovernanceTally(pid, 0).then((t) => p.updateTally(t));
-        });
-      }
-      this.proposal = p;
-    });
-
-    if (!getCachedValidators()) {
-      this.$http.getValidatorList();
-    }
-    // this.$http.getGovernanceProposer(pid).then(res => {
-    //   this.proposer = res
-    // })
-    this.$http
-      .getGovernanceDeposits(pid)
-      .then((res) => {
-        this.deposits = res;
-      })
-      .catch(() => {});
-    this.$http.getGovernanceVotes(pid).then((res) => {
-      this.votes = res;
-      this.next = res.pagination ? res.pagination.next_key : null;
+    this.initial();
+  },
+  mounted() {
+    const elem = document.getElementById("txevent");
+    elem.addEventListener("txcompleted", () => {
+      this.initial();
     });
   },
   methods: {
+    initial() {
+      this.$http.getGovernanceParameterTallying().then((res) => {
+        this.tallyParam = res;
+      });
+      const pid = this.$route.params.proposalid;
+      if (this.$route.query.from) {
+        this.from = this.$route.query.from;
+      }
+
+      this.$http.getLatestBlock().then((res) => {
+        this.latest = res;
+      });
+
+      this.$http.getGovernance(pid).then((p) => {
+        if (p.status === 2) {
+          this.$http.getStakingPool().then((pool) => {
+            this.totalPower = pool.bondedToken;
+            this.$http.getGovernanceTally(pid, 0).then((t) => p.updateTally(t));
+          });
+        }
+        this.proposal = p;
+      });
+
+      if (!getCachedValidators()) {
+        this.$http.getValidatorList();
+      }
+      // this.$http.getGovernanceProposer(pid).then(res => {
+      //   this.proposer = res
+      // })
+      this.$http
+        .getGovernanceDeposits(pid)
+        .then((res) => {
+          this.deposits = res;
+        })
+        .catch(() => {});
+      this.$http.getGovernanceVotes(pid).then((res) => {
+        this.votes = res;
+        this.next = res.pagination ? res.pagination.next_key : null;
+      });
+    },
     scaleWidth(p) {
       if (this.tallyParam) {
         if (p.status === 2) {

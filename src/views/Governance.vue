@@ -52,6 +52,7 @@
       :proposal-id="selectedProposalId"
       :proposal-title="selectedTitle"
     />
+    <div id="txevent" />
   </div>
 </template>
 
@@ -111,11 +112,14 @@ export default {
       ],
     };
   },
+  created() {
+    this.initial();
+  },
   mounted() {
-    this.$http.getGovernanceParameterTallying().then((res) => {
-      this.tallyParam = res;
+    const elem = document.getElementById("txevent");
+    elem.addEventListener("txcompleted", () => {
+      this.initial();
     });
-    this.getList();
   },
   computed: {
     type() {
@@ -124,6 +128,12 @@ export default {
     },
   },
   methods: {
+    initial() {
+      this.$http.getGovernanceParameterTallying().then((res) => {
+        this.tallyParam = res;
+      });
+      this.getList();
+    },
     switchStatus(s) {
       if (!this.loading) {
         this.proposals = [];
@@ -145,7 +155,8 @@ export default {
     getList() {
       this.loading = true;
       this.$http.getGovernanceListByStatus(this.type).then((res) => {
-        this.proposals = this.proposals.concat(res.proposals);
+        // this.proposals = this.proposals.concat(res.proposals);
+        this.proposals = res.proposals;
         this.updateTally(this.proposals);
         this.next = res.pagination.next_key;
         this.loading = false;

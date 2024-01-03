@@ -11,7 +11,8 @@ const isMain = () => {
   return chainInfo.env === "main";
 };
 
-const router = isMain() ? routerMain : routerDev;
+// const router = isMain() ? routerMain : routerDev;
+const router = routerDev;
 
 router.beforeEach((to, from, next) => {
   const c = to.params.chain;
