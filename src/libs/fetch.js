@@ -29,6 +29,10 @@ import { ethToReap } from "./metamask/addressConverter";
 import coinoneAxios from "./common/coinone";
 import gateioAxios from "./common/gateio";
 import chartProxy from "./common/chartProxy";
+import {
+  MIN_STANDING_BOND_AMOUNT,
+  MIN_VALIDATOR_BOND_AMOUNT,
+} from "@/libs/config";
 
 function commonProcess(res) {
   if (res && Object.keys(res).includes("result")) {
@@ -53,14 +57,14 @@ const validatorFilter = (
       return validatorList.filter(
         (ele) =>
           ele.type === "standing" &&
-          ele.tokens >= 44000000000000000000000000 &&
+          ele.tokens >= MIN_STANDING_BOND_AMOUNT &&
           ele.jailed == false
       );
     } else {
       return validatorList.filter(
         (ele) =>
           ele.type === "standing" &&
-          (ele.jailed == true || ele.tokens < 44000000000000000000000000)
+          (ele.jailed == true || ele.tokens < MIN_STANDING_BOND_AMOUNT)
       );
     }
   } else if (condition.type === "steering") {
@@ -68,14 +72,14 @@ const validatorFilter = (
       return validatorList.filter(
         (ele) =>
           ele.type === "steering" &&
-          ele.tokens >= 100000000000000000000000 &&
+          ele.tokens >= MIN_VALIDATOR_BOND_AMOUNT &&
           ele.jailed == false
       );
     } else {
       return validatorList.filter(
         (ele) =>
           ele.type === "steering" &&
-          (ele.jailed == true || ele.tokens < 100000000000000000000000)
+          (ele.jailed == true || ele.tokens < MIN_VALIDATOR_BOND_AMOUNT)
       );
     }
   } else {
@@ -84,16 +88,16 @@ const validatorFilter = (
         (ele) =>
           ele.jailed == false &&
           ((ele.type === "standing" &&
-            ele.tokens >= 44000000000000000000000000) ||
-            (ele.type === "steering" && ele.tokens >= 100000000000000000000000))
+            ele.tokens >= MIN_STANDING_BOND_AMOUNT) ||
+            (ele.type === "steering" &&
+              ele.tokens >= MIN_VALIDATOR_BOND_AMOUNT))
       );
     } else {
       return validatorList.filter(
         (ele) =>
           ele.jailed == true ||
-          (ele.type === "standing" &&
-            ele.tokens < 44000000000000000000000000) ||
-          (ele.type === "steering" && ele.tokens < 100000000000000000000000)
+          (ele.type === "standing" && ele.tokens < MIN_STANDING_BOND_AMOUNT) ||
+          (ele.type === "steering" && ele.tokens < MIN_VALIDATOR_BOND_AMOUNT)
       );
     }
   }
