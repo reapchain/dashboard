@@ -352,6 +352,10 @@ import {
 import { keybase } from "@/libs/fetch";
 import OperationModal from "@/views/components/OperationModal/index.vue";
 import { chainInfo } from "/env/reapchain.config";
+import {
+  MIN_STANDING_BOND_AMOUNT,
+  MIN_VALIDATOR_BOND_AMOUNT,
+} from "@/libs/config";
 // import { toHex } from '@cosmjs/encoding'
 // import fetch from 'node-fetch'
 
@@ -530,25 +534,24 @@ export default {
         if (condition.active === "active") {
           return validatorList.filter(
             (ele) =>
-              ele.type === "standing" &&
-              ele.tokens >= 44000000000000000000000000
+              ele.type === "standing" && ele.tokens >= MIN_STANDING_BOND_AMOUNT
           );
         } else {
           return validatorList.filter(
             (ele) =>
-              ele.type === "standing" && ele.tokens < 44000000000000000000000000
+              ele.type === "standing" && ele.tokens < MIN_STANDING_BOND_AMOUNT
           );
         }
       } else if (condition.type === "steering") {
         if (condition.active === "active") {
           return validatorList.filter(
             (ele) =>
-              ele.type === "steering" && ele.tokens >= 100000000000000000000000
+              ele.type === "steering" && ele.tokens >= MIN_VALIDATOR_BOND_AMOUNT
           );
         } else {
           return validatorList.filter(
             (ele) =>
-              ele.type === "steering" && ele.tokens < 100000000000000000000000
+              ele.type === "steering" && ele.tokens < MIN_VALIDATOR_BOND_AMOUNT
           );
         }
       } else {
