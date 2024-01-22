@@ -39,7 +39,7 @@
         <h6 class="mb-0">
           Consensus Public Address
         </h6>
-        <small @click="copy(JSON.stringify(consensusPubkey))">{{
+        <small @click="copy(consensusPubkey.key)">{{
           formatPubkey(consensusPubkey)
         }}</small>
       </b-media-body>
@@ -106,7 +106,7 @@ export default {
   methods: {
     formatPubkey(consensusPubkey) {
       if (typeof consensusPubkey === "object") {
-        return consensusPubkey.value;
+        return consensusPubkey.key;
       } else {
         return consensusPubkey;
       }

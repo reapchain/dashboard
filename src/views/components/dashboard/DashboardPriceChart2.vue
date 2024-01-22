@@ -7,12 +7,13 @@
             {{ coinInfo.name }}
             <span class="text-uppercase">({{ coinInfo.symbol }})</span>
           </h2>
-          <span
-            >Coingecko Rank:
+          <div class="empty-area"></div>
+          <!-- <span>
+            Coingecko Rank:
             <b-badge variant="light-danger">
               #{{ coinInfo.coingecko_rank }}
-            </b-badge></span
-          >
+            </b-badge>
+          </span> -->
         </div>
         <hr />
         <div class="my-1">
@@ -473,5 +474,9 @@ export default {
 .bridge-info {
   margin-top: 12px;
   font-weight: 600;
+}
+
+.empty-area {
+  padding: 8px;
 }
 </style>

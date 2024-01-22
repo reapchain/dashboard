@@ -34,6 +34,12 @@ It supports the following features:
 npm install
 ```
 
+or
+
+```
+npm install --legacy-peer-deps
+```
+
 2. Add Config file as follows
 
 ```
