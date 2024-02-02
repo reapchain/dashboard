@@ -77,7 +77,14 @@
       <dark-Toggler class="d-none d-lg-block" />
       <search-bar />
       <!-- <locale /> -->
-      <b-dropdown class="ml-1" variant="link" no-caret toggle-class="p-0" right>
+      <b-dropdown
+        class="ml-1"
+        variant="link"
+        no-caret
+        toggle-class="p-0"
+        right
+        v-if="!isHideWalletButton"
+      >
         <template #button-content>
           <b-button
             v-ripple.400="'rgba(255, 255, 255, 0.15)'"
@@ -305,6 +312,7 @@ export default {
         address: "",
         pubkey: "",
       },
+      isHideWalletButton: false,
     };
   },
   computed: {
@@ -348,6 +356,14 @@ export default {
   },
   mounted() {
     const walletTypeCheck = localStorage.getItem("walletType");
+
+    if (chainInfo.version) {
+      if (chainInfo.version === "v3.0" || chainInfo.version === "v2.0") {
+        this.isHideWalletButton = true;
+        return;
+      }
+    }
+
     if (walletTypeCheck === "keplr") {
       this.connectWithKeplr();
     } else if (walletTypeCheck === "metamask") {

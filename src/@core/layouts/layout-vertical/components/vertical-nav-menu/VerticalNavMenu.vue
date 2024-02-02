@@ -28,13 +28,13 @@
                 <b-img :src="appBggLogoImage" alt="logo" />
               </span>
               <h2 class="brand-text">
-                {{ appName }}
+                {{ myAppName }}
               </h2>
             </b-link>
           </li>
 
           <!-- Toggler Button -->
-          <li class="nav-item nav-toggle">
+          <li class="nav-item nav-toggle" v-if="false">
             <b-link class="nav-link modern-nav-toggle">
               <feather-icon
                 icon="XIcon"
@@ -92,6 +92,7 @@ import useAppConfig from "@core/app-config/useAppConfig";
 import { $themeConfig } from "@themeConfig";
 import VerticalNavMenuItems from "./components/vertical-nav-menu-items/VerticalNavMenuItems.vue";
 import useVerticalNavMenu from "./useVerticalNavMenu";
+import { chainInfo } from "/env/reapchain.config";
 
 export default {
   components: {
@@ -138,6 +139,17 @@ export default {
     // App Name
     const { appName, appLogoImage, appBggLogoImage } = $themeConfig.app;
 
+    let myAppName = "Reapchain";
+    if (chainInfo.version) {
+      if (chainInfo.version === "v3.1") {
+        myAppName = "Reapchain v3.1";
+      } else if (chainInfo.version === "v3.0") {
+        myAppName = "Reapchain v3.0";
+      } else if (chainInfo.version === "v2.0") {
+        myAppName = "Reapchain v2.0";
+      }
+    }
+
     return {
       navMenuItems,
       perfectScrollbarSettings,
@@ -158,6 +170,8 @@ export default {
       appName,
       appLogoImage,
       appBggLogoImage,
+
+      myAppName,
     };
   },
   computed: {

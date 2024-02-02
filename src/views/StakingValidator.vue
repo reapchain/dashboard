@@ -412,7 +412,12 @@ export default {
     },
     formatHash: abbrAddress,
     timeFormat(value) {
-      return toDay(value);
+      const day = toDay(value);
+
+      if (day === "1970-01-01 09:00") {
+        return "-";
+      }
+      return day;
     },
     percentFormat(value) {
       return percent(value);
