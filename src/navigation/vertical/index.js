@@ -1,7 +1,7 @@
 import store from "@/store";
 import { chainInfo } from "/env/reapchain.config";
 
-const modules = [
+let modules = [
   {
     scope: "normal",
     title: "Dashboard",
@@ -43,6 +43,49 @@ const modules = [
     route: "bridge",
   },
 ];
+
+if (chainInfo.version) {
+  if (chainInfo.version === "v3.1") {
+    modules = modules.concat([
+      {
+        scope: "normal",
+        title: "dashboard-v3",
+        route: "dashboard-v3",
+      },
+      {
+        scope: "normal",
+        title: "dashboard-v2",
+        route: "dashboard-v2",
+      },
+    ]);
+  } else if (chainInfo.version === "v3.0") {
+    modules = modules.concat([
+      {
+        scope: "normal",
+        title: "dashboard-latest",
+        route: "dashboard-latest",
+      },
+      {
+        scope: "normal",
+        title: "dashboard-v2",
+        route: "dashboard-v2",
+      },
+    ]);
+  } else if (chainInfo.version === "v2.0") {
+    modules = modules.concat([
+      {
+        scope: "normal",
+        title: "dashboard-latest",
+        route: "dashboard-latest",
+      },
+      {
+        scope: "normal",
+        title: "dashboard-v3",
+        route: "dashboard-v3",
+      },
+    ]);
+  }
+}
 
 const modules_main = [
   {

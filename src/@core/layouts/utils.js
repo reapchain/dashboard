@@ -103,8 +103,27 @@ export const navLinkProps = item => computed(() => {
   if (item.route) { 
     props.to = typeof item.route === 'string' ? { name: item.route } : item.route 
 
+    // bridgeUrl
     if (item.title === "bridge") {
       props.href = chainInfo.bridgeUrl
+      props.target = '_blank'
+      props.rel = 'nofollow'
+    }
+    // dashboard-latest
+    if (item.title === "dashboard-latest") {
+      props.href = "https://dashboard.reapchain.org"
+      props.target = '_blank'
+      props.rel = 'nofollow'
+    }
+    // dashboard-v3
+    if (item.title === "dashboard-v3") {
+      props.href = "https://v3.dashboard.reapchain.org"
+      props.target = '_blank'
+      props.rel = 'nofollow'
+    }
+    // dashboard-v2
+    if (item.title === "dashboard-v2") {
+      props.href = "https://v2.dashboard.reapchain.org"
       props.target = '_blank'
       props.rel = 'nofollow'
     }
