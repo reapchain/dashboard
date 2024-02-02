@@ -110,19 +110,19 @@ export const navLinkProps = item => computed(() => {
       props.rel = 'nofollow'
     }
     // dashboard-latest
-    if (item.title === "dashboard-latest") {
+    if (item.title === "reapchain-v3.1") {
       props.href = "https://dashboard.reapchain.org"
       props.target = '_blank'
       props.rel = 'nofollow'
     }
     // dashboard-v3
-    if (item.title === "dashboard-v3") {
+    if (item.title === "reapchain-v3.0") {
       props.href = "https://v3.dashboard.reapchain.org"
       props.target = '_blank'
       props.rel = 'nofollow'
     }
     // dashboard-v2
-    if (item.title === "dashboard-v2") {
+    if (item.title === "reapchain-v2.0") {
       props.href = "https://v2.dashboard.reapchain.org"
       props.target = '_blank'
       props.rel = 'nofollow'
