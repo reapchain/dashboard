@@ -49,39 +49,39 @@ if (chainInfo.version) {
     modules = modules.concat([
       {
         scope: "normal",
-        title: "dashboard-v3",
-        route: "dashboard-v3",
+        title: "reapchain-v3.0",
+        route: "reapchain-v3.0",
       },
       {
         scope: "normal",
-        title: "dashboard-v2",
-        route: "dashboard-v2",
+        title: "reapchain-v2.0",
+        route: "reapchain-v2.0",
       },
     ]);
   } else if (chainInfo.version === "v3.0") {
     modules = modules.concat([
       {
         scope: "normal",
-        title: "dashboard-latest",
-        route: "dashboard-latest",
+        title: "reapchain-v3.1",
+        route: "reapchain-v3.1",
       },
       {
         scope: "normal",
-        title: "dashboard-v2",
-        route: "dashboard-v2",
+        title: "reapchain-v2.0",
+        route: "reapchain-v2.0",
       },
     ]);
   } else if (chainInfo.version === "v2.0") {
     modules = modules.concat([
       {
         scope: "normal",
-        title: "dashboard-latest",
-        route: "dashboard-latest",
+        title: "reapchain-v3.1",
+        route: "reapchain-v3.1",
       },
       {
         scope: "normal",
-        title: "dashboard-v3",
-        route: "dashboard-v3",
+        title: "reapchain-v3.0",
+        route: "reapchain-v3.0",
       },
     ]);
   }
