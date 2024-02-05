@@ -136,17 +136,31 @@ export default class ChainFetch {
     ).then((data) => Block.create(data));
   }
 
+  async getLatestBlockData(config = null) {
+    const latestBlock = await this.get(
+      `/blocks/latest?${new Date().getTime()}`,
+      config
+    );
+    return Block.create(latestBlock);
+  }
+
   async getBlockByHeight(height, config = null) {
     const conf = config || this.getSelectedConfig();
-    if (conf.chain_name === "injective") {
-      return ChainFetch.fetch(
-        "https://tm.injective.network",
-        `/block?height=${height}`
-      ).then((data) => Block.create(commonProcess(data)));
-    }
     return this.get(`/blocks/${height}`, config).then((data) =>
       Block.create(data)
     );
+  }
+
+  async getBlockByHeight2(height) {
+    const _this = this;
+    const promise = new Promise((resolve, reject) => {
+      _this
+        .get(`/blocks/${height}`)
+        .then((data) => resolve(Block.create(data)));
+    });
+
+    const block = await promise;
+    return block;
   }
 
   async getSlashingSigningInfo(config = null) {
