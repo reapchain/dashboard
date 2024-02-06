@@ -127,7 +127,6 @@
                 <b-badge v-else variant="light-danger">
                   Inactive
                 </b-badge>
-                <!-- <span v-else>{{ validator.status }}</span> -->
               </td>
             </tr>
             <tr>
@@ -153,7 +152,14 @@
                 <feather-icon icon="FlagIcon" class="mr-75" />
                 <span class="font-weight-bold">Min Self Delegation</span>
               </th>
-              <td class="pb-50">
+              <td
+                class="pb-50"
+                v-if="insufficientSelfDelegation && false"
+                style="color:tomato; font-weight: 600;"
+              >
+                {{ tokenFormatter(validator.min_self_delegation, "areap") }}
+              </td>
+              <td class="pb-50" v-else>
                 {{ tokenFormatter(validator.min_self_delegation, "areap") }}
               </td>
             </tr>
@@ -276,6 +282,8 @@ import OperationModal from "@/views/components/OperationModal/index.vue";
 import StakingAddressComponent from "./StakingAddressComponent.vue";
 import StakingCommissionComponent from "./StakingCommissionComponent.vue";
 import StakingRewardComponent from "./StakingRewardComponent.vue";
+import { MIN_STANDING_BOND_AMOUNT } from "@/libs/config";
+import Decimal from "decimal.js";
 
 export default {
   components: {
@@ -328,6 +336,16 @@ export default {
     };
   },
   computed: {
+    insufficientSelfDelegation() {
+      if (this.validator.type !== "standing") {
+        return false;
+      }
+
+      const token = new Decimal(this.validator.min_self_delegation);
+      const minAmount = new Decimal(MIN_STANDING_BOND_AMOUNT);
+
+      return token.lt(minAmount);
+    },
     isMyAccount() {
       return this.walletAccount == this.accountAddress && this.myDevice;
     },

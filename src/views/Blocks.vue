@@ -36,8 +36,6 @@
       </b-table>
     </b-card>
 
-    <!-- currentPage : {{ currentPage }} lastBlockNum : {{ lastBlockNum }} perPage :
-    {{ perPage }} -->
     <div class="mt-3" style="padding-bottom: 36px;">
       <b-pagination
         style="position: absolute; left: 50%; margin-left: -145px;"
