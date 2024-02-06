@@ -2,9 +2,7 @@
   <div>
     <b-card no-body class="text-truncate">
       <b-card-header>
-        <b-card-title>
-          Latest Blocks
-        </b-card-title>
+        <b-card-title> Latest Blocks </b-card-title>
       </b-card-header>
       <b-table
         :items="blocks"
@@ -38,11 +36,13 @@
 
     <div class="mt-3" style="padding-bottom: 36px;">
       <b-pagination
+        v-if="!isFirst"
         style="position: absolute; left: 50%; margin-left: -145px;"
         v-model="currentPage"
         :total-rows="lastBlockNum"
         :per-page="perPage"
         aria-controls="blocks-table"
+        @page-click="pageClick"
       ></b-pagination>
     </div>
   </div>
@@ -82,6 +82,7 @@ export default {
       blocks: [],
 
       // pagenation
+      isFirst: true,
       lastBlockHeight: 1912809,
       lastBlockNum: 0,
       perPage: 20,
@@ -115,89 +116,14 @@ export default {
       ],
     };
   },
-  // created() {
-  //   this.$http.getLatestBlock().then((res) => {
-  //     this.blocks.push(res);
-  //     const list = [];
-  //     const { height } = res.block.header;
-  //     for (let i = 1; i < 20; i += 1) {
-  //       list.push(height - i);
-  //     }
-
-  //     if (!getCachedValidators()) {
-  //       this.$http.getValidatorList();
-  //     }
-
-  //     let promise = Promise.resolve();
-  //     list.forEach((item) => {
-  //       promise = promise.then(
-  //         () =>
-  //           new Promise((resolve) => {
-  //             this.$http.getBlockByHeight(item).then((b) => {
-  //               resolve();
-  //               this.blocks.push(b);
-  //             });
-  //           })
-  //       );
-  //     });
-  //     this.timer = setInterval(this.fetch, 6000);
-  //   });
-  // },
   async created() {
-    this.initBlocks();
-
-    // this.applyPage(myPage, lastBlockNum);
-
-    // this.$http.getLatestBlock().then(async (res) => {
-    //   return;
-    //   this.lastBlock = res;
-
-    //   const pageNum = Number(page);
-    //   if (pageNum && !isNaN(pageNum)) {
-    //     this.lastBlockNum = Number(this.lastBlock.block.header.height);
-
-    //     this.applyPage();
-    //   } else {
-    //     this.lastBlockNum = Number(this.lastBlock.block.header.height);
-    //   }
-
-    //   let tempBlockNum = this.lastBlockNum;
-    //   let loopFlag = true;
-    //   for (let i = 1; loopFlag; i++) {
-    //     if (tempBlockNum <= this.perPage) {
-    //       loopFlag = false;
-    //     } else {
-    //       tempBlockNum -= this.perPage;
-    //     }
-    //     this.blockCache[i] = [];
-    //   }
-
-    //   const _this = this;
-
-    //   let height = _this.lastBlock.block.header.height;
-
-    //   const dummyArr = new Array(this.perPage).fill("");
-    //   const newBlocks = await Promise.all(
-    //     dummyArr.map(async (value) => {
-    //       const newBlock = _this.$http.getBlockByHeight(height);
-    //       height -= 1;
-    //       return Block.create(await newBlock);
-    //     })
-    //   );
-
-    //   this.blockCache[1] = newBlocks.slice();
-    //   this.blocks = newBlocks;
-
-    //   // if (page) {
-    //   //   this.currentPage = page;
-    //   //   this.applyPage(page);
-    //   //   return;
-    //   // }
-
-    //   // if (!getCachedValidators()) {
-    //   //   this.$http.getValidatorList();
-    //   // }
-    // });
+    await this.initBlocks();
+    this.isFirst = false;
+  },
+  mounted() {
+    const { page } = this.$route.query;
+    const myPage = page ? Number(page) : 1;
+    this.currentPage = myPage;
   },
   beforeDestroy() {
     this.islive = false;
@@ -209,21 +135,11 @@ export default {
     formatProposer(v) {
       return getStakingValidatorByHex(this.$http.config.chain_name, v);
     },
-    // fetch() {
-    //   this.$http.getLatestBlock().then((b) => {
-    //     const has = this.blocks.findIndex(
-    //       (x) => x.block.header.height === b.block.header.height
-    //     );
-    //     if (has < 0) this.blocks.unshift(b);
-    //     if (this.blocks.length > 200) this.blocks.pop();
-    //   });
-    // },
-    async initBlocks(targetPage) {
-      // const { page } = this.$route.query;
-      // const myPage = Number(page) || 1;
-      const myPage = targetPage || 1;
+    async initBlocks() {
+      const { page } = this.$route.query;
+      const myPage = page ? Number(page) : 1;
 
-      console.log("myPage : ", myPage);
+      this.currentPage = myPage;
 
       const lastBlockNum = await this.getLatestBlock();
       this.lastBlockNum = lastBlockNum;
@@ -251,10 +167,7 @@ export default {
       const dummyBlocks =
         zeroValueIdx === -1 ? newBlocks : newBlocks.slice(0, zeroValueIdx);
 
-      console.log("dummyBlocks : ", dummyBlocks);
-
       this.blocks = dummyBlocks;
-      // this.blocks = [].concat(dummyBlocks);
     },
     async getLatestBlock() {
       const latestBlock = await this.$http.getLatestBlockData();
@@ -279,32 +192,26 @@ export default {
       );
 
       const zeroValueIdx = newBlocks.indexOf("");
-      return zeroValueIdx === -1 ? newBlocks : newBlocks.slice(0, zeroValueIdx);
+      const resultBlocks =
+        zeroValueIdx === -1 ? newBlocks : newBlocks.slice(0, zeroValueIdx);
+
+      return resultBlocks;
     },
-    applyPage(newPage, lastBlockNum) {
-      const subtractNum = (newPage - 1) * this.perPage;
-      const dummyArr = new Array(subtractNum).fill("");
-
-      this.createDummyBlocks(subtractNum, lastBlockNum).then((newBlocks) => {
-        this.blockCache[newPage] = newBlocks;
-        this.blocks = dummyArr.concat(newBlocks);
-      });
-
-      // this.blocks = dummyArr.concat(cacheData);
-    },
-  },
-  watch: {
-    currentPage(newCurrentPage) {
-      this.initBlocks(newCurrentPage);
-
+    pageClick(button, page) {
       this.$router
         .push({
-          params: {
-            page: newCurrentPage,
+          query: {
+            page,
           },
         })
         .catch(() => {});
-      // this.applyPage(newCurrentPage);
+    },
+  },
+  watch: {
+    $route() {
+      if (!this.isFirst) {
+        this.initBlocks();
+      }
     },
   },
 };
