@@ -26,6 +26,11 @@ It supports the following features:
 - View account information and witness list and information
 - Staking-related functions such as delegation, redelegation, and unbonding
 
+This project referenced the project below.
+
+- [Ping Dashboard](https://ping.pub/)
+- [ping-pub explorer github](https://github.com/ping-pub/explorer)
+
 # Installation:
 
 1. Install packages
