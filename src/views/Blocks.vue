@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-card no-body class="text-truncate">
-      <b-card-header>
+      <b-card-header v-show="false">
         <b-card-title> Latest Blocks </b-card-title>
       </b-card-header>
       <b-table
@@ -186,6 +186,8 @@ export default {
         zeroValueIdx === -1 ? newBlocks : newBlocks.slice(0, zeroValueIdx);
 
       this.blocks = dummyBlocks;
+
+      this.executeFetchByPage(myPage);
     },
     async getLatestBlock() {
       const latestBlock = await this.$http.getLatestBlockData();
@@ -201,12 +203,31 @@ export default {
         })
         .catch(() => {});
     },
+    async fetch() {
+      const latestBlock = await this.$http.getLatestBlockData();
+
+      const has = this.blocks.findIndex(
+        (x) => x.block.header.height === latestBlock.block.header.height
+      );
+      if (has < 0) this.blocks.unshift(latestBlock);
+      if (this.blocks.length > 200) this.blocks.pop();
+    },
+    executeFetchByPage(page) {
+      if (page === 1) {
+        this.timer = setInterval(this.fetch, 4000);
+      } else {
+        clearInterval(this.timer);
+      }
+    },
   },
   watch: {
     $route() {
       if (!this.isFirst) {
         this.initBlocks();
       }
+    },
+    currentPage(to) {
+      this.executeFetchByPage(to);
     },
   },
 };
