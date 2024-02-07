@@ -142,13 +142,8 @@ export default {
       if (!this.lastBlockNum) {
         return 0;
       }
-      console.log(
-        `totalRows : ${this.lastBlockNum} - ${this.minBlockNum} -> ${this
-          .lastBlockNum - this.minBlockNum}`
-      );
 
-      return this.lastBlockNum - this.minBlockNum + 1;
-      // return 241071;
+      return this.lastBlockNum - this.minBlockNum;
     },
   },
   methods: {
