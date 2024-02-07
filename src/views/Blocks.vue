@@ -36,10 +36,10 @@
 
     <div class="mt-3" style="padding-bottom: 36px;">
       <b-pagination
-        v-if="!isFirst"
+        v-if="!isFirst && totalRows > 0"
         style="position: absolute; left: 50%; margin-left: -145px;"
         v-model="currentPage"
-        :total-rows="lastBlockNum"
+        :total-rows="totalRows"
         :per-page="perPage"
         aria-controls="blocks-table"
         @page-click="pageClick"
@@ -63,7 +63,7 @@ import {
   getStakingValidatorByHex,
   toDay,
 } from "@/libs/utils";
-// import fetch from 'node-fetch'
+import { chainInfo } from "/env/reapchain.config";
 
 export default {
   components: {
@@ -77,14 +77,22 @@ export default {
     "b-tooltip": VBTooltip,
   },
   data() {
+    let minBlockNum = 1;
+
+    if (chainInfo.version === "v3.1") {
+      minBlockNum = 1912809;
+    } else if (chainInfo.version === "v3.0") {
+      minBlockNum = 1491802;
+    }
+
     return {
       islive: true,
       blocks: [],
 
       // pagenation
       isFirst: true,
-      lastBlockHeight: 1912809,
       lastBlockNum: 0,
+      minBlockNum,
       perPage: 20,
       currentPage: 1,
       total: 0,
@@ -129,6 +137,20 @@ export default {
     this.islive = false;
     clearInterval(this.timer);
   },
+  computed: {
+    totalRows() {
+      if (!this.lastBlockNum) {
+        return 0;
+      }
+      console.log(
+        `totalRows : ${this.lastBlockNum} - ${this.minBlockNum} -> ${this
+          .lastBlockNum - this.minBlockNum}`
+      );
+
+      return this.lastBlockNum - this.minBlockNum + 1;
+      // return 241071;
+    },
+  },
   methods: {
     length: (v) => (Array.isArray(v) ? v.length : 0),
     formatTime: (v) => toDay(v, "time"),
@@ -151,15 +173,16 @@ export default {
       let height = lastBlockNum - subtractNum;
 
       const _this = this;
+
       const newBlocks = await Promise.all(
         dummyArr.map(async (value) => {
-          if (height !== 0) {
-            const newBlock = _this.$http.getBlockByHeight2(height);
-            height -= 1;
-            return Block.create(await newBlock);
+          if (height < 1 || height < this.minBlockNum) {
+            return "";
           }
 
-          return "";
+          const newBlock = _this.$http.getBlockByHeight2(height);
+          height -= 1;
+          return Block.create(await newBlock);
         })
       );
 
@@ -173,29 +196,6 @@ export default {
       const latestBlock = await this.$http.getLatestBlockData();
       const height = Number(latestBlock.block.header.height);
       return height;
-    },
-    async createDummyBlocks(subtractNum, lastBlockNum) {
-      let height = lastBlockNum - subtractNum;
-
-      const _this = this;
-      const dummyArr = new Array(this.perPage).fill("");
-      const newBlocks = await Promise.all(
-        dummyArr.map(async (value) => {
-          if (height !== 0) {
-            const newBlock = _this.$http.getBlockByHeight2(height);
-            height -= 1;
-            return Block.create(await newBlock);
-          }
-
-          return "";
-        })
-      );
-
-      const zeroValueIdx = newBlocks.indexOf("");
-      const resultBlocks =
-        zeroValueIdx === -1 ? newBlocks : newBlocks.slice(0, zeroValueIdx);
-
-      return resultBlocks;
     },
     pageClick(button, page) {
       this.$router
