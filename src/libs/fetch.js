@@ -136,6 +136,12 @@ export default class ChainFetch {
     ).then((data) => Block.create(data));
   }
 
+  async getAllAccounts(queryString = "") {
+    return this.get(`/cosmos/auth/v1beta1/accounts?${queryString}`).then(
+      (data) => data
+    );
+  }
+
   async getBlockByHeight(height, config = null) {
     const conf = config || this.getSelectedConfig();
     if (conf.chain_name === "injective") {

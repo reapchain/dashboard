@@ -29,6 +29,11 @@ let modules = [
   },
   {
     scope: "normal",
+    title: "accounts",
+    route: "accounts",
+  },
+  {
+    scope: "normal",
     title: "uptime",
     route: "uptime",
   },

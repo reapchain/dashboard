@@ -39,35 +39,6 @@ const routerMain = new VueRouter({
       },
     },
     {
-      path: "/wallet/accounts",
-      alias: "/wallet",
-      name: "accounts",
-      component: () => import("@/views/WalletAccounts.vue"),
-      meta: {
-        pageTitle: "Accounts",
-        breadcrumb: [
-          {
-            text: "Accounts",
-            active: true,
-          },
-        ],
-      },
-    },
-    {
-      path: "/wallet/import",
-      name: "accounts-import",
-      component: () => import("@/views/WalletAccountImportAddress.vue"),
-      meta: {
-        pageTitle: "Accounts",
-        breadcrumb: [
-          {
-            text: "Import",
-            active: true,
-          },
-        ],
-      },
-    },
-    {
       path: "/wallet/delegations",
       name: "delegations",
       component: () => import("@/views/WalletDelegations.vue"),
