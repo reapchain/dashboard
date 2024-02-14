@@ -15,7 +15,7 @@
         stacked="sm"
       >
         <template #cell(address)="data">
-          <router-link :to="`./account`">
+          <router-link :to="`./account/${data.item.address}`">
             {{ data.item.address }}
           </router-link>
         </template>
