@@ -19,7 +19,7 @@
             {{ data.item.address }}
           </router-link>
         </template>
-        <template #cell(balance)="data">
+        <template #cell(amount)="data">
           {{ data.item.displayBalance }}
         </template>
       </b-table>
@@ -71,7 +71,7 @@ export default {
           key: "address",
         },
         {
-          key: "balance",
+          key: "amount",
         },
       ],
     };
