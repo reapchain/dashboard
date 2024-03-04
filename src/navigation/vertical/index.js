@@ -49,49 +49,6 @@ let modules = [
   },
 ];
 
-if (chainInfo.version) {
-  if (chainInfo.version === "v3.1") {
-    modules = modules.concat([
-      {
-        scope: "normal",
-        title: "reapchain-v3.0",
-        route: "reapchain-v3.0",
-      },
-      {
-        scope: "normal",
-        title: "reapchain-v2.0",
-        route: "reapchain-v2.0",
-      },
-    ]);
-  } else if (chainInfo.version === "v3.0") {
-    modules = modules.concat([
-      {
-        scope: "normal",
-        title: "reapchain-v3.1",
-        route: "reapchain-v3.1",
-      },
-      {
-        scope: "normal",
-        title: "reapchain-v2.0",
-        route: "reapchain-v2.0",
-      },
-    ]);
-  } else if (chainInfo.version === "v2.0") {
-    modules = modules.concat([
-      {
-        scope: "normal",
-        title: "reapchain-v3.1",
-        route: "reapchain-v3.1",
-      },
-      {
-        scope: "normal",
-        title: "reapchain-v3.0",
-        route: "reapchain-v3.0",
-      },
-    ]);
-  }
-}
-
 const modules_main = [
   {
     scope: "normal",
