@@ -27,6 +27,11 @@
       </div>
     </div>
     <b-row class="match-height">
+      <b-col v-if="proposals.length < 1 && !loading">
+        <div class="text-left pt-1">
+          <h4>No {{ statusName }} Proposals</h4>
+        </div>
+      </b-col>
       <b-col v-for="p in proposals" :key="p.id" lg="6" md="12">
         <proposal-summary-component
           :p="p"
@@ -126,6 +131,14 @@ export default {
       const myType = this.$route.query.status;
       return myType || "2";
     },
+    statusName() {
+      const myType = this.$route.query.status || "2";
+      const myOption = this.proposalStatusOption.find(
+        (ele) => ele.status === myType
+      );
+
+      return myOption ? myOption.name : "Active";
+    },
   },
   methods: {
     initial() {
@@ -135,7 +148,9 @@ export default {
       this.getList();
     },
     switchStatus(s) {
-      if (!this.loading) {
+      const myType = this.$route.query.status;
+
+      if (!this.loading && myType !== s) {
         this.proposals = [];
         this.$router.replace({
           query: {

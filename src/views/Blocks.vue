@@ -1,10 +1,8 @@
 <template>
   <div>
     <b-card no-body class="text-truncate">
-      <b-card-header>
-        <b-card-title>
-          Latest Blocks
-        </b-card-title>
+      <b-card-header v-show="false">
+        <b-card-title> Latest Blocks </b-card-title>
       </b-card-header>
       <b-table
         :items="blocks"
@@ -35,6 +33,18 @@
         </template>
       </b-table>
     </b-card>
+
+    <div class="mt-3" style="padding-bottom: 36px;">
+      <b-pagination
+        v-if="!isFirst && totalRows > 0"
+        style="position: absolute; left: 50%; margin-left: -145px;"
+        v-model="currentPage"
+        :total-rows="totalRows"
+        :per-page="perPage"
+        aria-controls="blocks-table"
+        @page-click="pageClick"
+      ></b-pagination>
+    </div>
   </div>
 </template>
 
@@ -45,13 +55,15 @@ import {
   BCardHeader,
   BCardTitle,
   VBTooltip,
+  BPagination,
 } from "bootstrap-vue";
 import {
+  Block,
   getCachedValidators,
   getStakingValidatorByHex,
   toDay,
 } from "@/libs/utils";
-// import fetch from 'node-fetch'
+import { chainInfo } from "/env/reapchain.config";
 
 export default {
   components: {
@@ -59,14 +71,34 @@ export default {
     BTable,
     BCardHeader,
     BCardTitle,
+    BPagination,
   },
   directives: {
     "b-tooltip": VBTooltip,
   },
   data() {
+    let minBlockNum = 1;
+
+    if (chainInfo.version === "v3.1") {
+      minBlockNum = 1912809;
+    } else if (chainInfo.version === "v3.0") {
+      minBlockNum = 1491802;
+    }
+
     return {
       islive: true,
       blocks: [],
+
+      // pagenation
+      isFirst: true,
+      lastBlockNum: 0,
+      minBlockNum,
+      perPage: 20,
+      currentPage: 1,
+      total: 0,
+      lastBlock: {},
+      blockCache: [],
+
       list_fields: [
         {
           key: "height",
@@ -92,37 +124,27 @@ export default {
       ],
     };
   },
-  created() {
-    this.$http.getLatestBlock().then((res) => {
-      this.blocks.push(res);
-      const list = [];
-      const { height } = res.block.header;
-      for (let i = 1; i < 20; i += 1) {
-        list.push(height - i);
-      }
-
-      if (!getCachedValidators()) {
-        this.$http.getValidatorList();
-      }
-
-      let promise = Promise.resolve();
-      list.forEach((item) => {
-        promise = promise.then(
-          () =>
-            new Promise((resolve) => {
-              this.$http.getBlockByHeight(item).then((b) => {
-                resolve();
-                this.blocks.push(b);
-              });
-            })
-        );
-      });
-      this.timer = setInterval(this.fetch, 6000);
-    });
+  async created() {
+    await this.initBlocks();
+    this.isFirst = false;
+  },
+  mounted() {
+    const { page } = this.$route.query;
+    const myPage = page ? Number(page) : 1;
+    this.currentPage = myPage;
   },
   beforeDestroy() {
     this.islive = false;
     clearInterval(this.timer);
+  },
+  computed: {
+    totalRows() {
+      if (!this.lastBlockNum) {
+        return 0;
+      }
+
+      return this.lastBlockNum - this.minBlockNum;
+    },
   },
   methods: {
     length: (v) => (Array.isArray(v) ? v.length : 0),
@@ -130,14 +152,82 @@ export default {
     formatProposer(v) {
       return getStakingValidatorByHex(this.$http.config.chain_name, v);
     },
-    fetch() {
-      this.$http.getLatestBlock().then((b) => {
-        const has = this.blocks.findIndex(
-          (x) => x.block.header.height === b.block.header.height
-        );
-        if (has < 0) this.blocks.unshift(b);
-        if (this.blocks.length > 200) this.blocks.pop();
-      });
+    async initBlocks() {
+      const { page } = this.$route.query;
+      const myPage = page ? Number(page) : 1;
+
+      this.currentPage = myPage;
+
+      const lastBlockNum = await this.getLatestBlock();
+      this.lastBlockNum = lastBlockNum;
+
+      this.blocks = [];
+
+      const subtractNum = (myPage - 1) * this.perPage;
+      const dummyArr = new Array(this.perPage).fill("");
+      let height = lastBlockNum - subtractNum;
+
+      const _this = this;
+
+      const newBlocks = await Promise.all(
+        dummyArr.map(async (value) => {
+          if (height < 1 || height < this.minBlockNum) {
+            return "";
+          }
+
+          const newBlock = _this.$http.getBlockByHeight2(height);
+          height -= 1;
+          return Block.create(await newBlock);
+        })
+      );
+
+      const zeroValueIdx = newBlocks.indexOf("");
+      const dummyBlocks =
+        zeroValueIdx === -1 ? newBlocks : newBlocks.slice(0, zeroValueIdx);
+
+      this.blocks = dummyBlocks;
+
+      this.executeFetchByPage(myPage);
+    },
+    async getLatestBlock() {
+      const latestBlock = await this.$http.getLatestBlockData();
+      const height = Number(latestBlock.block.header.height);
+      return height;
+    },
+    pageClick(button, page) {
+      this.$router
+        .push({
+          query: {
+            page,
+          },
+        })
+        .catch(() => {});
+    },
+    async fetch() {
+      const latestBlock = await this.$http.getLatestBlockData();
+
+      const has = this.blocks.findIndex(
+        (x) => x.block.header.height === latestBlock.block.header.height
+      );
+      if (has < 0) this.blocks.unshift(latestBlock);
+      if (this.blocks.length > 200) this.blocks.pop();
+    },
+    executeFetchByPage(page) {
+      if (page === 1) {
+        this.timer = setInterval(this.fetch, 4000);
+      } else {
+        clearInterval(this.timer);
+      }
+    },
+  },
+  watch: {
+    $route() {
+      if (!this.isFirst) {
+        this.initBlocks();
+      }
+    },
+    currentPage(to) {
+      this.executeFetchByPage(to);
     },
   },
 };

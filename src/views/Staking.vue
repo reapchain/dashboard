@@ -184,7 +184,14 @@
           </template>
           <template #cell(operation)="data">
             <template v-if="data.item.jailed">
-              <b-badge style="padding: 0.6rem 1rem; border-radius: 1rem; ">
+              <b-badge
+                style="padding: 0.6rem 1rem; border-radius: 1rem; "
+                :variant="
+                  insufficientSelfDelegation('standing', data.item.tokens)
+                    ? 'light-warning'
+                    : ''
+                "
+              >
                 Jailed
               </b-badge>
             </template>
@@ -356,8 +363,7 @@ import {
   MIN_STANDING_BOND_AMOUNT,
   MIN_VALIDATOR_BOND_AMOUNT,
 } from "@/libs/config";
-// import { toHex } from '@cosmjs/encoding'
-// import fetch from 'node-fetch'
+import Decimal from "decimal.js";
 
 export default {
   components: {
@@ -406,6 +412,7 @@ export default {
           tdClass: "text-right",
           thClass: "text-right",
           sortByFormatted: true,
+          formatter: (value) => `${value}`,
         },
         // {
         //   key: "changes",
@@ -663,6 +670,16 @@ export default {
     percent,
     tokenFormatter(amount, denom) {
       return formatToken({ amount, denom }, {}, 0);
+    },
+    insufficientSelfDelegation(type, token) {
+      if (type === "standing") {
+        const selfBonded = new Decimal(token);
+        const minAmount = new Decimal(MIN_STANDING_BOND_AMOUNT);
+
+        return selfBonded.lt(minAmount);
+      } else {
+        return false;
+      }
     },
     rankBadge(data) {
       return "primary";
