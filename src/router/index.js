@@ -44,6 +44,14 @@ router.afterEach(() => {
   if (appLoading) {
     appLoading.style.display = "none";
   }
+
+  Vue.nextTick(() => {
+    if (chainInfo.version) {
+      document.title = `Reapchain Dashboard ${chainInfo.version}`;
+    } else {
+      document.title = `Reapchain Dashboard`;
+    }
+  });
 });
 
 export default router;
