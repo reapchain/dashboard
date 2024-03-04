@@ -2,7 +2,7 @@ name: build for main
 on:
   push:
     branches:
-      - main
+      - deploy/main-v2
 
 jobs:
   build:
