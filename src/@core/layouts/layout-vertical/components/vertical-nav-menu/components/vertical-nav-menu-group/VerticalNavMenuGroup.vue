@@ -11,7 +11,7 @@
     <b-dropdown
       :text="versionName"
       :variant="item.tagVariant || 'primary'"
-      class="d-flex align-items-center custom-dropdown   "
+      class="d-flex align-items-center custom-dropdown"
       right
     >
       <b-dropdown-item
@@ -127,7 +127,7 @@ export default {
     let dropdownItems = [];
     let versionName = "";
 
-    if (chainInfo.version === "v3.1") {
+    if (chainInfo.version === "v3.1" || !chainInfo.version) {
       dropdownItems = [reapchainVersion["v3.0"], reapchainVersion["v2.0"]];
       versionName = reapchainVersion["v3.1"].name;
     } else if (chainInfo.version === "v3.0") {
