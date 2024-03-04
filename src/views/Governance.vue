@@ -148,7 +148,9 @@ export default {
       this.getList();
     },
     switchStatus(s) {
-      if (!this.loading) {
+      const myType = this.$route.query.status;
+
+      if (!this.loading && myType !== s) {
         this.proposals = [];
         this.$router.replace({
           query: {
