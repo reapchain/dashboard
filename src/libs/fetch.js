@@ -144,6 +144,12 @@ export default class ChainFetch {
     return Block.create(latestBlock);
   }
 
+  async getAllAccounts(queryString = "") {
+    return this.get(`/cosmos/auth/v1beta1/accounts?${queryString}`).then(
+      (data) => data
+    );
+  }
+
   async getBlockByHeight(height, config = null) {
     const conf = config || this.getSelectedConfig();
     return this.get(`/blocks/${height}`, config).then((data) =>
