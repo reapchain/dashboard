@@ -42,10 +42,18 @@
         <dashboard-card-vertical
           color="primary"
           icon="TrendingUpIcon"
+          :statistic="apr"
+          statistic-title="Apr"
+        />
+      </b-col>
+      <!-- <b-col xl="2" md="4" sm="6">
+        <dashboard-card-vertical
+          color="primary"
+          icon="TrendingUpIcon"
           :statistic="inflation"
           statistic-title="Inflation"
         />
-      </b-col>
+      </b-col> -->
       <b-col xl="2" md="4" sm="6">
         <dashboard-card-vertical
           color="success"
@@ -327,6 +335,7 @@ import DashboardCardVertical from "./components/dashboard/DashboardCardVertical.
 import DashboardPriceChart2 from "./components/dashboard/DashboardPriceChart2.vue";
 import FeatherIcon from "../@core/components/feather-icon/FeatherIcon.vue";
 import { chainInfo } from "/env/reapchain.config";
+import Decimal from "decimal.js";
 
 export default {
   components: {
@@ -378,6 +387,7 @@ export default {
       communityPool: "-",
       ratio: "-",
       inflation: "-",
+      apr: "-",
       proposals: [],
       myVotes: {},
       selectedValidator: "",
@@ -468,6 +478,8 @@ export default {
       Promise.all([
         this.$http.getStakingPool(),
         this.$http.getBankTotal(res.bond_denom),
+        this.$http.getEpochMintProvision(),
+        this.$http.getMintingInflation(),
       ]).then((pool) => {
         this.supply = `${formatNumber(
           formatTokenAmount(pool[1].amount, 2, res.bond_denom, false),
@@ -480,6 +492,14 @@ export default {
           2
         )}`;
         this.ratio = `${percent(pool[0].bondedToken / pool[1].amount)}%`;
+
+        const totalSupply = new Decimal(pool[1].amount);
+        const bonded = new Decimal(pool[0].bondedToken);
+        const inflation = new Decimal(pool[3]);
+        const inflationA = inflation.mul(totalSupply);
+        const apr = inflationA.div(bonded).toFixed(2);
+
+        this.apr = `${percent(apr)}%`;
       });
     });
 

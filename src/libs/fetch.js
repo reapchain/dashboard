@@ -236,6 +236,12 @@ export default class ChainFetch {
     return this.get(`/bank/total/${denom}`).then((data) => commonProcess(data));
   }
 
+  async getEpochMintProvision() {
+    return this.get(
+      `/reapchain/inflation/v1/epoch_mint_provision`
+    ).then((data) => commonProcess(data));
+  }
+
   async getBankTotals() {
     if (compareVersions(this.config.sdk_version, "0.40") < 0) {
       return this.get("/supply/total").then((data) => commonProcess(data));
