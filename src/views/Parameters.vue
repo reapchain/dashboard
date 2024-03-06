@@ -38,7 +38,7 @@
         <parameters-module-component :data="slashing" />
       </b-col>
     </b-row>
-    <b-row v-if="true">
+    <b-row v-if="false">
       <b-col>
         <parameters-module-component :data="inflation" />
       </b-col>

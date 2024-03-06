@@ -242,6 +242,12 @@ export default class ChainFetch {
     ).then((data) => commonProcess(data));
   }
 
+  async getCirculatingSupply() {
+    return this.get(`/reapchain/inflation/v1/circulating_supply`).then((data) =>
+      commonProcess(data)
+    );
+  }
+
   async getBankTotals() {
     if (compareVersions(this.config.sdk_version, "0.40") < 0) {
       return this.get("/supply/total").then((data) => commonProcess(data));

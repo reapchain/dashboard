@@ -24,12 +24,21 @@
       </b-col>
       <b-col xl="2" md="4" sm="6">
         <dashboard-card-vertical
+          hide-chart
+          color="danger"
+          icon="UserCheckIcon"
+          :statistic="validators"
+          statistic-title="Active Validators"
+        />
+      </b-col>
+      <!-- <b-col xl="2" md="4" sm="6">
+        <dashboard-card-vertical
           color="warning"
           icon="DollarSignIcon"
           :statistic="supply"
           statistic-title="Total Supply"
         />
-      </b-col>
+      </b-col> -->
       <b-col xl="2" md="4" sm="6">
         <dashboard-card-vertical
           color="danger"
@@ -41,10 +50,13 @@
       <b-col xl="2" md="4" sm="6">
         <dashboard-card-vertical
           color="primary"
-          icon="TrendingUpIcon"
+          icon="DollarSignIcon"
           :statistic="apr"
           statistic-title="Apr"
         />
+      </b-col>
+      <b-col xl="4" md="8" sm="12">
+        <dashboard-card-supply :data="supplyData" />
       </b-col>
       <!-- <b-col xl="2" md="4" sm="6">
         <dashboard-card-vertical
@@ -54,23 +66,14 @@
           statistic-title="Inflation"
         />
       </b-col> -->
-      <b-col xl="2" md="4" sm="6">
+      <!-- <b-col xl="2" md="4" sm="6">
         <dashboard-card-vertical
           color="success"
           icon="AwardIcon"
           :statistic="communityPool"
           statistic-title="Community Pool"
         />
-      </b-col>
-      <b-col xl="2" md="4" sm="6">
-        <dashboard-card-vertical
-          hide-chart
-          color="danger"
-          icon="UserCheckIcon"
-          :statistic="validators"
-          statistic-title="Active Validators"
-        />
-      </b-col>
+      </b-col> -->
     </b-row>
     <b-card no-body v-if="false">
       <b-card-header>
@@ -332,6 +335,7 @@ import dayjs from "dayjs";
 import ParametersModuleComponent from "./components/parameters/ParametersModuleComponent.vue";
 import DashboardCardHorizontal from "./components/dashboard/DashboardCardHorizontal.vue";
 import DashboardCardVertical from "./components/dashboard/DashboardCardVertical.vue";
+import DashboardCardSupply from "./components/dashboard/DashboardCardSupply.vue";
 import DashboardPriceChart2 from "./components/dashboard/DashboardPriceChart2.vue";
 import FeatherIcon from "../@core/components/feather-icon/FeatherIcon.vue";
 import { chainInfo } from "/env/reapchain.config";
@@ -362,6 +366,7 @@ export default {
     DashboardCardHorizontal,
     DashboardPriceChart2,
     DashboardCardVertical,
+    DashboardCardSupply,
     FeatherIcon,
   },
   directives: {
@@ -382,6 +387,7 @@ export default {
       marketData: null,
       height: "-",
       supply: "-",
+      supplyData: {},
       bonded: "-",
       validators: "-",
       communityPool: "-",
@@ -480,12 +486,26 @@ export default {
         this.$http.getBankTotal(res.bond_denom),
         this.$http.getEpochMintProvision(),
         this.$http.getMintingInflation(),
+        this.$http.getCirculatingSupply(),
       ]).then((pool) => {
         this.supply = `${formatNumber(
           formatTokenAmount(pool[1].amount, 2, res.bond_denom, false),
           true,
           2
         )}`;
+        this.supplyData.totalSupply = `${formatTokenAmount(
+          pool[1].amount,
+          0,
+          res.bond_denom,
+          false
+        )} REAP`;
+        this.supplyData.circulatingSupply = `${formatTokenAmount(
+          pool[4].circulating_supply.amount,
+          0,
+          res.bond_denom,
+          false
+        )} REAP`;
+
         this.bonded = `${formatNumber(
           formatTokenAmount(pool[0].bondedToken, 2, res.bond_denom, false),
           true,
