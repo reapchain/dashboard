@@ -64,6 +64,7 @@ import {
   toDuration,
   tokenFormatter,
 } from "@/libs/utils";
+import Decimal from "decimal.js";
 
 import ParametersModuleComponent from "./components/parameters/ParametersModuleComponent.vue";
 import ObjectFieldComponent from "./components/ObjectFieldComponent.vue";
@@ -98,10 +99,15 @@ export default {
             color: "light-warning",
           },
           {
-            subtitle: "inflation",
+            subtitle: "apr",
             icon: "TrendingUpIcon",
             color: "light-primary",
           },
+          // {
+          //   subtitle: "inflation",
+          //   icon: "TrendingUpIcon",
+          //   color: "light-primary",
+          // },
         ],
       },
       staking: {
@@ -151,6 +157,9 @@ export default {
       Promise.all([
         this.$http.getStakingPool(),
         this.$http.getBankTotal(res.bond_denom),
+        this.$http.getEpochMintProvision(),
+        this.$http.getMintingInflation(),
+        this.$http.getCirculatingSupply(),
       ]).then((pool) => {
         const bondedAndSupply = this.chain.items.findIndex(
           (x) => x.subtitle === "bonded_and_supply"
@@ -176,6 +185,19 @@ export default {
           "title",
           `${percent(pool[0].bondedToken / pool[1].amount)}%`
         );
+
+        const totalSupply = new Decimal(pool[1].amount);
+        const bonded = new Decimal(pool[0].bondedToken);
+        const inflation = new Decimal(pool[3]);
+        const inflationA = inflation.mul(totalSupply);
+        const apr = inflationA.div(bonded).toFixed(2);
+
+        this.apr = `${percent(apr)}%`;
+
+        const chainIndex = this.chain.items.findIndex(
+          (x) => x.subtitle === "apr"
+        );
+        this.$set(this.chain.items[chainIndex], "title", `${percent(apr)}%`);
       });
     });
     this.$http.getSlashingParameters().then((res) => {
@@ -186,16 +208,16 @@ export default {
     if (conf.excludes && conf.excludes.indexOf("mint") > -1) {
       this.mint = null;
     } else {
-      this.$http.getMintingInflation().then((res) => {
-        const chainIndex = this.chain.items.findIndex(
-          (x) => x.subtitle === "inflation"
-        );
-        this.$set(this.chain.items[chainIndex], "title", `${percent(res)}%`);
-        this.inflation = this.normalize(
-          { inflationRate: `${percent(res)}%` },
-          "Inflation Parameters"
-        );
-      });
+      // this.$http.getMintingInflation().then((res) => {
+      //   const chainIndex = this.chain.items.findIndex(
+      //     (x) => x.subtitle === "inflation"
+      //   );
+      //   this.$set(this.chain.items[chainIndex], "title", `${percent(res)}%`);
+      //   this.inflation = this.normalize(
+      //     { inflationRate: `${percent(res)}%` },
+      //     "Inflation Parameters"
+      //   );
+      // });
       this.$http.getMintParameters().then((res) => {
         this.mint = this.normalize(res, "Mint Parameters");
 
@@ -217,8 +239,8 @@ export default {
         //   "Inflation Parameters"
         // );
 
-        const inflationParams = this.normalize(res, "Inflation Parameters");
-        this.inflation = inflationParams;
+        // const inflationParams = this.normalize(res, "Inflation Parameters");
+        // this.inflation = inflationParams;
       });
     }
 

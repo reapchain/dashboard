@@ -50,7 +50,7 @@
       <b-col xl="2" md="4" sm="6">
         <dashboard-card-vertical
           color="primary"
-          icon="DollarSignIcon"
+          icon="TrendingUpIcon"
           :statistic="apr"
           statistic-title="Apr"
         />

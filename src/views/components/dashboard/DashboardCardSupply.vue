@@ -52,6 +52,11 @@ export default {
 }
 .left {
   flex: 1;
+  font-family: "Montserrat", Helvetica, Arial, serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.45;
+  color: #6e6b7b;
 }
 .right {
   flex: 1;
