@@ -56,7 +56,7 @@
         />
       </b-col>
       <b-col xl="4" md="8" sm="12">
-        <dashboard-card-supply :data="supplyData" />
+        <dashboard-card-supply v-if="!supplyData.loading" :data="supplyData" />
       </b-col>
       <!-- <b-col xl="2" md="4" sm="6">
         <dashboard-card-vertical
@@ -387,7 +387,9 @@ export default {
       marketData: null,
       height: "-",
       supply: "-",
-      supplyData: {},
+      supplyData: {
+        loading: true,
+      },
       bonded: "-",
       validators: "-",
       communityPool: "-",
@@ -505,6 +507,8 @@ export default {
           res.bond_denom,
           false
         )} REAP`;
+
+        this.supplyData.loading = false;
 
         this.bonded = `${formatNumber(
           formatTokenAmount(pool[0].bondedToken, 2, res.bond_denom, false),

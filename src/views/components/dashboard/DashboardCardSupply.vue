@@ -9,14 +9,9 @@
         - Circulating Supply <br />
         - Max Supply <br />
       </div>
-      <div class="right" v-if="data.totalSupply">
-        {{ data.totalSupply }} <br />
-        {{ data.circulatingSupply }} <br />
-        4,900,000,000 REAP <br />
-      </div>
-      <div class="right" v-else>
-        - <br />
-        - <br />
+      <div class="right">
+        {{ data.totalSupply || "-" }} <br />
+        {{ data.circulatingSupply || "-" }} <br />
         4,900,000,000 REAP <br />
       </div>
     </div>
@@ -40,6 +35,7 @@ export default {
       default: "",
     },
   },
+  computed: {},
 };
 </script>
 
