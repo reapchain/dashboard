@@ -41,7 +41,7 @@
       </b-col> -->
       <b-col xl="2" md="4" sm="6">
         <dashboard-card-vertical
-          color="danger"
+          color="warning"
           icon="PercentIcon"
           :statistic="ratio"
           :statistic-title="`Bonded: ${bonded}`"
@@ -55,8 +55,25 @@
           statistic-title="Apr"
         />
       </b-col>
+      <b-col xl="2" md="4" sm="6">
+        <dashboard-card-vertical
+          color="success"
+          icon="AwardIcon"
+          :statistic="communityPool"
+          statistic-title="Community Pool"
+        />
+      </b-col>
+      <b-col xl="2" md="4" sm="6">
+        <dashboard-card-bridge-link color="info" icon="TrendingUpIcon" />
+      </b-col>
       <b-col xl="4" md="8" sm="12">
         <dashboard-card-supply v-if="!supplyData.loading" :data="supplyData" />
+      </b-col>
+      <b-col xl="4" md="8" sm="12">
+        <dashboard-card-supply-token />
+      </b-col>
+      <b-col xl="4" md="8" sm="12">
+        <dashboard-card-bridge />
       </b-col>
       <!-- <b-col xl="2" md="4" sm="6">
         <dashboard-card-vertical
@@ -64,14 +81,6 @@
           icon="TrendingUpIcon"
           :statistic="inflation"
           statistic-title="Inflation"
-        />
-      </b-col> -->
-      <!-- <b-col xl="2" md="4" sm="6">
-        <dashboard-card-vertical
-          color="success"
-          icon="AwardIcon"
-          :statistic="communityPool"
-          statistic-title="Community Pool"
         />
       </b-col> -->
     </b-row>
@@ -336,6 +345,9 @@ import ParametersModuleComponent from "./components/parameters/ParametersModuleC
 import DashboardCardHorizontal from "./components/dashboard/DashboardCardHorizontal.vue";
 import DashboardCardVertical from "./components/dashboard/DashboardCardVertical.vue";
 import DashboardCardSupply from "./components/dashboard/DashboardCardSupply.vue";
+import DashboardCardSupplyToken from "./components/dashboard/DashboardCardSupplyToken.vue";
+import DashboardCardBridge from "./components/dashboard/DashboardCardBridge.vue";
+import DashboardCardBridgeLink from "./components/dashboard/DashboardCardBridgeLink.vue";
 import DashboardPriceChart2 from "./components/dashboard/DashboardPriceChart2.vue";
 import FeatherIcon from "../@core/components/feather-icon/FeatherIcon.vue";
 import { chainInfo } from "/env/reapchain.config";
@@ -367,6 +379,9 @@ export default {
     DashboardPriceChart2,
     DashboardCardVertical,
     DashboardCardSupply,
+    DashboardCardSupplyToken,
+    DashboardCardBridge,
+    DashboardCardBridgeLink,
     FeatherIcon,
   },
   directives: {
@@ -529,7 +544,12 @@ export default {
 
     this.$http.getCommunityPool().then((res) => {
       if (res.pool.length >= 1) {
-        this.communityPool = this.formatToken(res.pool);
+        this.communityPool = formatTokenAmount(
+          res.pool[0].amount,
+          0,
+          res.pool[0].denom,
+          false
+        );
       } else {
         this.communityPool = this.formatToken([
           {

@@ -1,7 +1,7 @@
 <template>
   <b-card class="">
     <h4 class="title">
-      Supply(MainNet)
+      Supply(ERC-20)
     </h4>
     <div class="container">
       <div class="left">
@@ -10,8 +10,8 @@
         - Max Supply <br />
       </div>
       <div class="right">
-        {{ data.totalSupply || "-" }} <br />
-        {{ data.circulatingSupply || "-" }} <br />
+        1,395,000,000 REAP <br />
+        2,200,000,000 REAP <br />
         4,900,000,000 REAP <br />
       </div>
     </div>
@@ -25,16 +25,7 @@ export default {
   components: {
     BCard,
   },
-  props: {
-    data: {
-      type: [Object],
-      required: true,
-    },
-    title: {
-      type: String,
-      default: "",
-    },
-  },
+  props: {},
   computed: {},
 };
 </script>
