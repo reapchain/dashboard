@@ -157,6 +157,13 @@ export default class ChainFetch {
     );
   }
 
+  async getCurrentValset(height, config = null) {
+    const conf = config || this.getSelectedConfig();
+    return this.get(`/gravity/v1beta/valset/current`, config).then(
+      (data) => data
+    );
+  }
+
   async getBlockByHeight2(height) {
     const _this = this;
     const promise = new Promise((resolve, reject) => {
@@ -201,6 +208,14 @@ export default class ChainFetch {
     const offset = page * size - size;
     return this.get(
       `/cosmos/tx/v1beta1/txs?events=message.sender='${sender}'&pagination.reverse=true&order_by=ORDER_BY_DESC&pagination.limit=${limit}&pagination.offset=${offset}`
+    );
+  }
+
+  async getTxsByRecipientPagination(recipient, page = 1, size = 10) {
+    const limit = size;
+    const offset = page * size - size;
+    return this.get(
+      `/cosmos/tx/v1beta1/txs?&pagination.reverse=true&events=coin_received.receiver='${recipient}'&pagination.limit=${limit}&pagination.offset=${offset}&pagination.count_total=true`
     );
   }
 
