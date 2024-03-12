@@ -12,6 +12,7 @@
     <b-row>
       <b-col><dashboard-price-chart-2 /></b-col>
     </b-row>
+
     <!-- Stats Card Vertical -->
     <b-row class="match-height">
       <b-col xl="2" md="4" sm="6">
@@ -24,11 +25,27 @@
       </b-col>
       <b-col xl="2" md="4" sm="6">
         <dashboard-card-vertical
+          icon="ClockIcon"
+          :statistic="blockTime"
+          statistic-title="Block Time"
+          color="warning"
+        />
+      </b-col>
+      <b-col xl="2" md="4" sm="6">
+        <dashboard-card-vertical
           hide-chart
           color="danger"
-          icon="UserCheckIcon"
+          icon="UsersIcon"
           :statistic="validators"
           statistic-title="Active Validators"
+        />
+      </b-col>
+      <b-col xl="2" md="4" sm="6">
+        <dashboard-card-vertical
+          color="success"
+          icon="UserCheckIcon"
+          :statistic="relayers"
+          statistic-title="Relayers"
         />
       </b-col>
       <!-- <b-col xl="2" md="4" sm="6">
@@ -39,9 +56,32 @@
           statistic-title="Total Supply"
         />
       </b-col> -->
+      <b-col xl="4" md="8" sm="12">
+        <dashboard-card-supply v-if="!supplyData.loading" :data="supplyData" />
+      </b-col>
+
+      <!-- <b-col xl="2" md="4" sm="6">
+        <dashboard-card-bridge-link color="info" icon="TrendingUpIcon" />
+      </b-col> -->
+      <!-- <b-col xl="4" md="8" sm="12">
+        <dashboard-card-supply v-if="!supplyData.loading" :data="supplyData" />
+      </b-col> -->
+      <!-- <b-col xl="4" md="8" sm="12">
+        <dashboard-card-supply-token />
+      </b-col> -->
+    </b-row>
+    <b-row class="match-height">
       <b-col xl="2" md="4" sm="6">
         <dashboard-card-vertical
-          color="warning"
+          color="primary"
+          icon="AwardIcon"
+          :statistic="communityPool"
+          statistic-title="Community Pool"
+        />
+      </b-col>
+      <b-col xl="2" md="4" sm="6">
+        <dashboard-card-vertical
+          color="info"
           icon="PercentIcon"
           :statistic="ratio"
           :statistic-title="`Bonded: ${bonded}`"
@@ -49,40 +89,23 @@
       </b-col>
       <b-col xl="2" md="4" sm="6">
         <dashboard-card-vertical
-          color="primary"
-          icon="TrendingUpIcon"
-          :statistic="apr"
-          statistic-title="Apr"
-        />
-      </b-col>
-      <b-col xl="2" md="4" sm="6">
-        <dashboard-card-vertical
-          color="success"
-          icon="AwardIcon"
-          :statistic="communityPool"
-          statistic-title="Community Pool"
-        />
-      </b-col>
-      <b-col xl="2" md="4" sm="6">
-        <dashboard-card-bridge-link color="info" icon="TrendingUpIcon" />
-      </b-col>
-      <b-col xl="4" md="8" sm="12">
-        <dashboard-card-supply v-if="!supplyData.loading" :data="supplyData" />
-      </b-col>
-      <b-col xl="4" md="8" sm="12">
-        <dashboard-card-supply-token />
-      </b-col>
-      <b-col xl="4" md="8" sm="12">
-        <dashboard-card-bridge />
-      </b-col>
-      <!-- <b-col xl="2" md="4" sm="6">
-        <dashboard-card-vertical
-          color="primary"
+          color="danger"
           icon="TrendingUpIcon"
           :statistic="inflation"
           statistic-title="Inflation"
         />
-      </b-col> -->
+      </b-col>
+      <b-col xl="2" md="4" sm="6">
+        <dashboard-card-vertical
+          color="warning"
+          icon="DollarSignIcon"
+          :statistic="apr"
+          statistic-title="Staking Apr"
+        />
+      </b-col>
+      <b-col xl="4" md="8" sm="12">
+        <dashboard-card-bridge />
+      </b-col>
     </b-row>
     <b-card no-body v-if="false">
       <b-card-header>
@@ -399,6 +422,7 @@ export default {
       chain: this.$store.state.chains.selected.chain_name,
       syncing: false,
       latestTime: "",
+      blockTime: "",
       marketData: null,
       height: "-",
       supply: "-",
@@ -407,6 +431,7 @@ export default {
       },
       bonded: "-",
       validators: "-",
+      relayers: "-",
       communityPool: "-",
       ratio: "-",
       inflation: "-",
@@ -495,6 +520,25 @@ export default {
       }
       this.latestTime = toDay(res.block.header.time, "long");
       this.validators = res.block.last_commit.signatures.length;
+
+      if (this.height > 1) {
+        this.$http
+          .getBlockByHeight(res.block.header.height - 1)
+          .then((res2) => {
+            const beforeLatestBlockTime = res2.block.header.time;
+
+            const time1 = new Date(res.block.header.time);
+            const time2 = new Date(res2.block.header.time);
+            const diff = (time1.getTime() - time2.getTime()) / 1000;
+            this.blockTime = `${diff.toFixed(1)}s` || "-";
+          });
+      } else {
+        this.blockTime = "-";
+      }
+    });
+
+    this.$http.getCurrentValset().then((res) => {
+      this.relayers = res.valset.members.length;
     });
 
     this.$http.getStakingParameters().then((res) => {
