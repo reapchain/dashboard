@@ -1070,7 +1070,7 @@ export default {
     },
     getReceiveTxsInfo() {
       this.$http
-        .getTxsByRecipientPagination(this.address, 1, 100)
+        .getTxsByRecipientPagination(this.address, 1, 20)
         .then((res) => {
           this.applyReceivedTxsInfo(res);
         });

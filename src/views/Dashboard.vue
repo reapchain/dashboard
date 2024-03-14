@@ -91,7 +91,7 @@
         <dashboard-card-vertical
           color="danger"
           icon="TrendingUpIcon"
-          :statistic="inflation"
+          :statistic="isEndInflation ? '0%' : inflation"
           statistic-title="Inflation"
         />
       </b-col>
@@ -435,6 +435,8 @@ export default {
       communityPool: "-",
       ratio: "-",
       inflation: "-",
+      maxInflationAmount: "-",
+      currentInflationAmount: "-",
       apr: "-",
       proposals: [],
       myVotes: {},
@@ -505,6 +507,17 @@ export default {
           action: "",
         };
       });
+    },
+    isEndInflation() {
+      if (
+        this.maxInflationAmount &&
+        this.currentInflationAmount &&
+        this.maxInflationAmount === this.currentInflationAmount
+      ) {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
   created() {
@@ -602,6 +615,11 @@ export default {
           },
         ]);
       }
+    });
+
+    this.$http.getMintParameters().then((res) => {
+      this.maxInflationAmount = res.max_inflation_amount;
+      this.currentInflationAmount = res.current_inflation_amount;
     });
 
     const conf = this.$http.getSelectedConfig();
