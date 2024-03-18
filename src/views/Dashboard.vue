@@ -90,11 +90,19 @@
       <b-col xl="2" md="4" sm="6">
         <dashboard-card-vertical
           color="danger"
+          icon="UserPlusIcon"
+          :statistic="steeringNumber"
+          statistic-title="Steerings"
+        />
+      </b-col>
+      <!-- <b-col xl="2" md="4" sm="6">
+        <dashboard-card-vertical
+          color="danger"
           icon="TrendingUpIcon"
           :statistic="isEndInflation ? '0%' : inflation"
           statistic-title="Inflation"
         />
-      </b-col>
+      </b-col> -->
       <b-col xl="2" md="4" sm="6">
         <dashboard-card-vertical
           color="warning"
@@ -431,6 +439,7 @@ export default {
       },
       bonded: "-",
       validators: "-",
+      steeringNumber: "-",
       relayers: "-",
       communityPool: "-",
       ratio: "-",
@@ -552,6 +561,15 @@ export default {
 
     this.$http.getCurrentValset().then((res) => {
       this.relayers = res.valset.members.length;
+    });
+
+    this.$http.getValidatorList().then((res) => {
+      if (res) {
+        const steeringList = res.filter((validator) => {
+          return validator.type === "steering";
+        });
+        this.steeringNumber = steeringList.length;
+      }
     });
 
     this.$http.getStakingParameters().then((res) => {
