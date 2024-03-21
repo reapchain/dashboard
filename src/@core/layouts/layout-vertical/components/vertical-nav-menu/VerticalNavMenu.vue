@@ -147,6 +147,8 @@ export default {
         myAppName = "Reapchain v3.0";
       } else if (chainInfo.version === "v2.0") {
         myAppName = "Reapchain v2.0";
+      } else {
+        myAppName = "Reapchain Test";
       }
     }
 
