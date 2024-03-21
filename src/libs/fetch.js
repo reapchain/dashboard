@@ -157,6 +157,13 @@ export default class ChainFetch {
     );
   }
 
+  async getCurrentValset(height, config = null) {
+    const conf = config || this.getSelectedConfig();
+    return this.get(`/gravity/v1beta/valset/current`, config).then(
+      (data) => data
+    );
+  }
+
   async getBlockByHeight2(height) {
     const _this = this;
     const promise = new Promise((resolve, reject) => {
@@ -204,6 +211,14 @@ export default class ChainFetch {
     );
   }
 
+  async getTxsByRecipientPagination(recipient, page = 1, size = 10) {
+    const limit = size;
+    const offset = page * size - size;
+    return this.get(
+      `/cosmos/tx/v1beta1/txs?&pagination.reverse=true&events=coin_received.receiver='${recipient}'&pagination.limit=${limit}&pagination.offset=${offset}&pagination.count_total=true`
+    );
+  }
+
   async getTxsByRecipient(recipient) {
     return this.get(`/txs?message.recipient=${recipient}`);
   }
@@ -234,6 +249,18 @@ export default class ChainFetch {
       }));
     }
     return this.get(`/bank/total/${denom}`).then((data) => commonProcess(data));
+  }
+
+  async getEpochMintProvision() {
+    return this.get(
+      `/reapchain/inflation/v1/epoch_mint_provision`
+    ).then((data) => commonProcess(data));
+  }
+
+  async getCirculatingSupply() {
+    return this.get(`/reapchain/inflation/v1/circulating_supply`).then((data) =>
+      commonProcess(data)
+    );
   }
 
   async getBankTotals() {

@@ -12,6 +12,7 @@
     <b-row>
       <b-col><dashboard-price-chart-2 /></b-col>
     </b-row>
+
     <!-- Stats Card Vertical -->
     <b-row class="match-height">
       <b-col xl="2" md="4" sm="6">
@@ -24,31 +25,55 @@
       </b-col>
       <b-col xl="2" md="4" sm="6">
         <dashboard-card-vertical
+          icon="ClockIcon"
+          :statistic="blockTime"
+          statistic-title="Block Time"
           color="warning"
-          icon="DollarSignIcon"
-          :statistic="supply"
-          statistic-title="Total Supply"
         />
       </b-col>
       <b-col xl="2" md="4" sm="6">
         <dashboard-card-vertical
+          hide-chart
           color="danger"
-          icon="PercentIcon"
-          :statistic="ratio"
-          :statistic-title="`Bonded: ${bonded}`"
-        />
-      </b-col>
-      <b-col xl="2" md="4" sm="6">
-        <dashboard-card-vertical
-          color="primary"
-          icon="TrendingUpIcon"
-          :statistic="inflation"
-          statistic-title="Inflation"
+          icon="UsersIcon"
+          :statistic="validators"
+          statistic-title="Active Validators"
         />
       </b-col>
       <b-col xl="2" md="4" sm="6">
         <dashboard-card-vertical
           color="success"
+          icon="UserCheckIcon"
+          :statistic="relayers"
+          statistic-title="Relayers"
+        />
+      </b-col>
+      <!-- <b-col xl="2" md="4" sm="6">
+        <dashboard-card-vertical
+          color="warning"
+          icon="DollarSignIcon"
+          :statistic="supply"
+          statistic-title="Total Supply"
+        />
+      </b-col> -->
+      <b-col xl="4" md="8" sm="12">
+        <dashboard-card-supply v-if="!supplyData.loading" :data="supplyData" />
+      </b-col>
+
+      <!-- <b-col xl="2" md="4" sm="6">
+        <dashboard-card-bridge-link color="info" icon="TrendingUpIcon" />
+      </b-col> -->
+      <!-- <b-col xl="4" md="8" sm="12">
+        <dashboard-card-supply v-if="!supplyData.loading" :data="supplyData" />
+      </b-col> -->
+      <!-- <b-col xl="4" md="8" sm="12">
+        <dashboard-card-supply-token />
+      </b-col> -->
+    </b-row>
+    <b-row class="match-height">
+      <b-col xl="2" md="4" sm="6">
+        <dashboard-card-vertical
+          color="primary"
           icon="AwardIcon"
           :statistic="communityPool"
           statistic-title="Community Pool"
@@ -56,12 +81,38 @@
       </b-col>
       <b-col xl="2" md="4" sm="6">
         <dashboard-card-vertical
-          hide-chart
-          color="danger"
-          icon="UserCheckIcon"
-          :statistic="validators"
-          statistic-title="Active Validators"
+          color="info"
+          icon="PercentIcon"
+          :statistic="ratio"
+          :statistic-title="`Bonded: ${bonded}`"
         />
+      </b-col>
+      <b-col xl="2" md="4" sm="6">
+        <dashboard-card-vertical
+          color="danger"
+          icon="UserPlusIcon"
+          :statistic="steeringNumber"
+          statistic-title="Steerings"
+        />
+      </b-col>
+      <!-- <b-col xl="2" md="4" sm="6">
+        <dashboard-card-vertical
+          color="danger"
+          icon="TrendingUpIcon"
+          :statistic="isEndInflation ? '0%' : inflation"
+          statistic-title="Inflation"
+        />
+      </b-col> -->
+      <b-col xl="2" md="4" sm="6">
+        <dashboard-card-vertical
+          color="warning"
+          icon="DollarSignIcon"
+          :statistic="apr"
+          statistic-title="Staking Apr"
+        />
+      </b-col>
+      <b-col xl="4" md="8" sm="12">
+        <dashboard-card-bridge />
       </b-col>
     </b-row>
     <b-card no-body v-if="false">
@@ -324,9 +375,14 @@ import dayjs from "dayjs";
 import ParametersModuleComponent from "./components/parameters/ParametersModuleComponent.vue";
 import DashboardCardHorizontal from "./components/dashboard/DashboardCardHorizontal.vue";
 import DashboardCardVertical from "./components/dashboard/DashboardCardVertical.vue";
+import DashboardCardSupply from "./components/dashboard/DashboardCardSupply.vue";
+import DashboardCardSupplyToken from "./components/dashboard/DashboardCardSupplyToken.vue";
+import DashboardCardBridge from "./components/dashboard/DashboardCardBridge.vue";
+import DashboardCardBridgeLink from "./components/dashboard/DashboardCardBridgeLink.vue";
 import DashboardPriceChart2 from "./components/dashboard/DashboardPriceChart2.vue";
 import FeatherIcon from "../@core/components/feather-icon/FeatherIcon.vue";
 import { chainInfo } from "/env/reapchain.config";
+import Decimal from "decimal.js";
 
 export default {
   components: {
@@ -353,6 +409,10 @@ export default {
     DashboardCardHorizontal,
     DashboardPriceChart2,
     DashboardCardVertical,
+    DashboardCardSupply,
+    DashboardCardSupplyToken,
+    DashboardCardBridge,
+    DashboardCardBridgeLink,
     FeatherIcon,
   },
   directives: {
@@ -370,14 +430,23 @@ export default {
       chain: this.$store.state.chains.selected.chain_name,
       syncing: false,
       latestTime: "",
+      blockTime: "",
       marketData: null,
       height: "-",
       supply: "-",
+      supplyData: {
+        loading: true,
+      },
       bonded: "-",
       validators: "-",
+      steeringNumber: "-",
+      relayers: "-",
       communityPool: "-",
       ratio: "-",
       inflation: "-",
+      maxInflationAmount: "-",
+      currentInflationAmount: "-",
+      apr: "-",
       proposals: [],
       myVotes: {},
       selectedValidator: "",
@@ -448,6 +517,17 @@ export default {
         };
       });
     },
+    isEndInflation() {
+      if (
+        this.maxInflationAmount &&
+        this.currentInflationAmount &&
+        this.maxInflationAmount === this.currentInflationAmount
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   created() {
     this.$http.getGovernanceListByStatus(2).then((res) => {
@@ -462,30 +542,89 @@ export default {
       }
       this.latestTime = toDay(res.block.header.time, "long");
       this.validators = res.block.last_commit.signatures.length;
+
+      if (this.height > 1) {
+        this.$http
+          .getBlockByHeight(res.block.header.height - 1)
+          .then((res2) => {
+            const beforeLatestBlockTime = res2.block.header.time;
+
+            const time1 = new Date(res.block.header.time);
+            const time2 = new Date(res2.block.header.time);
+            const diff = (time1.getTime() - time2.getTime()) / 1000;
+            this.blockTime = `${diff.toFixed(1)}s` || "-";
+          });
+      } else {
+        this.blockTime = "-";
+      }
+    });
+
+    this.$http.getCurrentValset().then((res) => {
+      this.relayers = res.valset.members.length;
+    });
+
+    this.$http.getValidatorList().then((res) => {
+      if (res) {
+        const steeringList = res.filter((validator) => {
+          return validator.type === "steering";
+        });
+        this.steeringNumber = steeringList.length;
+      }
     });
 
     this.$http.getStakingParameters().then((res) => {
       Promise.all([
         this.$http.getStakingPool(),
         this.$http.getBankTotal(res.bond_denom),
+        this.$http.getEpochMintProvision(),
+        this.$http.getMintingInflation(),
+        this.$http.getCirculatingSupply(),
       ]).then((pool) => {
         this.supply = `${formatNumber(
           formatTokenAmount(pool[1].amount, 2, res.bond_denom, false),
           true,
           2
         )}`;
+        this.supplyData.totalSupply = `${formatTokenAmount(
+          pool[1].amount,
+          0,
+          res.bond_denom,
+          false
+        )} REAP`;
+        this.supplyData.circulatingSupply = `${formatTokenAmount(
+          pool[4].circulating_supply.amount,
+          0,
+          res.bond_denom,
+          false
+        )} REAP`;
+
+        this.supplyData.loading = false;
+
         this.bonded = `${formatNumber(
           formatTokenAmount(pool[0].bondedToken, 2, res.bond_denom, false),
           true,
           2
         )}`;
         this.ratio = `${percent(pool[0].bondedToken / pool[1].amount)}%`;
+
+        const totalSupply = new Decimal(pool[1].amount);
+        const bonded = new Decimal(pool[0].bondedToken);
+        const inflation = new Decimal(pool[3]);
+        const inflationA = inflation.mul(totalSupply);
+        const apr = inflationA.div(bonded).toFixed(2);
+
+        this.apr = `${percent(apr)}%`;
       });
     });
 
     this.$http.getCommunityPool().then((res) => {
       if (res.pool.length >= 1) {
-        this.communityPool = this.formatToken(res.pool);
+        this.communityPool = formatTokenAmount(
+          res.pool[0].amount,
+          0,
+          res.pool[0].denom,
+          false
+        );
       } else {
         this.communityPool = this.formatToken([
           {
@@ -494,6 +633,11 @@ export default {
           },
         ]);
       }
+    });
+
+    this.$http.getMintParameters().then((res) => {
+      this.maxInflationAmount = res.max_inflation_amount;
+      this.currentInflationAmount = res.current_inflation_amount;
     });
 
     const conf = this.$http.getSelectedConfig();

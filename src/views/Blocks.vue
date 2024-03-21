@@ -143,7 +143,7 @@ export default {
         return 0;
       }
 
-      return this.lastBlockNum - this.minBlockNum;
+      return this.lastBlockNum - this.minBlockNum + 1;
     },
   },
   methods: {

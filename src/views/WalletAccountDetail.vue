@@ -260,6 +260,27 @@
         />
       </b-card>
 
+      <b-card title="Recent Received">
+        <b-table
+          :items="receivedTxs"
+          striped
+          hover
+          responsive="sm"
+          stacked="sm"
+        >
+          <template #cell(height)="data">
+            <router-link :to="`../blocks/${data.item.height}`">
+              {{ data.item.height }}
+            </router-link>
+          </template>
+          <template #cell(txhash)="data">
+            <router-link :to="`../tx/${data.item.txhash}`">
+              {{ formatHash(data.item.txhash) }}
+            </router-link>
+          </template>
+        </b-table>
+      </b-card>
+
       <b-card v-if="account" title="Profile" class="text-trancate">
         <b-table-simple stacked="sm">
           <b-tbody v-if="account.value.base_account">
@@ -624,6 +645,7 @@ export default {
       unbonding: [],
       quotes: {},
       transactions: [],
+      receivedTransactions: [],
       stakingParameters: {},
       operationModalType: "",
       error: null,
@@ -642,6 +664,17 @@ export default {
     txs() {
       if (this.transactions.txs) {
         return this.transactions.tx_responses.map((x) => ({
+          height: Number(x.height),
+          txhash: x.txhash,
+          msgs: abbrMessage(x.tx.body.messages),
+          time: toDay(x.timestamp),
+        }));
+      }
+      return [];
+    },
+    receivedTxs() {
+      if (this.receivedTransactions.txs) {
+        return this.receivedTransactions.tx_responses.map((x) => ({
           height: Number(x.height),
           txhash: x.txhash,
           msgs: abbrMessage(x.tx.body.messages),
@@ -864,6 +897,7 @@ export default {
         this.unbonding = res.unbonding_responses || res;
       });
       this.getTxsInfo();
+      this.getReceiveTxsInfo();
     },
     accountDataProcess() {
       this.$http
@@ -1034,6 +1068,13 @@ export default {
           this.applyPaginationAndTxs(res);
         });
     },
+    getReceiveTxsInfo() {
+      this.$http
+        .getTxsByRecipientPagination(this.address, 1, 20)
+        .then((res) => {
+          this.applyReceivedTxsInfo(res);
+        });
+    },
     applyPaginationAndTxs(res) {
       if (!res.pagination || !res.txs) {
         res.txs = [];
@@ -1050,7 +1091,9 @@ export default {
 
       this.transactions = res;
     },
-    // 피보나치 수열 코드
+    applyReceivedTxsInfo(res) {
+      this.receivedTransactions = res;
+    },
   },
 };
 </script>
